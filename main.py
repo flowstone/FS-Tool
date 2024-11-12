@@ -1,14 +1,12 @@
 import tkinter as tk
 from tkinter import ttk
-import win32gui
-import win32con
 from PIL import Image, ImageDraw
 from desktop_clock import DesktopClock
 from pic_conversion import PicConversion
-from main_mini import MainMini
 import pystray
 from pystray import MenuItem
 import os
+import threading
 
 class MainApplication:
     def __init__(self):
@@ -30,30 +28,35 @@ class MainApplication:
         self.root.resizable(False, False)
 
         # 绑定系统事件，监听窗口最小化操作
-        self.root.bind("<Unmap>", self.on_minimize)
+        #self.root.bind("<Unmap>", self.on_minimize)
+        # 关闭窗口，隐藏窗口
+        self.root.protocol("WM_DELETE_WINDOW", lambda: self.root.iconify())
 
-        # 创建用于任务栏图标的图像
-        self.icon_image = self.create_task_icon()
 
-        # 创建pystray图标对象
-        self.tray_icon = pystray.Icon(
-            'app_icon',
-            self.icon_image,
-            'FSTool',
-            menu=pystray.Menu(
-                MenuItem('显示应用', self.show_application),
-                MenuItem('退出', self.exit_application)
-            )
-        )
+        # 用于创建任务栏托盘图标
+        self.create_system_tray_icon()
+
+
 
         self.root.mainloop()
 
-    def create_task_icon(self):
-        # 创建一个简单的圆形图标图像（这里你可以根据需要替换为自己的图标图像）
-        image = Image.new('RGB', (32, 32), (255, 0, 0))
-        draw = ImageDraw.Draw(image)
-        draw.ellipse((0, 0, 32, 32), fill=(0, 0, 255))
-        return image
+    def create_system_tray_icon(self):
+        # 替换为自己的图标路径
+        image = Image.open("desktop_clock.ico")
+
+        # 创建pystray图标对象
+        tray_icon = pystray.Icon(
+            'app_icon',
+            image,
+            'FSTool',
+            menu=pystray.Menu(
+                MenuItem('打开应用', self.show_application),
+                MenuItem('退出', self.exit_application)
+            )
+        )
+        # 在单独的线程中运行托盘图标
+        tray_thread = threading.Thread(target=tray_icon.run)
+        tray_thread.start()
 
     # 显示主窗口
     def show_application(self):
@@ -61,8 +64,8 @@ class MainApplication:
 
         # 显示主窗口
         self.root.deiconify()
-        # 停止任务栏图标运行，隐藏图标
-        self.tray_icon.stop()
+
+
 
     # 退出应用程序
     def exit_application(self):
@@ -70,14 +73,17 @@ class MainApplication:
         self.root.destroy()
         os._exit(0)
 
-    def on_minimize(self,event):
+    def on_minimize(self):
         print("你点击了主窗口的最小化")
+        # 停止系统托盘图标
+        #self.tray_icon.stop()
         # 隐藏主窗口
-        self.root.withdraw()
+        #self.root.withdraw()
+        #最小化窗口
+        self.root.iconify()
         #MainMini(self.root)
 
-        # 在任务栏显示图标
-        self.tray_icon.run()
+
 
     def desktop_clock(self):
         print("你点击了透明时间")
