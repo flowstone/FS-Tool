@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import ttk
+
 from desktop_clock import DesktopClock
 from pic_conversion import PicConversion
 
@@ -12,12 +14,15 @@ class MainApplication:
         self.root.geometry("240x500-100+100")
 
         # 创建两个按钮
-        self.desktopClockBtn = tk.Button(self.root, text="透明时间", command=self.desktop_clock)
-        self.picConversionBtn = tk.Button(self.root, text="图转大师", command=self.pic_conversion)
+        self.desktopClockBtn = ttk.Button(self.root, text="透明时间", command=self.desktop_clock)
+        self.picConversionBtn = ttk.Button(self.root, text="图转大师", command=self.pic_conversion)
 
         # 布局按钮
-        self.desktopClockBtn.pack(pady=10)
-        self.picConversionBtn.pack(pady=10)
+        self.desktopClockBtn.pack(padx=0, pady=50)
+        self.picConversionBtn.pack(padx=0, pady=5)
+
+        # 禁止窗口在水平和垂直方向上调整大小
+        self.root.resizable(False, False)
 
         self.root.mainloop()
 
