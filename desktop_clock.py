@@ -39,5 +39,5 @@ class DesktopClock:
 
 
 
-#if __name__ == "__main__":
-#    app = DesktopClock()
+if __name__ == "__main__":
+    app = DesktopClock()
