@@ -23,10 +23,10 @@ class MainApplication:
 
 
     def desktop_clock(self):
-        DesktopClock()
+        DesktopClock(self.root)
 
     def pic_conversion(self):
-        PicConversion()
+        PicConversion(self.root)
 
 if __name__ == "__main__":
     app = MainApplication()
