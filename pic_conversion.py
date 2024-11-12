@@ -1,15 +1,29 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageDraw, ImageFont
+import win32api
+import win32con
+import win32gui
 import os
 
-
-class ImageFormatConverter:
+class PicConversion:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("图片格式转换应用")
 
+        # 获取屏幕宽度和高度
+        screen_width = win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
+        screen_height = win32api.GetSystemMetrics(win32con.SM_CYSCREEN)
+        # 设置主应用窗口大小
+        window_width = 500
+        window_height = 400
+
+        # 计算窗口在屏幕中心的位置
+        x_pos = (screen_width - window_width) // 2
+        y_pos = (screen_height - window_height) // 2
+
+        self.root.geometry(f"{window_width}x{window_height}+{x_pos}+{y_pos}")
         # 用于存储上传的图片路径
         self.image_path = None
 
@@ -91,6 +105,6 @@ class ImageFormatConverter:
         except Exception as e:
             print(f"转换图片时出错: {e}")
 
-
 if __name__ == "__main__":
-    app = ImageFormatConverter()
+    app = PicConversion()
+
