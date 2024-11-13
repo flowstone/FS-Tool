@@ -12,7 +12,8 @@ import win32api
 import win32gui
 import win32con
 from floating_ball import FloatingBall
-
+from batch_create_folder_slice import CreateFolderApp
+from batch_file_renamer import FileRenamerApp
 
 class MainApplication:
     def __init__(self):
@@ -28,9 +29,15 @@ class MainApplication:
         # 创建两个按钮
         self.desktopClockBtn = ttk.Button(self.root, text="透明时间", command=self.desktop_clock)
         self.picConversionBtn = ttk.Button(self.root, text="图转大师", command=self.pic_conversion)
+        self.batchCreateFolderBtn = ttk.Button(self.root, text="文件夹创建师", command=self.batch_create_folder)
+        self.batchRenameFile = ttk.Button(self.root, text="重命名使者", command=self.batch_rename_file)
+
         # 布局按钮
         self.desktopClockBtn.pack(padx=0, pady=50)
         self.picConversionBtn.pack(padx=0, pady=5)
+        self.batchCreateFolderBtn.pack(padx=0, pady=50)
+        self.batchRenameFile.pack(padx=0, pady=5)
+
 
         # 禁止窗口在水平和垂直方向上调整大小
         self.root.resizable(False, False)
@@ -119,6 +126,16 @@ class MainApplication:
     def pic_conversion(self):
         print("你点击了图转大师")
         PicConversion(self.root)
+
+
+    def batch_create_folder(self):
+        print("你点击了文件夹创建师")
+        CreateFolderApp(self.root)
+
+
+    def batch_rename_file(self):
+        print("你点击了重命名使者")
+        FileRenamerApp(self.root)
 
 if __name__ == "__main__":
     app = MainApplication()

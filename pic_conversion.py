@@ -9,8 +9,8 @@ import os
 
 class PicConversion:
     def __init__(self, parent):
-        self.parent = parent
-        self.pic_window = tk.Toplevel(self.parent)
+        self.root = parent
+        self.pic_window = tk.Toplevel(self.root)
         self.pic_window.title("图片格式转换应用")
 
         self.preview_image = None
@@ -59,7 +59,7 @@ class PicConversion:
         # 指定应用图标
         self.pic_window.iconbitmap('pic_conversion.ico')
 
-        #self.pic_window.mainloop()
+        self.root.mainloop()
 
     def upload_image(self):
         self.image_path = filedialog.askopenfilename(filetypes=[("图片文件", "*.jpg;*.png;*.gif;*.bmp;*.webp;;*.ico")])

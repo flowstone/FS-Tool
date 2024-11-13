@@ -7,8 +7,8 @@ import time
 # 时间应用，透明，在桌面左上角显示
 class DesktopClock:
     def __init__(self, parent):
-        self.parent = parent
-        self.desktop_clock_window = tk.Toplevel(self.parent)
+        self.root = parent
+        self.desktop_clock_window = tk.Toplevel(self.root)
 
         self.desktop_clock_window.overrideredirect(True)  # 去除窗口边框和标题栏
         self.desktop_clock_window.attributes('-alpha', 0.8)  # 设置窗口透明度
@@ -29,16 +29,14 @@ class DesktopClock:
 
         self.update_time()
 
-
-
-        #self.desktop_clock_window.mainloop()
+        self.root.mainloop()
 
 
 
     def update_time(self):
         current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.label_time.config(text=current_time)
-        self.desktop_clock_window.after(1000, self.update_time)
+        self.root.after(1000, self.update_time)
 
 
 
