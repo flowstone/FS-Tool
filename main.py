@@ -36,11 +36,17 @@ class MainApplication:
         # 绑定系统事件，监听窗口最小化操作
         #self.root.bind("<Unmap>", self.on_minimize)
         # 关闭窗口，隐藏窗口
-        self.root.protocol("WM_DELETE_WINDOW", lambda: self.root.iconify())
+        #self.root.protocol("WM_DELETE_WINDOW", lambda: self.root.iconify())
+        # 关闭主窗口，托盘还在运行
+        self.root.protocol("WM_DELETE_WINDOW", self.hide_main_window)
 
         # 用于创建任务栏托盘图标
         self.create_system_tray_icon()
         self.root.mainloop()
+
+    def hide_main_window(self):
+        """隐藏主窗口（即关闭程序主界面），但保持托盘图标运行"""
+        self.root.withdraw()
 
     # 处理打包后，应用无法正确找到图片资源
     def get_resource_path(self, relative_path):
