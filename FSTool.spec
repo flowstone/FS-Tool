@@ -5,8 +5,8 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[],
-    hiddenimports=['pystray', 'pystray._win32','MenuItem'],
+    datas=[('desktop_clock.ico', '.')],
+    hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -35,5 +35,4 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['desktop_clock.ico'],
 )

@@ -7,6 +7,7 @@ import pystray
 from pystray import MenuItem
 import os
 import threading
+import sys
 
 class MainApplication:
     def __init__(self):
@@ -39,10 +40,18 @@ class MainApplication:
 
 
         self.root.mainloop()
+    # 处理打包后，应用无法正确找到图片资源
+    def get_resource_path(self, relative_path):
+        if hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS, relative_path)
+        return os.path.join(os.path.abspath("."), relative_path)
+
 
     def create_system_tray_icon(self):
+        # 获取图标文件的绝对路径
+        #ico_path = os.path.abspath("desktop_clock.ico")
         # 替换为自己的图标路径
-        image = Image.open("desktop_clock.ico")
+        image = Image.open(self.get_resource_path("desktop_clock.ico"))
 
         # 创建pystray图标对象
         tray_icon = pystray.Icon(
