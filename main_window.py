@@ -15,6 +15,7 @@ class MainWindow(QWidget):
         self.init_ui()
 
     def init_ui(self):
+        print("你调用了主界面的构造方法")
         self.setWindowTitle("流体石头的工具箱")
         self.setGeometry(100, 100, 300, 250)
         self.setStyleSheet("background-color: #F5F5F5;")  # 设置窗口背景色为淡灰色
@@ -134,21 +135,35 @@ class MainWindow(QWidget):
     def handle_close_event(self, event):
         event.ignore()
         self.hide()
-        print(self.is_tray_icon_visible)
+
+        print(f"关闭窗口时，is_tray_icon_visible：,{self.is_tray_icon_visible}")
         if not self.is_tray_icon_visible:
             self.tray_icon.show()
             self.is_tray_icon_visible = True
+
 
         if not self.is_floating_ball_visible:
             self.create_floating_ball()
 
     def create_floating_ball(self):
         self.floating_ball = FloatingBall()
+        # 连接子窗口的信号到主窗口的槽函数
+        self.floating_ball.value_changed_signal.connect(self.update_tray_icon_visible)
         self.floating_ball.show()
         self.is_floating_ball_visible = True
 
+    def update_tray_icon_visible(self, value):
+        if value:
+            print("信号状态: 已接收 - True")
+        else:
+            print("信号状态: 已接收 - False")
+        # 更新主窗口is_tray_icon_visible值
+        self.is_tray_icon_visible = value
+        print(f"信号更新后，is_tray_icon_visible：{self.is_tray_icon_visible}")
+
     # 双击托盘，打开窗口
     def tray_icon_activated(self, reason):
+        print("你双击了任务栏托盘，打开窗口")
         if reason == QSystemTrayIcon.DoubleClick:
             self.show()
             # 悬浮球退出

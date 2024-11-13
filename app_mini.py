@@ -1,12 +1,14 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QSystemTrayIcon, QMenu, QAction
-from PyQt5.QtCore import Qt, QPoint, QPropertyAnimation, pyqtProperty, QParallelAnimationGroup,QTimer, QEasingCurve
+from PyQt5.QtCore import Qt, QPoint, QPropertyAnimation, pyqtProperty, QParallelAnimationGroup,QTimer, QEasingCurve, pyqtSignal
 from PyQt5.QtGui import QIcon, QCursor, QMouseEvent, QPixmap, QColor, QBrush, QPainter, QLinearGradient,QTransform
 from PyQt5 import QtCore
 import os
 
 
 class FloatingBall(QWidget):
+    value_changed_signal = pyqtSignal(bool)
+
     def __init__(self):
         super().__init__()
         self.init_ui()
@@ -96,6 +98,8 @@ class FloatingBall(QWidget):
         from main_window import MainWindow
         main_window = MainWindow()
         main_window.show()
+        # 当按钮被点击时发射信号，传递一个布尔值
+        self.value_changed_signal.emit(True)
         self.close()
 
     # 鼠标双击，打开主界面
