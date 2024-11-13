@@ -59,7 +59,7 @@ class PicConversion:
         # 指定应用图标
         self.pic_window.iconbitmap('pic_conversion.ico')
 
-        self.pic_window.mainloop()
+        #self.pic_window.mainloop()
 
     def upload_image(self):
         self.image_path = filedialog.askopenfilename(filetypes=[("图片文件", "*.jpg;*.png;*.gif;*.bmp;*.webp;;*.ico")])

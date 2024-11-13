@@ -31,7 +31,7 @@ class DesktopClock:
 
 
 
-        self.desktop_clock_window.mainloop()
+        #self.desktop_clock_window.mainloop()
 
 
 
