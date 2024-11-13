@@ -1,28 +1,34 @@
-import pystray
-from pystray import MenuItem as item
-from PIL import Image
-import tkinter as tk
+from tkinter import Tk, Button, Label
+from tkinter.filedialog import askopenfilename
+from PIL import Image, ImageTk
 
 
-class MainApplication:
-    def __init__(self):
-        self.root = tk.Tk()
-        image = Image.open("../desktop_clock.ico")  # 替换为自己的图标路径
-        menu = (
-            item('最小化', lambda: self.minimize_to_tray),
-            item('退出', lambda: self.exit_program)
-        )
-        self.icon = pystray.Icon("name", image, "title", menu)
-        self.icon.run()
-    def minimize_to_tray(self):
-        self.root.iconify()
+class ImageUploadApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("图片上传预览（tkinter）")
+        self.root.geometry("400x300")
+        self.root.configure(bg='#F0F0F0')
 
-    def exit_program(self):
-        self.icon.stop()
-        self.root.destroy()
+        title_label = Label(self.root, text="图片上传工具", font=("Helvetica", 16), bg='#F0F0F0')
+        title_label.pack(pady=10)
 
+        upload_button = Button(self.root, text="上传", command=self.on_upload, font=("Helvetica", 12), bg='#0080FF', fg='white')
+        upload_button.pack(pady=10)
+        self.image_label = Label(self.root)
+        self.image_label.pack()
 
+    def on_upload(self):
+        file_path = askopenfilename(filetypes=[("图片文件", "*.png;*.jpg;*.jpeg")])
+        if file_path:
+            image = Image.open(file_path)
+            image.thumbnail((300, 300))
+            photo = ImageTk.PhotoImage(image)
+            self.image_label.config(image=photo, bg='#F0F0F0')
+            self.image_label.image = photo
 
 
 if __name__ == "__main__":
-    app = MainApplication()
+    root = Tk()
+    app = ImageUploadApp(root)
+    root.mainloop()

@@ -41,7 +41,7 @@ class HoverApp:
 
     def create_icon_with_image(self):
         # 加载指定的图片（这里假设图片名为example.jpg，可根据实际情况修改）
-        image = Image.open("pic_conversion.png")
+        image = Image.open("../resources/pic_conversion.png")
         # 确保图片模式为RGBA（包含透明通道），如果不是则转换
         if image.mode != "RGBA":
             image = image.convert("RGBA")

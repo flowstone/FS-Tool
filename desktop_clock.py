@@ -1,44 +1,54 @@
-import tkinter as tk
-from tkinter import ttk
+import sys
 import time
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout
+from PyQt5.QtGui import QFont, QColor, QPalette
+from PyQt5.QtCore import Qt, QTimer
 
 
+class DesktopClockApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.init_ui()
 
-# 时间应用，透明，在桌面左上角显示
-class DesktopClock:
-    def __init__(self, parent):
-        self.root = parent
-        self.desktop_clock_window = tk.Toplevel(self.root)
+    def init_ui(self):
+        # 设置窗口无边框、无标题栏
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+        # 设置窗口透明度
+        self.setWindowOpacity(0.8)
 
-        self.desktop_clock_window.overrideredirect(True)  # 去除窗口边框和标题栏
-        self.desktop_clock_window.attributes('-alpha', 0.8)  # 设置窗口透明度
-        self.desktop_clock_window.attributes('-topmost', True)  # 始终保持在最顶层
+        # 设置窗口背景透明，这里采用的方式是将背景色设置为透明色，需要配合样式表实现
+        palette = QPalette()
+        palette.setColor(QPalette.Window, QColor(0, 0, 0, 0))
+        self.setPalette(palette)
 
+        self.setGeometry(0, 0, 200, 80)  # 设置窗口初始位置和大小，这里定位在桌面左上角并设置合适尺寸
+        self.setStyleSheet("""
+                    QWidget {
+                        background-color: rgba(240, 240, 240, 0);
+                    }
+                    QLabel {
+                        font-family: Arial;
+                        font-size: 24px;
+                        color: white;
+                    }
+                """)
 
+        layout = QVBoxLayout()
 
-        # 设置一个在应用程序中不太会出现的颜色作为背景色
-        self.desktop_clock_window.config(bg='#f0f0f0')
-        # 将该颜色设置为透明色
-        self.desktop_clock_window.attributes('-transparentcolor', '#f0f0f0')
+        self.label_time = QLabel(self)
+        self.label_time.setFont(QFont('Arial', 24))
+        self.label_time.setAlignment(Qt.AlignCenter)
 
-        self.label_time = ttk.Label(self.desktop_clock_window, font=("Helvetica", 24),foreground='white')
-        self.label_time.pack()
-
-        # 指定应用图标
-        #self.desktop_clock_window.iconbitmap('desktop_clock.ico')
+        layout.addWidget(self.label_time)
+        self.setLayout(layout)
 
         self.update_time()
 
-        self.root.mainloop()
-
-
-
     def update_time(self):
         current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        self.label_time.config(text=current_time)
-        self.root.after(1000, self.update_time)
+        self.label_time.setText(current_time)
+        timer = QTimer(self)
+        timer.timeout.connect(self.update_time)
+        timer.start(1000)
 
 
-
-#if __name__ == "__main__":
-#    app = DesktopClock()
