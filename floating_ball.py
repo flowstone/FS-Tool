@@ -3,28 +3,29 @@ from PIL import Image, ImageTk, ImageDraw, ImageFont
 import win32api
 import win32con
 import win32gui
+import threading
+import time
 
-class MainMini:
-    def __init__(self, parent):
-        self.parent = parent
-        self.mini_window = tk.Toplevel(self.parent)
+class FloatingBall:
+    def __init__(self):
+        self.floating_ball = tk.Toplevel()
 
-        self.mini_window.attributes('-alpha', 0.9)  # 设置窗口透明度
-        self.mini_window.attributes('-topmost', True)  # 始终保持在最顶层
+        self.floating_ball.attributes('-alpha', 0.9)  # 设置窗口透明度
+        self.floating_ball.attributes('-topmost', True)  # 始终保持在最顶层
         # 设置一个在应用程序中不太会出现的颜色作为背景色
-        self.mini_window.config(bg='#f0f0f0')
+        self.floating_ball.config(bg='#f0f0f0')
         # 将该颜色设置为透明色
-        self.mini_window.attributes('-transparentcolor', '#f0f0f0')
+        self.floating_ball.attributes('-transparentcolor', '#f0f0f0')
         #self.root.withdraw()  # 隐藏主窗口，先不显示
 
         # 创建一个椭圆的悬浮图标
         self.icon_image = self.create_icon_with_image()
-        self.icon_label = tk.Label(self.mini_window, image=self.icon_image, foreground='white')
+        self.icon_label = tk.Label(self.floating_ball, image=self.icon_image, foreground='white')
 
 
 
         # 绑定双击图标事件
-        self.icon_label.bind("<Double-Button-1>", self.show_app)
+        self.icon_label.bind("<Double-Button-1>", self.show_main_app)
 
         # 绑定鼠标按下、移动和释放事件，用于实现图标拖动功能
         self.icon_label.bind("<ButtonPress-1>", self.start_drag)
@@ -33,12 +34,12 @@ class MainMini:
 
 
         # 去除窗口边框和标题栏
-        self.mini_window.overrideredirect(True)
+        self.floating_ball.overrideredirect(True)
         # 设置窗口初始位置和大小
-        self.mini_window.geometry("60x60-100+100")
+        self.floating_ball.geometry("60x60-100+100")
         self.icon_label.pack()
 
-        self.mini_window.mainloop()
+        self.running = True  # 新增标志位，用于控制线程循环
 
 
     def create_icon_with_image(self):
@@ -52,42 +53,43 @@ class MainMini:
         image = image.resize((60, 60), Image.Resampling.LANCZOS)
         return ImageTk.PhotoImage(image)
 
-
-    def show_app(self, event):
-        # 显示整个应用程序，恢复窗口边框和标题栏
-        self.mini_window.deiconify()
-        self.mini_window.overrideredirect(False)
-
-        # 获取屏幕宽度和高度
-        screen_width = win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
-        screen_height = win32api.GetSystemMetrics(win32con.SM_CYSCREEN)
-
-        # 计算窗口在屏幕中心的位置
-        x_pos = (screen_width - 200) // 2
-        y_pos = (screen_height - 200) // 2
-
-        self.mini_window.geometry(f"600x400+{x_pos}+{y_pos}")
-        self.mini_window.title("我的应用程序")
-        label = tk.Label(self.mini_window, text="这是整个应用程序内容")
-
-        label.pack()
-
-    def hide_app(self, event):
-        # 隐藏应用程序内容，恢复到悬浮图标状态
-        for widget in self.mini_window.winfo_children():
-            widget.destroy()
-        self.mini_window.geometry("30x30")
-        self.icon_label = tk.Label(self.mini_window, image=self.icon_image)
-        self.icon_label.pack()
+    # 显示主界面
+    def show_main_app(self, event):
+        # 杀死悬浮球
+        self.main_window.deiconify()
+        self.floating_ball.destroy()
 
 
 
+    # 按下悬浮球，获取坐标
     def start_drag(self, event):
-        self.drag_x = event.x_root - self.mini_window.winfo_x()
-        self.drag_y = event.y_root - self.mini_window.winfo_y()
+        self.drag_x = event.x_root - self.floating_ball.winfo_x()
+        self.drag_y = event.y_root - self.floating_ball.winfo_y()
 
+    # 移动悬浮球，获取坐标
     def drag(self, event):
-        self.mini_window.geometry(f"+{event.x_root - self.drag_x}+{event.y_root - self.drag_y}")
+        self.floating_ball.geometry(f"+{event.x_root - self.drag_x}+{event.y_root - self.drag_y}")
 
+    # 松开悬浮球
     def stop_drag(self, event):
         pass
+
+
+    def set_main_window(self, main_window):
+        self.main_window = main_window
+
+
+    def start(self):
+        thread = threading.Thread(target=self.run)
+        thread.start()
+
+
+    def run(self):
+        while self.running:
+            self.floating_ball.update()  # 定期更新悬浮球窗口状态
+            # 可以添加更多的逻辑判断、操作等内容，比如处理其他的事件等
+            time.sleep(0.1)  # 适当休眠，避免过度占用CPU资源
+
+    def stop(self):
+        self.running = False
+        self.floating_ball.destroy()

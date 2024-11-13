@@ -11,6 +11,7 @@ import sys
 import win32api
 import win32gui
 import win32con
+from floating_ball import FloatingBall
 
 
 class MainApplication:
@@ -47,6 +48,11 @@ class MainApplication:
     def hide_main_window(self):
         """隐藏主窗口（即关闭程序主界面），但保持托盘图标运行"""
         self.root.withdraw()
+        # 创建悬浮球实例并关联主界面窗口
+        self.floating_ball = FloatingBall()
+
+        self.floating_ball.set_main_window(self.root)
+        self.floating_ball.start()
 
     # 处理打包后，应用无法正确找到图片资源
     def get_resource_path(self, relative_path):
@@ -82,6 +88,8 @@ class MainApplication:
         print("你点击了任务栏中的显示应用")
         # 显示主窗口
         self.root.deiconify()
+        # 隐藏悬浮球
+        self.floating_ball.stop()
 
 
 
