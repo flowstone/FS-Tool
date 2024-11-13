@@ -21,7 +21,7 @@ class MainApplication:
         # 设置窗口初始位置和大小
         self.root.geometry("240x500-100+100")
         # 使用iconbitmap方法指定图标文件路径（替换为你实际的图标文件路径，格式通常为.ico）
-        self.root.iconbitmap('desktop_clock.ico')
+        self.root.iconbitmap(self.get_resource_path("desktop_clock.ico"))
 
 
         # 创建两个按钮
