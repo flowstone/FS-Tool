@@ -7,6 +7,7 @@ from batch_file_renamer import RenameFileApp
 from batch_create_folder import CreateFolderApp
 from PyQt5.QtGui import QIcon
 from app_mini import FloatingBall
+import  os
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -14,12 +15,14 @@ class MainWindow(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        self.setWindowTitle("PyQt示例应用")
+        self.setWindowTitle("流体石头的工具箱")
         self.setGeometry(100, 100, 300, 250)
         self.setStyleSheet("background-color: #F5F5F5;")  # 设置窗口背景色为淡灰色
         # 悬浮球可见状态，false可以创建悬浮球，反之。。。
         self.is_floating_ball_visible = False
+        self.is_tray_icon_visible = False
 
+        self.setWindowIcon(QIcon(self.get_resource_path("resources/app.ico")))
 
         layout = QVBoxLayout()
         # 透明时间
@@ -97,18 +100,27 @@ class MainWindow(QWidget):
 
         # 创建系统托盘图标
         self.tray_icon = QSystemTrayIcon(self)
-        self.tray_icon.setIcon(QIcon('resources/desktop_clock.ico'))  # 这里需要一个名为icon.png的图标文件，可以替换为真实路径
+        self.tray_icon.setIcon(QIcon(self.get_resource_path("resources/app_mini.ico")))  # 这里需要一个名为icon.png的图标文件，可以替换为真实路径
         self.tray_icon.activated.connect(self.tray_icon_activated)
 
         # 创建托盘菜单
         tray_menu = QMenu()
-        show_action = QAction("显示", self)
+        show_action = QAction("主界面", self)
         show_action.triggered.connect(self.tray_menu_show_main)
         quit_action = QAction("退出", self)
         quit_action.triggered.connect(sys.exit)
         tray_menu.addAction(show_action)
         tray_menu.addAction(quit_action)
         self.tray_icon.setContextMenu(tray_menu)
+
+    def get_resource_path(self, relative_path):
+        """
+        获取资源（如图片等）的实际路径，处理打包后资源路径的问题
+        """
+        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS, relative_path)
+        return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
+
     # 从托盘菜单点击显示窗口
     def tray_menu_show_main(self):
         self.show()
@@ -117,11 +129,16 @@ class MainWindow(QWidget):
             self.floating_ball.close()
             self.is_floating_ball_visible = False
 
+
     # 处理窗口关闭事件
     def handle_close_event(self, event):
         event.ignore()
         self.hide()
-        self.tray_icon.show()
+        print(self.is_tray_icon_visible)
+        if not self.is_tray_icon_visible:
+            self.tray_icon.show()
+            self.is_tray_icon_visible = True
+
         if not self.is_floating_ball_visible:
             self.create_floating_ball()
 

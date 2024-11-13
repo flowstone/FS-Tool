@@ -1,7 +1,7 @@
 import sys
 import os
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar,QFileDialog
-from PyQt5.QtGui import QFont, QColor, QPalette
+from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
 
@@ -13,6 +13,7 @@ class RenameFileApp(QWidget):
 
     def init_ui(self):
         self.setWindowTitle("文件名批量修改工具")
+        self.setWindowIcon(QIcon(self.get_resource_path("resources/app.ico")))
 
 
         layout = QVBoxLayout()
@@ -163,6 +164,15 @@ class RenameFileApp(QWidget):
         layout.addLayout(button_layout)
 
         self.setLayout(layout)
+
+
+    def get_resource_path(self, relative_path):
+        """
+        获取资源（如图片等）的实际路径，处理打包后资源路径的问题
+        """
+        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS, relative_path)
+        return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
 
     def browse_folder(self):
         folder_path = QFileDialog.getExistingDirectory(self, "选择文件夹")

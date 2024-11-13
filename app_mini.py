@@ -53,13 +53,20 @@ class FloatingBall(QWidget):
             self.direction = 0.02  # 达到最小透明度后开始增大透明度
         self.setWindowOpacity(self.opacity)
 
+    def get_resource_path(self, relative_path):
+        """
+        获取资源（如图片等）的实际路径，处理打包后资源路径的问题
+        """
+        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS, relative_path)
+        return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
 
     def setup_background_image(self):
         layout = QVBoxLayout()
 
 
         # 这里使用一个示例图片路径，你可以替换为真实路径
-        pixmap = QPixmap("resources/pic_conversion.png")
+        pixmap = QPixmap(self.get_resource_path("resources/app_mini.ico"))
         pixmap = pixmap.scaled(self.size())
         self.background_label = QLabel(self)
         self.background_label.setPixmap(pixmap)
@@ -97,82 +104,4 @@ class FloatingBall(QWidget):
             self.show_main_window()
 
 
-
-    def on_enter_event(self, event):
-        print("鼠标移动到悬浮球")
-        self.is_hovered = True
-        self.start_hover_effect()
-
-    def on_leave_event(self, event):
-        print("鼠标离开了悬浮球")
-        self.is_hovered = False
-        self.start_leave_effect()
-
-    def start_hover_effect(self):
-        self.animate_rotation(360, 1000)  # 鼠标悬停时旋转360度，持续1000毫秒
-
-    def start_leave_effect(self):
-        self.stop_rotation()  # 鼠标离开时停止旋转
-
-    def on_mouse_press_event(self, event: QMouseEvent):
-        if event.button() == Qt.LeftButton:
-            self.dragPosition = event.globalPos() - self.frameGeometry().topLeft()
-            self.start_click_effect()  # 点击时启动点击特效
-            event.accept()
-
-    def start_click_effect(self):
-        self.animate_size(100, 0.9, duration=100, easing=QEasingCurve.OutElastic)  # 点击时放大并改变透明度，添加弹性效果
-        QTimer.singleShot(100, self.reset_size)  # 100毫秒后还原大小和透明度
-
-    def reset_size(self):
-        self.animate_size(self.original_size, self.original_opacity, duration=200)
-
-    def animate_size(self, target_size, target_opacity, duration=200, easing=QEasingCurve.Linear):
-        size_animation = QPropertyAnimation(self, b'size')
-        size_animation.setDuration(duration)
-        size_animation.setStartValue(self.size())
-        size_animation.setEndValue(QtCore.QSize(target_size, target_size))
-        size_animation.setEasingCurve(easing)
-
-        opacity_animation = QPropertyAnimation(self, b'opacity')
-        opacity_animation.setDuration(duration)
-        opacity_animation.setStartValue(self.windowOpacity())
-        opacity_animation.setEndValue(target_opacity)
-        opacity_animation.setEasingCurve(easing)
-
-        group_animation = QParallelAnimationGroup()
-        group_animation.addAnimation(size_animation)
-        group_animation.addAnimation(opacity_animation)
-
-        group_animation.start()
-
-    def animate_rotation(self, angle, duration):
-        print("开始进入旋转动画")
-        self.rotation_animation = QPropertyAnimation(self, b'rotation_angle')
-        self.rotation_animation.setDuration(duration)
-        self.rotation_animation.setStartValue(0)
-        self.rotation_animation.setEndValue(angle)
-        self.rotation_animation.setEasingCurve(QEasingCurve.Linear)
-        self.rotation_animation.valueChanged.connect(self.update_rotation)
-        self.rotation_animation.start()
-
-    def stop_rotation(self):
-        print("开始停止旋转动画")
-        if hasattr(self, 'rotation_animation'):
-            self.rotation_animation.stop()
-
-    def update_rotation(self, value):
-        transform = QTransform()
-        transform.rotate(value)
-        self.setTransform(transform)
-
-    def start_breathing_effect(self):
-        self.breathing_timer = QTimer(self)
-        self.breathing_timer.timeout.connect(self.toggle_opacity)
-        self.breathing_timer.start(500)  # 每500毫秒切换一次透明度
-
-    def toggle_opacity(self):
-        current_opacity = self.windowOpacity()
-        target_opacity = self.original_opacity + 0.1 if current_opacity <= self.original_opacity else self.original_opacity - 0.1
-        self.setWindowOpacity(target_opacity)
 
