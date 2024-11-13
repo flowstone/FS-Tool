@@ -13,6 +13,8 @@ class DesktopClockApp(QWidget):
     def init_ui(self):
         # 设置窗口无边框、无标题栏
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+        self.setAttribute(Qt.WA_TranslucentBackground, True)  # 设置窗口背景透明
+
         # 设置窗口透明度
         self.setWindowOpacity(0.8)
 
