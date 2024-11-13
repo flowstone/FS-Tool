@@ -25,7 +25,7 @@ class DesktopClock:
         self.label_time.pack()
 
         # 指定应用图标
-        self.desktop_clock_window.iconbitmap('desktop_clock.ico')
+        #self.desktop_clock_window.iconbitmap('desktop_clock.ico')
 
         self.update_time()
 
