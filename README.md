@@ -12,7 +12,8 @@ pyinstaller --name "应用名" --onefile --window --icon=clock.ico 程序脚本.
 
 ##### 2.打包PyQt脚本
 ``` bash
-pyinstaller --onefile --add-data "F:\Workspace\PycharmProjects\fs-tool\.venv\Lib\site-packages\PyQt5\Qt5\bin;./PyQt5/Qt/bin" --add-data "F:\Workspace\PycharmProjects\fs-tool\.venv\Lib\site-packages\PyQt5\Qt5\plugins;./PyQt5/Qt/plugins" --collect-all PyQt5 .\app_mini.py
+pyinstaller --name "Fs-Tool" --onefile --window --add-data "F:\Workspace\PycharmProjects\fs-tool\.venv\Lib\site-
+packages\PyQt5\Qt5\bin;./PyQt5/Qt/bin" --add-data "F:\Workspace\PycharmProjects\fs-tool\.venv\Lib\site-packages\PyQt5\Qt5\plugins;./PyQt5/Qt/plugins" --collect-all PyQt5 --icon=desktop_clock.ico .\main.py
 ```
 
 ###### 说明
