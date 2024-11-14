@@ -1,9 +1,17 @@
 name: PyInstaller Package and Release
 
 on:
-  push:
-    tags:
-      - v*  # 仅在推送以v开头的标签时触发工作流，方便进行版本管理，可按实际需求调整
+  workflow_dispatch:
+    inputs:
+      #java_version:
+      #  description: "The version of Java to use for jpackage"
+      #  required: true
+      app_version:
+        description: "应用版本，如1.0.1"
+        required: true
+      release_notes:
+        description: "Release描述"
+        required: false
 
 jobs:
   build_and_release:
@@ -33,8 +41,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用GitHub自动生成的token用于创建发布
         with:
-          tag_name: ${{ github.ref }}  # 使用推送的标签作为发布版本号
-          release_name: Release ${{ github.ref }}  # 发布名称，可按需调整
+          tag_name: v${{ inputs.app_version }}
+          name: Release v${{ inputs.app_version }}
           draft: false  # 是否为草稿，设为false表示直接发布
           prerelease: false  # 是否为预发布版本，设为false表示正式发布
 
