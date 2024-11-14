@@ -44,4 +44,6 @@ F:\Workspace\PycharmProjects\fs-tool\.venv\Lib\site-packages\PyQt5\Qt5\bin;./PyQ
 
 ![](https://raw.githubusercontent.com/flowstone/fs-tool/release/resources/preview/app-menu-bar.png)
 
+5. 欢迎预览
 
+![](https://raw.githubusercontent.com/flowstone/fs-tool/release/resources/preview/start-work.gif)
