@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton,  QSystemTrayIcon, QMenu, QAction
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QSystemTrayIcon, QMenu, QAction, QToolBar, QMainWindow
 from PyQt5.QtGui import QFont, QPalette, QColor
 from desktop_clock import DesktopClockApp
 from pic_conversion import PicConversionApp
@@ -10,8 +10,10 @@ from app_mini import FloatingBall
 import  os
 from loguru import logger
 from path_util import PathUtil
+from app_menu_bar import AppMenuBar
 
-class MainWindow(QWidget):
+
+class MainWindow(QMainWindow):
     def __init__(self, tray_icon_visible=False):
         super().__init__()
         # 任务栏托盘标志位，False没有创建  True已创建
@@ -25,11 +27,20 @@ class MainWindow(QWidget):
         self.setGeometry(100, 100, 300, 250)
         self.setStyleSheet("background-color: #F5F5F5;")  # 设置窗口背景色为淡灰色
 
+        layout = QVBoxLayout()
+
+        # ---- 导入外部的工具栏
+        self.app_menu_bar = AppMenuBar(self)
+        layout.addWidget(self.app_menu_bar)
+        central_widget = QWidget(self)
+        central_widget.setLayout(layout)
+        self.setCentralWidget(central_widget)
+        # ++++ 导入外部的工具栏
+
         # 悬浮球可见状态，false可以创建悬浮球，反之。。。
         self.is_floating_ball_visible = False
         self.setWindowIcon(QIcon(PathUtil.get_resource_path("resources/app.ico")))
 
-        layout = QVBoxLayout()
         # 透明时间
         time_btn = QPushButton("透明时间")
         time_btn.setFont(QFont('Arial', 14))  # 设置字体
@@ -96,16 +107,28 @@ class MainWindow(QWidget):
             }
         """)
         rename_file_btn.clicked.connect(self.rename_file_btn_clicked)
+
         layout.addWidget(rename_file_btn)
 
         self.setLayout(layout)
+        # 初始化应用托盘图标
+        self.init_tray_menu()
+
 
         # 处理窗口关闭事件，使其最小化到托盘
         self.closeEvent = self.handle_close_event
 
+
+
+
+    # 初始化应用托盘图标
+    def init_tray_menu(self):
+        logger.info("---- 初始化任务栏图标 ----")
+
         # 创建系统托盘图标
         self.tray_icon = QSystemTrayIcon(self)
-        self.tray_icon.setIcon(QIcon(PathUtil.get_resource_path("resources/app_mini.ico")))  # 这里需要一个名为icon.png的图标文件，可以替换为真实路径
+        self.tray_icon.setIcon(
+            QIcon(PathUtil.get_resource_path("resources/app_mini.ico")))  # 这里需要一个名为icon.png的图标文件，可以替换为真实路径
         self.tray_icon.activated.connect(self.tray_icon_activated)
 
         # 创建托盘菜单
