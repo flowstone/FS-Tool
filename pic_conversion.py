@@ -5,6 +5,7 @@ from PyQt5.QtGui import QPixmap, QIcon
 from PIL import Image
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
+from loguru import logger
 
 
 class PicConversionApp(QWidget):
@@ -13,6 +14,7 @@ class PicConversionApp(QWidget):
         self.init_ui()
 
     def init_ui(self):
+        logger.info("---- 初始化图片格式转换应用 ----")
         self.setWindowTitle("图片格式转换应用")
         self.setWindowIcon(QIcon(self.get_resource_path("resources/app.ico")))
 
@@ -114,15 +116,16 @@ class PicConversionApp(QWidget):
 
 
     def upload_image(self):
+        logger.info("---- 开始上传图片 ----")
         self.image_path = QFileDialog.getOpenFileName(self, "选择图片", "", "图片文件 (*.jpg *.png *.gif *.bmp *.webp *.ico)")[0]
         if self.image_path:
-            print(f"已上传图片: {self.image_path}")
+            logger.info(f"已上传图片: {self.image_path}")
             try:
                 self.preview_image = Image.open(self.image_path)
                 pixmap = QPixmap(self.image_path)
                 self.image_label.setPixmap(pixmap.scaled(self.image_label.width(), self.image_label.height(), aspectRatioMode=1))
             except Exception as e:
-                print(f"显示图片时出错: {e}")
+                logger.error(f"显示图片时出错: {e}")
 
     def toggle_format(self, format, state):
         if state == 2:  # 表示选中状态（PyQt中选中为2，未选中为0）
@@ -138,7 +141,7 @@ class PicConversionApp(QWidget):
 
     def convert_image(self):
         if not self.image_path:
-            print("请先上传图片!")
+            logger.warning("---- 请先上传图片! ----")
             return
 
         try:
@@ -157,7 +160,7 @@ class PicConversionApp(QWidget):
                     image = image.convert('RGB') if image.mode!= 'RGB' else image
                 image.save(new_image_path)
 
-            print(f"图片已成功转换为所选格式，保存路径分别为: {[f'{base_name}.{f.lower()}' for f in self.selected_formats]}")
+            logger.info(f"图片已成功转换为所选格式，保存路径分别为: {[f'{base_name}.{f.lower()}' for f in self.selected_formats]}")
         except Exception as e:
-            print(f"转换图片时出错: {e}")
+            logger.error(f"转换图片时出错: {e}")
 

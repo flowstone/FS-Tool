@@ -3,14 +3,17 @@ import time
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout
 from PyQt5.QtGui import QFont, QColor, QPalette
 from PyQt5.QtCore import Qt, QTimer
+from loguru import logger
 
 
 class DesktopClockApp(QWidget):
     def __init__(self):
         super().__init__()
+
         self.init_ui()
 
     def init_ui(self):
+        logger.info("---- 初始化透明时间 ----")
         # 设置窗口无边框、无标题栏
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground, True)  # 设置窗口背景透明
@@ -36,7 +39,6 @@ class DesktopClockApp(QWidget):
                 """)
 
         layout = QVBoxLayout()
-
         self.label_time = QLabel(self)
         self.label_time.setFont(QFont('Arial', 24))
         self.label_time.setAlignment(Qt.AlignCenter)

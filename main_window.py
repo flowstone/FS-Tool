@@ -8,21 +8,25 @@ from batch_create_folder import CreateFolderApp
 from PyQt5.QtGui import QIcon
 from app_mini import FloatingBall
 import  os
+from loguru import logger
 
 class MainWindow(QWidget):
-    def __init__(self):
+    def __init__(self, tray_icon_visible=False):
         super().__init__()
+        # 任务栏托盘标志位，False没有创建  True已创建
+        self.is_tray_icon_visible = tray_icon_visible
+
+
         self.init_ui()
 
     def init_ui(self):
-        print("你调用了主界面的构造方法")
+        logger.info(f"调用了主界面的初始化,任务栏托盘标志位 = {self.is_tray_icon_visible}")
         self.setWindowTitle("流体石头的工具箱")
         self.setGeometry(100, 100, 300, 250)
         self.setStyleSheet("background-color: #F5F5F5;")  # 设置窗口背景色为淡灰色
+
         # 悬浮球可见状态，false可以创建悬浮球，反之。。。
         self.is_floating_ball_visible = False
-        self.is_tray_icon_visible = False
-
         self.setWindowIcon(QIcon(self.get_resource_path("resources/app.ico")))
 
         layout = QVBoxLayout()
@@ -124,6 +128,8 @@ class MainWindow(QWidget):
 
     # 从托盘菜单点击显示窗口
     def tray_menu_show_main(self):
+        logger.info("---- 托盘菜单点击显示窗口 ----")
+
         self.show()
         # 悬浮球退出
         if  self.is_floating_ball_visible:
@@ -133,10 +139,11 @@ class MainWindow(QWidget):
 
     # 处理窗口关闭事件
     def handle_close_event(self, event):
+        logger.info(f"开始关闭主窗口，任务栏托盘标志位 = ,{self.is_tray_icon_visible}")
+
         event.ignore()
         self.hide()
 
-        print(f"关闭窗口时，is_tray_icon_visible：,{self.is_tray_icon_visible}")
         if not self.is_tray_icon_visible:
             self.tray_icon.show()
             self.is_tray_icon_visible = True
@@ -145,25 +152,19 @@ class MainWindow(QWidget):
         if not self.is_floating_ball_visible:
             self.create_floating_ball()
 
+        logger.info(f"成功关闭主窗口，任务栏托盘标志位 = ,{self.is_tray_icon_visible}")
+
     def create_floating_ball(self):
+        logger.info("---- 创建悬浮球 ----")
         self.floating_ball = FloatingBall()
-        # 连接子窗口的信号到主窗口的槽函数
-        self.floating_ball.value_changed_signal.connect(self.update_tray_icon_visible)
         self.floating_ball.show()
         self.is_floating_ball_visible = True
 
-    def update_tray_icon_visible(self, value):
-        if value:
-            print("信号状态: 已接收 - True")
-        else:
-            print("信号状态: 已接收 - False")
-        # 更新主窗口is_tray_icon_visible值
-        self.is_tray_icon_visible = value
-        print(f"信号更新后，is_tray_icon_visible：{self.is_tray_icon_visible}")
+
 
     # 双击托盘，打开窗口
     def tray_icon_activated(self, reason):
-        print("你双击了任务栏托盘，打开窗口")
+        logger.info("---- 双击任务栏托盘，打开窗口 ----")
         if reason == QSystemTrayIcon.DoubleClick:
             self.show()
             # 悬浮球退出
@@ -172,22 +173,22 @@ class MainWindow(QWidget):
                 self.is_floating_ball_visible = False
 
     def time_btn_clicked(self):
-        print("按钮<透明时间>被点击了")
+        logger.info("---- 按钮<透明时间>被点击了 ----")
         self.desktop_clock = DesktopClockApp()
         self.desktop_clock.show()
 
     def img_conv_btn_clicked(self):
-        print("按钮<图转大师>被点击了")
+        logger.info("---- 按钮<图转大师>被点击了 ----")
         self.pic_conversion=PicConversionApp()
         self.pic_conversion.show()
 
     def create_folder_btn_clicked(self):
-        print("按钮<文件夹创建师>被点击了")
+        logger.info("---- 按钮<文件夹创建师>被点击了 ----")
         self.rename_file = RenameFileApp()
         self.rename_file.show()
 
     def rename_file_btn_clicked(self):
-        print("按钮<重命名使者>被点击了")
+        logger.info("---- 按钮<重命名使者>被点击了 ----")
         self.create_folder = CreateFolderApp()
         self.create_folder.show()
 

@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLa
 from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
+from loguru import logger
 
 
 class RenameFileApp(QWidget):
@@ -12,6 +13,7 @@ class RenameFileApp(QWidget):
         self.init_ui()
 
     def init_ui(self):
+        logger.info("---- 初始化文件名批量修改工具 ----")
         self.setWindowTitle("文件名批量修改工具")
         self.setWindowIcon(QIcon(self.get_resource_path("resources/app.ico")))
 
@@ -165,7 +167,7 @@ class RenameFileApp(QWidget):
 
         self.setLayout(layout)
 
-
+    @staticmethod
     def get_resource_path(self, relative_path):
         """
         获取资源（如图片等）的实际路径，处理打包后资源路径的问题
@@ -193,6 +195,7 @@ class RenameFileApp(QWidget):
             QMessageBox.warning(self, "警告", "请选择要修改的文件夹！")
 
     # 修改文件名
+    @staticmethod
     def rename_files(self, folder_path, prefix, suffix, char_to_find, replace_char):
         # 遍历文件夹下的文件名
         for filename in os.listdir(folder_path):

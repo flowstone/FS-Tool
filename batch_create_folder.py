@@ -6,6 +6,7 @@ from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
+from loguru import logger
 
 
 class CreateFolderApp(QWidget):
@@ -14,6 +15,7 @@ class CreateFolderApp(QWidget):
         self.init_ui()
 
     def init_ui(self):
+        logger.info("---- 初始化创建文件夹并移动文件 ----")
         self.setWindowTitle("批量移动文件")
 
         # 设置窗口背景色为淡灰色
@@ -142,12 +144,14 @@ class CreateFolderApp(QWidget):
         return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
 
     def browse_folder(self):
+        logger.info("---- 开始选择文件夹 ----")
         folder_path = QFileDialog.getExistingDirectory(self, "选择文件夹")
         self.folder_path_entry.setText(folder_path)
 
 
 
     def start_operation(self):
+        logger.info("---- 开始执行操作 ----")
         folder_path = self.folder_path_entry.text()
         slice_char = self.slice_entry.text()
 
