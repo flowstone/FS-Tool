@@ -15,7 +15,7 @@ class DesktopClockApp(QWidget):
     def init_ui(self):
         logger.info("---- 初始化透明时间 ----")
         # 设置窗口无边框、无标题栏
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
         self.setAttribute(Qt.WA_TranslucentBackground, True)  # 设置窗口背景透明
         self.setWindowTitle("透明时间")
 
@@ -23,10 +23,6 @@ class DesktopClockApp(QWidget):
         self.setWindowOpacity(0.8)
         self.setWindowIcon(QIcon(PathUtil.get_resource_path("resources/app.ico")))
 
-        # 设置窗口背景透明，这里采用的方式是将背景色设置为透明色，需要配合样式表实现
-        palette = QPalette()
-        palette.setColor(QPalette.Window, QColor(0, 0, 0, 0))
-        self.setPalette(palette)
 
         self.setGeometry(0, 0, 200, 80)  # 设置窗口初始位置和大小，这里定位在桌面左上角并设置合适尺寸
         self.setStyleSheet("""
