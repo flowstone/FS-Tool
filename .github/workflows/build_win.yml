@@ -24,11 +24,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+           python-version: '3.x'  # 根据项目实际依赖的Python版本进行调整
+
 
       - name: Use site-packages variable
         run: |
-          echo "The site-packages path is: ${{ env.pythonSitePackages }}"
+          echo "The site-packages path is: ${{ env.Python_ROOT_DIR }}"
           
       - name: Install dependencies
         run: pip install -r requirements.txt  # 安装项目依赖的Python库
@@ -37,7 +38,7 @@ jobs:
         run: pip install pyinstaller  # 安装PyInstaller打包工具
 
       - name: Build application with PyInstaller
-        run: pyinstaller --name "流体石头的工具箱" --onefile --window --add-data "${{ env.pythonSitePackages }}\PyQt5\Qt5\bin;./PyQt5/Qt/bin" --add-data "${{ env.pythonSitePackages }}\PyQt5\Qt5\plugins;./PyQt5/Qt/plugins" --add-data "resources;resources" --collect-all PyQt5 --icon=resources/app.ico .\app.py
+        run: pyinstaller --name "流体石头的工具箱" --onefile --window --add-data "${{ env.Python_ROOT_DIR }}\Lib\site-packages\PyQt5\Qt5\bin;./PyQt5/Qt/bin" --add-data "${{ env.Python_ROOT_DIR }}\Lib\site-packages\PyQt5\Qt5\plugins;./PyQt5/Qt/plugins" --add-data "resources;resources" --collect-all PyQt5 --icon=resources/app.ico .\app.py
         working-directory: ${{ github.repository }}  # 设置工作目录为仓库根目录
 
       - name: Create release
