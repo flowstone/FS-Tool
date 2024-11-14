@@ -7,7 +7,7 @@ from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
 from loguru import logger
-
+from path_util import PathUtil
 
 class CreateFolderApp(QWidget):
     def __init__(self):
@@ -24,7 +24,7 @@ class CreateFolderApp(QWidget):
         palette.setColor(QPalette.Window, QColor("#F5F5F5"))
         self.setPalette(palette)
 
-        self.setWindowIcon(QIcon(self.get_resource_path("resources/app.ico")))
+        self.setWindowIcon(QIcon(PathUtil.get_resource_path("resources/app.ico")))
 
         layout = QVBoxLayout()
 
@@ -135,13 +135,7 @@ class CreateFolderApp(QWidget):
         self.setLayout(layout)
 
 
-    def get_resource_path(self, relative_path):
-        """
-        获取资源（如图片等）的实际路径，处理打包后资源路径的问题
-        """
-        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-            return os.path.join(sys._MEIPASS, relative_path)
-        return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
+
 
     def browse_folder(self):
         logger.info("---- 开始选择文件夹 ----")
@@ -162,6 +156,7 @@ class CreateFolderApp(QWidget):
             QMessageBox.warning(self, "警告", "请选择要操作的文件夹！")
 
     # 创建文件夹，并移动到指定目录下
+    @staticmethod
     def create_folder_move_files(self, folder_path, slice_char):
 
         # 遍历文件夹下的文件名

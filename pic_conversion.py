@@ -6,7 +6,7 @@ from PIL import Image
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from loguru import logger
-
+from path_util import PathUtil
 
 class PicConversionApp(QWidget):
     def __init__(self):
@@ -16,7 +16,7 @@ class PicConversionApp(QWidget):
     def init_ui(self):
         logger.info("---- 初始化图片格式转换应用 ----")
         self.setWindowTitle("图片格式转换应用")
-        self.setWindowIcon(QIcon(self.get_resource_path("resources/app.ico")))
+        self.setWindowIcon(QIcon(PathUtil.get_resource_path("resources/app.ico")))
 
         # 获取屏幕尺寸
         desktop = QDesktopWidget().availableGeometry()
@@ -106,13 +106,6 @@ class PicConversionApp(QWidget):
         self.setLayout(layout)
 
 
-    def get_resource_path(self, relative_path):
-        """
-        获取资源（如图片等）的实际路径，处理打包后资源路径的问题
-        """
-        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-            return os.path.join(sys._MEIPASS, relative_path)
-        return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
 
 
     def upload_image(self):

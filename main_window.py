@@ -9,6 +9,7 @@ from PyQt5.QtGui import QIcon
 from app_mini import FloatingBall
 import  os
 from loguru import logger
+from path_util import PathUtil
 
 class MainWindow(QWidget):
     def __init__(self, tray_icon_visible=False):
@@ -26,7 +27,7 @@ class MainWindow(QWidget):
 
         # 悬浮球可见状态，false可以创建悬浮球，反之。。。
         self.is_floating_ball_visible = False
-        self.setWindowIcon(QIcon(self.get_resource_path("resources/app.ico")))
+        self.setWindowIcon(QIcon(PathUtil.get_resource_path("resources/app.ico")))
 
         layout = QVBoxLayout()
         # 透明时间
@@ -104,7 +105,7 @@ class MainWindow(QWidget):
 
         # 创建系统托盘图标
         self.tray_icon = QSystemTrayIcon(self)
-        self.tray_icon.setIcon(QIcon(self.get_resource_path("resources/app_mini.ico")))  # 这里需要一个名为icon.png的图标文件，可以替换为真实路径
+        self.tray_icon.setIcon(QIcon(PathUtil.get_resource_path("resources/app_mini.ico")))  # 这里需要一个名为icon.png的图标文件，可以替换为真实路径
         self.tray_icon.activated.connect(self.tray_icon_activated)
 
         # 创建托盘菜单
@@ -117,13 +118,7 @@ class MainWindow(QWidget):
         tray_menu.addAction(quit_action)
         self.tray_icon.setContextMenu(tray_menu)
 
-    def get_resource_path(self, relative_path):
-        """
-        获取资源（如图片等）的实际路径，处理打包后资源路径的问题
-        """
-        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-            return os.path.join(sys._MEIPASS, relative_path)
-        return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
+
 
     # 从托盘菜单点击显示窗口
     def tray_menu_show_main(self):
@@ -183,11 +178,11 @@ class MainWindow(QWidget):
 
     def create_folder_btn_clicked(self):
         logger.info("---- 按钮<文件夹创建师>被点击了 ----")
-        self.rename_file = RenameFileApp()
-        self.rename_file.show()
+        self.create_folder = CreateFolderApp()
+        self.create_folder.show()
 
     def rename_file_btn_clicked(self):
         logger.info("---- 按钮<重命名使者>被点击了 ----")
-        self.create_folder = CreateFolderApp()
-        self.create_folder.show()
+        self.rename_file = RenameFileApp()
+        self.rename_file.show()
 

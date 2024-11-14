@@ -5,7 +5,7 @@ from PyQt5.QtGui import QIcon, QCursor, QMouseEvent, QPixmap, QColor, QBrush, QP
 from PyQt5 import QtCore
 import os
 from loguru import logger
-
+from path_util import PathUtil
 
 class FloatingBall(QWidget):
 
@@ -57,20 +57,14 @@ class FloatingBall(QWidget):
             self.direction = 0.02  # 达到最小透明度后开始增大透明度
         self.setWindowOpacity(self.opacity)
 
-    def get_resource_path(self, relative_path):
-        """
-        获取资源（如图片等）的实际路径，处理打包后资源路径的问题
-        """
-        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-            return os.path.join(sys._MEIPASS, relative_path)
-        return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
+
 
     def setup_background_image(self):
         logger.info("---- 初始化悬浮球背景图 ----")
 
         layout = QVBoxLayout()
         # 这里使用一个示例图片路径，你可以替换为真实路径
-        pixmap = QPixmap(self.get_resource_path("resources/app_mini.ico"))
+        pixmap = QPixmap(PathUtil.get_resource_path("resources/app_mini.ico"))
         pixmap = pixmap.scaled(self.size())
         self.background_label = QLabel(self)
         self.background_label.setPixmap(pixmap)
