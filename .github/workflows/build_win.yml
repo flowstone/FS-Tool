@@ -1,0 +1,29 @@
+name: Package exe with PyInstaller - Windows
+
+on:
+  push:
+    branches: [ release ]
+  pull_request:
+    branches: [ release ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: PyInstaller Windows
+      uses: JackMcKew/pyinstaller-action-windows@python3-10-pyinstaller-5-3
+      with:
+        path: src
+        pypi_url: https://pypi.python.org/ # optional, default is https://pypi.python.org/
+        # Specify a custom URL for PYPI Index
+        pypi_index_url: https://pypi.python.org/simple # optional, default is https://pypi.python.org/simple
+        # Specify a file path for .spec file
+        spec: 流体石头的工具箱.spec # optional, default is
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: 流体石头的工具箱
+        path: dist/windows # or path/to/artifact
