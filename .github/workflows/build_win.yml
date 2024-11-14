@@ -32,6 +32,11 @@ jobs:
       - name: Build application with PyInstaller
         run: pyinstaller --name "FS-Tool" --onefile --window --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\bin;./PyQt5/Qt/bin" --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\plugins;./PyQt5/Qt/plugins" --add-data "resources;resources" --collect-all PyQt5 --icon=resources/app.ico app.py
         #working-directory: ${{ github.repository }}  # 设置工作目录为仓库根目录
+      - name: Get the version number from the tag
+        id: get_version
+        run: |
+          TAG_NAME=$(basename ${{ github.ref }})
+          echo "::set-output name=version::$TAG_NAME"
 
       - name: Create release
         uses: actions/create-release@v1
@@ -39,8 +44,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用GitHub自动生成的token用于创建发布
         with:
-          tag_name: ${{ github.ref }}
-          name: Release ${{ github.ref }}
+          tag_name: ${{ steps.get_version.outputs.version }}
+          name: Release ${{ steps.get_version.outputs.version }}
           draft: false  # 是否为草稿，设为false表示直接发布
           prerelease: false  # 是否为预发布版本，设为false表示正式发布
 
@@ -51,5 +56,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}  # 获取创建发布时的上传链接
           asset_path: dist/FS-Tool.exe  # 要上传的打包后的可执行文件路径，根据实际打包情况调整
-          asset_name: FS-Tool-${{ github.ref }}.exe  # 上传文件的名称，可按需调整
+          asset_name: FS-Tool-${{ steps.get_version.outputs.version }}.exe  # 上传文件的名称，可按需调整
           asset_content_type: application/octet-stream  # 文件类型，.exe文件一般用此类型
