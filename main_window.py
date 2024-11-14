@@ -16,7 +16,6 @@ class MainWindow(QWidget):
         # 任务栏托盘标志位，False没有创建  True已创建
         self.is_tray_icon_visible = tray_icon_visible
 
-
         self.init_ui()
 
     def init_ui(self):

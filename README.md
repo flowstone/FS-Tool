@@ -5,6 +5,14 @@
 
 
 ### 脚本
+
+#### 开始
+
+在项目根目录下运行脚本
+``` bash
+pip install -r requirements.txt
+```
+
 ##### 1.打包Tkinter脚本
 ``` bash
 pyinstaller --name "应用名" --onefile --window --icon=clock.ico 程序脚本.py
