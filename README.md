@@ -1,8 +1,5 @@
 # FS Tool
 
-### 工具列表
-* 时间应用
-
 
 ### 脚本
 
@@ -30,5 +27,21 @@ F:\Workspace\PycharmProjects\fs-tool\.venv\Lib\site-packages\PyQt5\Qt5\bin;./PyQ
 源PyQt5的目录:exe包中的目标路径
 ```
 
+##### 预览
+1. 应用图标
+
+![](https://raw.githubusercontent.com/flowstone/fs-tool/release/resources/preview/app-logo.png)
+
+2. 应用界面
+
+![](https://raw.githubusercontent.com/flowstone/fs-tool/release/resources/preview/app-main-window.png)
+
+3. 关闭应用窗口，屏幕右上角会有悬浮球
+
+![](https://raw.githubusercontent.com/flowstone/fs-tool/release/resources/preview/app-mini.png)
+
+4. 任务栏托盘
+
+![](https://raw.githubusercontent.com/flowstone/fs-tool/release/resources/preview/app-menu-bar.png)
 
 
