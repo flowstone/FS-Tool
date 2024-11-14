@@ -24,8 +24,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'  # 根据项目实际依赖的Python版本进行调整
+          python-version: '3.8'
 
+      - name: Use site-packages variable
+        run: |
+          echo "The site-packages path is: ${{ env.pythonSitePackages }}"
+          
       - name: Install dependencies
         run: pip install -r requirements.txt  # 安装项目依赖的Python库
 
