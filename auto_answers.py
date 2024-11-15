@@ -12,7 +12,9 @@ import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from path_util import PathUtil
-from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.chrome.service import Service as BraveService
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.os_manager import ChromeType
 
 # 这里定义一些常见的姓氏和名字的列表，可以根据实际情况扩展
 last_names = ["赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈", "褚", "卫", "蒋", "沈", "韩", "杨"]
@@ -268,15 +270,20 @@ class AutoAnswersApp(QWidget):
 
     def start(self):
 
+        logger.info("---- 开始配置Firefox ----")
+        # 获取当前脚本所在目录，用于构建驱动路径（可根据实际情况调整，如果驱动路径是固定的已知路径，可直接写具体路径）
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        driver_path = os.path.join(current_dir, "resources/driver",
+                                   "chromedriver")  # Windows系统下驱动文件名是chromedriver.exe，Mac系统下一般是chromedriver（无后缀），这里以Windows为例，根据实际情况替换
+        service = webdriver.ChromeService(executable_path=driver_path)
 
         options = webdriver.ChromeOptions()
-        options.add_argument("--start-maximized")  # 窗口最大化，等同于Java中窗口全屏操作
-        #self.web_driver = webdriver.Chrome(options=options,service=ChromeService(ChromeDriverManager().install()))
-        # 获取当前目录下data文件夹中test.txt文件的绝对路径
-        file_path = os.path.join("resources/drivers", "chromedriver")
-        absolute_path = os.path.abspath(file_path)
-        options.add_argument(f"--executable-path={absolute_path}")
-        self.web_driver = webdriver.Chrome(options=options)
+        # 窗口最大化，等同于Java中窗口全屏操作
+        options.add_argument("--start-maximized")
+        #self.web_driver = webdriver.Firefox(options=options,service=FirefoxService(GeckoDriverManager().install()))
+        #self.web_driver = webdriver.Edge(options=options, service=EdgeService(EdgeChromiumDriverManager().install()))
+        #self.web_driver = webdriver.Chrome(options=options,service=BraveService(ChromeDriverManager(chrome_type=ChromeType.BRAVE).install()))
+        self.web_driver = webdriver.Chrome(service = service, options=options,)
 
         # self.web_driver.delete_all_cookies()  # 删除所有Cookie
         # 设置隐式等待时间为10秒
@@ -296,7 +303,7 @@ class AutoAnswersApp(QWidget):
         for handle in self.web_driver.window_handles:
             if handle != current_handle:
                 self.web_driver.switch_to.window(handle)
-        self.set_auto_option()
+        self.fill_person_info()
 
 
 
@@ -382,43 +389,45 @@ class AutoAnswersApp(QWidget):
         org_name.send_keys(self.company_value)
 
 
-        logger.info("---- 开始死循环判断 ----")
+
+
+    def fill_person_info(self):
+        logger.info("---- 开始填充个人数据 ----")
         max_retries = 10  # 定义最大重试次数，可以根据实际情况调整
         retry_count = 0
         while self.while_flag and retry_count < max_retries:
             try:
-                if self.is_all_selected():
-                    self.while_flag = False
-                    logger.info("---- 全部已选择，开始提交 ----")
-                    self.submit_auto_answers()
-                    break
-                else:
+                self.set_auto_option()
+                if not self.is_all_selected():
                     logger.info("---- 缺失部分下拉选择，刷新页面 ----")
                     self.web_driver.refresh()
-                    self.set_auto_option()
-
+                    time.sleep(2)
+                else:
+                    self.while_flag = False
             except Exception as e:
                 logger.error(f"在循环操作中出现异常: {e}")
                 break
             retry_count += 1
+            if retry_count > max_retries:
+                logger.error("达到最大重试次数，仍未满足提交条件，自动答题流程结束。")
 
-        if retry_count == max_retries:
-            logger.error("达到最大重试次数，仍未满足提交条件，自动答题流程结束。")
+        logger.info("---- 全部已选择，开始提交 ----")
+        self.submit_auto_answers()
+
 
     def submit_auto_answers(self):
 
-        wait = WebDriverWait(self.web_driver, 10)
-        log_img_button = wait.until(EC.element_to_be_clickable((By.ID, "log_img")))
-        log_img_button.click()
         logger.info("---- 点击了<开始学习测评> ----")
 
         # 点击按钮
         self.web_driver.find_element(By.ID, "log_img").click()
 
         logger.info("currentHandle:", self.web_driver.current_window_handle)
+        self.web_driver.switch_to.window(self.web_driver.current_window_handle)
 
         # 做题部分
         subject = self.web_driver.find_element(By.ID, "subject")
+        logger.info(subject.text)
         lis = subject.find_elements(By.TAG_NAME, "li")
         for ls in lis:
             k_wait = ls.find_element(By.CLASS_NAME, "KWait")
