@@ -1,17 +1,10 @@
 name: Mac Package and Release
 
 on:
-  #push:
-  #  tags:
-  #    - 'v*.*.*'  # 这个通配符表示匹配任何推送的tag，你也可以指定具体格式的tag，比如 'v*.*.*' 表示以v开头的语义化版本号格式的tag
- workflow_dispatch:
-    inputs:
-      #java_version:
-      #  description: "The version of Java to use for jpackage"
-      #  required: true
-      app_version:
-        description: "应用版本，如1.0.1"
-        required: true
+  push:
+    tags:
+      - 'v*.*.*'  # 这个通配符表示匹配任何推送的tag，你也可以指定具体格式的tag，比如 'v*.*.*' 表示以v开头的语义化版本号格式的tag
+
 jobs:
   build_and_release:
     runs-on: macos-13 # macos13支持Intel平台，14之后默认是ARM平台，Intel平台要收费
