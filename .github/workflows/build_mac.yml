@@ -38,10 +38,11 @@ jobs:
 
       - name: test
         run: |
+          ls
           pwd
           cd /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/
           ls
-          cd /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/PyQt5/Qt5/bin
+          cd /Users/runner/hostedtoolcache/Python/3.11.9/x64
           pwd
           ls 
           echo ${{env.Python_ROOT_DIR}}
