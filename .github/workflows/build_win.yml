@@ -1,4 +1,4 @@
-name: PyInstaller Package and Release
+name: Win Package and Release
 
 on:
   push:
