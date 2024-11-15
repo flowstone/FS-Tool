@@ -23,7 +23,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-           python-version: '3.9'  # 根据项目实际依赖的Python版本进行调整
+           python-version: '3.11'  # 根据项目实际依赖的Python版本进行调整
 
 
       - name: Use site-packages variable
