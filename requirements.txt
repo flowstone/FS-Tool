@@ -1,6 +1,6 @@
 colorama==0.4.6
 cx_Freeze==7.2.5
-cx_Logging==3.2.1
+cx_Logging==3.2.1;sys_platform=='win32'
 lief==0.15.1
 logger==1.4
 loguru==0.7.2
