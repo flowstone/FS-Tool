@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QPushButton, QSpacerItem, QSizePolicy
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont,QPixmap, QIcon
-
+import os
 from path_util import PathUtil
 from loguru import logger
 from selenium import webdriver
@@ -11,7 +11,8 @@ import random
 import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
+from path_util import PathUtil
+from selenium.webdriver.chrome.service import Service as ChromeService
 
 # 这里定义一些常见的姓氏和名字的列表，可以根据实际情况扩展
 last_names = ["赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈", "褚", "卫", "蒋", "沈", "韩", "杨"]
@@ -266,13 +267,20 @@ class AutoAnswersApp(QWidget):
             self.start()
 
     def start(self):
+
+
         options = webdriver.ChromeOptions()
         options.add_argument("--start-maximized")  # 窗口最大化，等同于Java中窗口全屏操作
-        self.web_driver = webdriver.Chrome(
-            options=options)  # 如果没配置环境变量，可在这里指定驱动路径，如webdriver.Chrome('path/to/chromedriver')
+        #self.web_driver = webdriver.Chrome(options=options,service=ChromeService(ChromeDriverManager().install()))
+        # 获取当前目录下data文件夹中test.txt文件的绝对路径
+        file_path = os.path.join("resources/drivers", "chromedriver")
+        absolute_path = os.path.abspath(file_path)
+        options.add_argument(f"--executable-path={absolute_path}")
+        self.web_driver = webdriver.Chrome(options=options)
+
         # self.web_driver.delete_all_cookies()  # 删除所有Cookie
         # 设置隐式等待时间为10秒
-        self.web_driver.implicitly_wait(10)  # 设置隐式等待时间为10秒
+        self.web_driver.implicitly_wait(2)  # 设置隐式等待时间为10秒
         self.web_driver.get("http://www.jscdc.cn/")
         self.web_driver.find_element(By.LINK_TEXT, "疾控服务").click()
         health_element = self.web_driver.find_element(By.XPATH, "//*[@class='part03']/div[2]/a[1]")
