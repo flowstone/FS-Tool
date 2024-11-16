@@ -54,6 +54,7 @@ class AutoAnswersApp(QWidget):
         self.culture_status = False
         self.job_status = False
         self.while_flag = True
+        self.while_second_flag = True
 
         self.setWindowTitle("自动答题")
         main_layout = QVBoxLayout()
@@ -462,9 +463,30 @@ class AutoAnswersApp(QWidget):
         org_name.send_keys(self.company_value)
         logger.info(f"设置<单位>:{self.company_value}")
 
-
-        logger.info("---- 全部已选择，开始提交 ----")
         self.submit_auto_answers()
+        # 再添加一层校验
+        #city_value = city.get_attribute("value")
+        #county_value = county.get_attribute("value")
+        #countryside_value = countryside.get_attribute("value")
+        #age_group_value = age_group.get_attribute("value")
+        #sex_value = sex.get_attribute("value")
+        #education_status_value = education_status.get_attribute("value")
+        #metier_value = metier.get_attribute("value")
+        #logger.info(f"{city_value}-{county_value}-{countryside_value}-{age_group_value}-{sex_value}--{education_status_value}-{metier_value}")
+        #if (city_value != "" and
+        #    county_value != "" and
+        #    countryside_value != "" and
+        #    age_group_value != "" and
+        #    sex_value != "" and
+        #    education_status_value != "" and
+        #    metier_value != "") :
+        #    logger.info("---- 全部已选择，开始提交 ----")
+        #    self.submit_auto_answers()
+        #else:
+        #    self.while_flag = True
+        #    self.fill_person_info()
+
+
 
 
     def fill_person_info(self):
