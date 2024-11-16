@@ -47,3 +47,7 @@ F:\Workspace\PycharmProjects\fs-tool\.venv\Lib\site-packages\PyQt5\Qt5\bin;./PyQ
 5. 欢迎预览
 
 ![](https://raw.githubusercontent.com/flowstone/fs-tool/release/resources/preview/start-work.gif)
+
+
+##### 备注
+Chrome浏览器指定版本**131.0.6778.69**

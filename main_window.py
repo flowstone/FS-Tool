@@ -5,6 +5,7 @@ from desktop_clock import DesktopClockApp
 from pic_conversion import PicConversionApp
 from batch_file_renamer import RenameFileApp
 from batch_create_folder import CreateFolderApp
+from auto_answers import AutoAnswersApp
 from PyQt5.QtGui import QIcon
 from app_mini import FloatingBall
 import  os
@@ -110,6 +111,24 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(rename_file_btn)
 
+        # 自动答题
+        auto_answers_btn = QPushButton("自动答题")
+        auto_answers_btn.setFont(QFont('Arial', 14))
+        auto_answers_btn.setStyleSheet("""
+                    QPushButton {
+                        background-color: #96CDCD;
+                        color: white;
+                        border-radius: 8px;
+                        padding: 10px;
+                    }
+                    QPushButton:hover {
+                        background-color: #668B8B;
+                    }
+                """)
+        auto_answers_btn.clicked.connect(self.auto_answers_btn_clicked)
+
+        layout.addWidget(auto_answers_btn)
+
         self.setLayout(layout)
         # 初始化应用托盘图标
         self.init_tray_menu()
@@ -208,4 +227,9 @@ class MainWindow(QMainWindow):
         logger.info("---- 按钮<重命名使者>被点击了 ----")
         self.rename_file = RenameFileApp()
         self.rename_file.show()
+
+    def auto_answers_btn_clicked(self):
+        logger.info("---- 按钮<自动答题>被点击了 ----")
+        self.auto_answers = AutoAnswersApp()
+        self.auto_answers.show()
 
