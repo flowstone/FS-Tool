@@ -12,9 +12,7 @@ import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from path_util import PathUtil
-from selenium.webdriver.chrome.service import Service as BraveService
-from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.core.os_manager import ChromeType
+from selenium.webdriver.support.ui import Select
 
 # 这里定义一些常见的姓氏和名字的列表，可以根据实际情况扩展
 last_names = ["赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈", "褚", "卫", "蒋", "沈", "韩", "杨"]
@@ -26,7 +24,7 @@ class AutoAnswersApp(QWidget):
 
         COMBO_BOX_STYLE = """
             QComboBox {
-                background-color: white;
+                #background-color: white;
                 border: 1px solid #ccc;
                 border-radius: 3px;
                 padding: 1px 18px 1px 3px;
@@ -226,12 +224,21 @@ class AutoAnswersApp(QWidget):
         main_layout.addWidget(submit_button, alignment=Qt.AlignCenter)
 
         # 设置窗口整体样式，例如背景颜色（可按需修改）
-        self.setStyleSheet("QWidget { background-color: #f9f9f9; }")
+        #self.setStyleSheet("QWidget { background-color: #f9f9f9; }")
+
 
         # 连接次数下拉框的信号与槽函数，当选择改变时执行相应操作
         submit_button.clicked.connect(self.start_answers)
         self.setLayout(main_layout)
 
+    @staticmethod
+    def generate_name():
+        last_name = random.choice(last_names)
+        first_name = random.choice(first_names)
+        full_name = last_name + first_name
+        return full_name
+
+    def start_answers(self):
         self.zone3_value = self.zone3_combo.currentText()
         self.zone4_value = self.zone4_combo.currentText()
         self.zone5_value = self.zone5_combo.currentText()
@@ -255,14 +262,6 @@ class AutoAnswersApp(QWidget):
         logger.info(f"职业: {self.job_value}")
         logger.info(f"公司: {self.company_value}")
 
-    @staticmethod
-    def generate_name():
-        last_name = random.choice(last_names)
-        first_name = random.choice(first_names)
-        full_name = last_name + first_name
-        return full_name
-
-    def start_answers(self):
         logger.info("---- 开始进行自动答案 ----")
         for index in range(self.selected_number):
             logger.info(f"---- 自动答案第<{self.selected_number}>次 ----")
@@ -270,11 +269,14 @@ class AutoAnswersApp(QWidget):
 
     def start(self):
 
-        logger.info("---- 开始配置Firefox ----")
+        logger.info("---- 开始配置chrome ----")
         # 获取当前脚本所在目录，用于构建驱动路径（可根据实际情况调整，如果驱动路径是固定的已知路径，可直接写具体路径）
         current_dir = os.path.dirname(os.path.abspath(__file__))
+        driver_name = "chromedriver.exe"
+        if sys.platform.startswith('darwin') or sys.platform.startswith('linux'):
+            driver_name = "chromedriver"
         driver_path = os.path.join(current_dir, "resources/driver",
-                                   "chromedriver")  # Windows系统下驱动文件名是chromedriver.exe，Mac系统下一般是chromedriver（无后缀），这里以Windows为例，根据实际情况替换
+                                   driver_name)  # Windows系统下驱动文件名是chromedriver.exe，Mac系统下一般是chromedriver（无后缀），这里以Windows为例，根据实际情况替换
         service = webdriver.ChromeService(executable_path=driver_path)
 
         options = webdriver.ChromeOptions()
@@ -305,28 +307,79 @@ class AutoAnswersApp(QWidget):
                 self.web_driver.switch_to.window(handle)
         self.fill_person_info()
 
+        self.set_auto_option()
 
 
+
+    def check_is_refresh(self):
+        logger.info("---- 判断页面下拉框是否加载完全 ----")
+        # 市  地区
+        city = self.web_driver.find_element(By.ID, "zone3")
+        city_options = city.find_elements(By.TAG_NAME, "option")
+        self.zone3_status = len(city_options) > 0
+        logger.info(f"下拉框加载状态-zone3_status:{self.zone3_status}")
+
+        # 县  地区
+        county = self.web_driver.find_element(By.ID, "zone4")
+        county_options = county.find_elements(By.TAG_NAME, "option")
+        self.zone4_status = len(county_options) > 0
+        logger.info(f"下拉框加载状态-zone4_status:{self.zone4_status}")
+
+        # 乡  地区
+        countryside = self.web_driver.find_element(By.ID, "zone5")
+        countryside_options = countryside.find_elements(By.TAG_NAME, "option")
+        self.zone5_status = len(countryside_options) > 0
+        logger.info(f"下拉框加载状态-zone5_status:{self.zone5_status}")
+
+        # 年龄
+        age_group = self.web_driver.find_element(By.ID, "ageGroup")
+        age_group_options = age_group.find_elements(By.TAG_NAME, "option")
+        self.age_status = len(age_group_options) > 0
+        logger.info(f"下拉框加载状态-age_status:{self.age_status}")
+
+
+        # 性别
+        sex = self.web_driver.find_element(By.ID, "sex")
+        sex_options = sex.find_elements(By.TAG_NAME, "option")
+        self.gender_status = len(sex_options) > 0
+        logger.info(f"下拉框加载状态-gender_status:{self.gender_status}")
+
+
+
+        # 教育
+        education_status = self.web_driver.find_element(By.ID, "educationStatus")
+        education_status_options = education_status.find_elements(By.TAG_NAME, "option")
+        self.culture_status = len(education_status_options) > 0
+        logger.info(f"下拉框加载状态-culture_status:{self.culture_status}")
+
+
+
+
+        # 职业
+        metier = self.web_driver.find_element(By.ID, "metier")
+        metier_options = metier.find_elements(By.TAG_NAME, "option")
+        self.job_status = len(metier_options) > 0
+        logger.info(f"job_status:{self.job_status}")
 
     def set_auto_option(self):
+        logger.info("---- 全部加载完全，开始设置下拉框 ----")
         # 市  地区
         city = self.web_driver.find_element(By.ID, "zone3")
         city_options = city.find_elements(By.TAG_NAME, "option")
         for city_option in city_options:
             if city_option.text == self.zone3_value:
                 city_option.click()
-                logger.info(f"---- 设置<市>:{city_option.text} ----")
-                self.zone3_status = True
+                logger.info(f"设置<市>:{city_option.text} ")
                 break
 
         # 县  地区
         county = self.web_driver.find_element(By.ID, "zone4")
         county_options = county.find_elements(By.TAG_NAME, "option")
+        self.zone4_status = len(county_options) > 0
         for county_option in county_options:
             if county_option.text == self.zone4_value:
                 county_option.click()
-                logger.info(f"---- 设置<县>:{county_option.text} ----")
-                self.zone4_status = True
+                logger.info(f"设置<县>:{county_option.text}")
                 break
 
         # 乡  地区
@@ -335,21 +388,21 @@ class AutoAnswersApp(QWidget):
         for countryside_option in countryside_options:
             if countryside_option.text == self.zone5_value:
                 countryside_option.click()
-                logger.info(f"---- 设置<乡>:{countryside_option.text} ----")
-                self.zone5_status = True
+                logger.info(f"设置<乡>:{countryside_option.text}")
                 break
 
         # 姓名，这里假设你有获取中文姓名的对应逻辑，示例中暂时使用固定字符串替代
         name = self.web_driver.find_element(By.ID, "name")
         name.send_keys(self.name_value)
+        logger.info(f"设置<姓名>:{self.name_value}")
+
         # 年龄
         age_group = self.web_driver.find_element(By.ID, "ageGroup")
         age_group_options = age_group.find_elements(By.TAG_NAME, "option")
         for age_group_option in age_group_options:
             if age_group_option.text == self.age_value:
                 age_group_option.click()
-                logger.info(f"---- 设置<年龄>:{age_group_option.text} ----")
-                self.age_status = True
+                logger.info(f"设置<年龄>:{age_group_option.text}")
                 break
 
         # 性别
@@ -358,8 +411,7 @@ class AutoAnswersApp(QWidget):
         for sex_option in sex_options:
             if sex_option.text == self.gender_value:
                 sex_option.click()
-                logger.info(f"---- 设置<性别>:{sex_option.text} ----")
-                self.gender_status = True
+                logger.info(f"设置<性别>:{sex_option.text}")
                 break
 
         # 教育
@@ -368,8 +420,7 @@ class AutoAnswersApp(QWidget):
         for education_status_option in education_status_options:
             if education_status_option.text == self.culture_value:
                 education_status_option.click()
-                logger.info(f"---- 设置<教育>:{education_status_option.text} ----")
-                self.culture_status = True
+                logger.info(f"设置<教育>:{education_status_option.text}")
                 break
 
         # 职业
@@ -379,16 +430,17 @@ class AutoAnswersApp(QWidget):
         for metier_option in metier_options:
             if metier_option.text == self.job_value:
                 metier_option.click()
-                self.job_status = True
-                logger.info(f"---- 设置<职业>:{metier_option.text} ----")
+                logger.info(f"设置<职业>:{metier_option.text}")
                 break
 
         # 单位
-        logger.info("---- 设置<单位> ----")
         org_name = self.web_driver.find_element(By.ID, "orgName")
         org_name.send_keys(self.company_value)
+        logger.info(f"设置<单位>:{self.company_value}")
 
 
+        logger.info("---- 全部已选择，开始提交 ----")
+        self.submit_auto_answers()
 
 
     def fill_person_info(self):
@@ -397,12 +449,13 @@ class AutoAnswersApp(QWidget):
         retry_count = 0
         while self.while_flag and retry_count < max_retries:
             try:
-                self.set_auto_option()
+                self.check_is_refresh()
                 if not self.is_all_selected():
                     logger.info("---- 缺失部分下拉选择，刷新页面 ----")
                     self.web_driver.refresh()
                     time.sleep(2)
                 else:
+                    logger.info("---- 全部加载下拉框完成 ----")
                     self.while_flag = False
             except Exception as e:
                 logger.error(f"在循环操作中出现异常: {e}")
@@ -411,8 +464,6 @@ class AutoAnswersApp(QWidget):
             if retry_count > max_retries:
                 logger.error("达到最大重试次数，仍未满足提交条件，自动答题流程结束。")
 
-        logger.info("---- 全部已选择，开始提交 ----")
-        self.submit_auto_answers()
 
 
     def submit_auto_answers(self):
@@ -422,12 +473,11 @@ class AutoAnswersApp(QWidget):
         # 点击按钮
         self.web_driver.find_element(By.ID, "log_img").click()
 
-        logger.info("currentHandle:", self.web_driver.current_window_handle)
+        #logger.info("currentHandle:", self.web_driver.current_window_handle)
         self.web_driver.switch_to.window(self.web_driver.current_window_handle)
 
         # 做题部分
         subject = self.web_driver.find_element(By.ID, "subject")
-        logger.info(subject.text)
         lis = subject.find_elements(By.TAG_NAME, "li")
         for ls in lis:
             k_wait = ls.find_element(By.CLASS_NAME, "KWait")
@@ -439,17 +489,19 @@ class AutoAnswersApp(QWidget):
             else:
                 i = random.randint(0, 1)
                 input_radio[i].click()
-            # 交卷按钮
-            count = len(lis)
-            element = self.web_driver.find_element(By.ID, "btnAct" + str(count))
-            element.find_element(By.TAG_NAME, "input").click()
-            time.sleep(1)
-            # 接受弹窗确认
-            self.web_driver.switch_to.alert.accept()
-            time.sleep(1)
+        # 交卷按钮
+        count = len(lis)
+        element = self.web_driver.find_element(By.ID, "btnAct" + str(count))
+        element.find_element(By.TAG_NAME, "input").click()
+        logger.info("---- 交卷成功 ----")
+        time.sleep(1)
+        # 接受弹窗确认
+        self.web_driver.switch_to.alert.accept()
+        time.sleep(1)
 
-            # 关闭窗口
-            self.web_driver.quit()
+        # 关闭窗口
+        self.web_driver.quit()
+
     # 判断Select是不是全部选中
     def is_all_selected(self):
         # 这里编写具体要执行的操作内容，以下只是示例打印信息
