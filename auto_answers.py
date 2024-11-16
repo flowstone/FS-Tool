@@ -1,26 +1,23 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QPushButton, QSpacerItem, QSizePolicy
+from PyQt5.QtWidgets import QApplication,QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QPushButton, QMenu, QSizePolicy,QMessageBox,QAction
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont,QPixmap, QIcon
 import os
-from path_util import PathUtil
+
+from PySimpleGUI import MenuBar
 from loguru import logger
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import random
 import time
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from path_util import PathUtil
-from selenium.webdriver.support.ui import Select
 import hashlib
-from PyQt5.QtWidgets import QMessageBox
 
 # 这里定义一些常见的姓氏和名字的列表，可以根据实际情况扩展
 last_names = ["赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈", "褚", "卫", "蒋", "沈", "韩", "杨"]
 first_names = ["强", "伟", "芳", "娜", "秀英", "敏", "静", "丽", "军", "磊", "超", "鹏", "慧", "勇", "杰"]
 
-class AutoAnswersApp(QWidget):
+class AutoAnswersApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -65,6 +62,17 @@ class AutoAnswersApp(QWidget):
         font.setPointSize(12)
 
         self.setWindowIcon(QIcon(PathUtil.get_resource_path("resources/app.ico")))
+
+        self.help_menu = self.addToolBar("帮助")
+        # 创建"打开"菜单项
+        readme_action = QAction("说明", self)
+        readme_action.triggered.connect(self.show_instructions)
+        # 将菜单项添加到文件菜单
+        self.help_menu.addAction(readme_action)
+        main_layout.addWidget(self.help_menu)
+        central_widget = QWidget(self)
+        central_widget.setLayout(main_layout)
+        self.setCentralWidget(central_widget)
 
         # 图片标签，单独占一行
         image_label = QLabel(self)
@@ -211,7 +219,7 @@ class AutoAnswersApp(QWidget):
         times_label = QLabel("次数")  # 添加次数标签，使界面更清晰
         times_label.setFont(font)
         self.times_combo = QComboBox()
-        self.times_combo.addItems(["1", "2", "3", "4", "5"])
+        self.times_combo.addItems(["1", "3", "5", "7", "50", "100", "200", "600"])
         self.times_combo.setFont(font)
         self.times_combo.setFixedWidth(120)
         self.times_combo.setStyleSheet(COMBO_BOX_STYLE)
@@ -220,8 +228,9 @@ class AutoAnswersApp(QWidget):
 
 
         # 姓名输入框和标签
-        passwd_label = QLabel("访问密码")
+        passwd_label = QLabel("*访问密码")
         passwd_label.setFont(font)
+        passwd_label.setStyleSheet("color:red;")
         self.passwd_edit = QLineEdit()
         self.passwd_edit.setPlaceholderText("指定手机号")
         self.passwd_edit.setFont(font)
@@ -238,13 +247,16 @@ class AutoAnswersApp(QWidget):
         submit_button.setStyleSheet(COMBO_BOX_STYLE)
         main_layout.addWidget(submit_button, alignment=Qt.AlignCenter)
 
+        submit_button.clicked.connect(self.start_answers)
+
         # 设置窗口整体样式，例如背景颜色（可按需修改）
         #self.setStyleSheet("QWidget { background-color: #f9f9f9; }")
 
-
-        # 连接次数下拉框的信号与槽函数，当选择改变时执行相应操作
-        submit_button.clicked.connect(self.start_answers)
         self.setLayout(main_layout)
+
+    def show_instructions(self):
+        readme_text = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>HTML Editor-LDDGO.NET</title><link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/styles/default.min.css"type="text/css"></head><body><h2 style="text-align: center;">说明</h2><h3><em><span style="color: #e03e2d;"><strong>私人使用</strong></span></em></h3><p>自动答题的工具，必须的条件，加上次数即可模仿用户点击答题</p><p>防止恶意操作，添加密码访问，密码是手机号</p><p>如果网站改版，功能将失效，可使用JS脚本代替</p><h3><strong>特殊说明</strong></h3><ol><li>当页面下拉框加载失败后，将重复刷新页面(最多10次，间隔2秒)</li><li>有异常出现，只有本次答题失败，继续执行下一次</li><li>存在程序闪崩情况</li></ol><h3><strong>试题地址</strong></h3><p>https://www.jscdc.cn<h3><strong>其它版本</strong></h3><p>【<a href="https://github.com/flowstone/Auto-Answers">Github</a>】：Java、JS脚本</p><p>&nbsp;</p><p><strong><span style="color: #e03e2d; font-size: 8pt; font-family: "courier new", courier, monospace;"><em>注：此版本，没有调用接口获得正确答案，所以分数大概不及格，</em></span></strong><br/><strong><span style="color: #e03e2d; font-size: 8pt; font-family: "courier new", courier, monospace;"><em>如果希望高分，可以使用JS脚本(青龙面板)</em></span></strong></p><p>&nbsp;</p><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"type="text/javascript"></script><script type="text/javascript">hljs.highlightAll();</script></body></html>'
+        QMessageBox.information(self, "说明", readme_text)
 
     @staticmethod
     def generate_name():
@@ -255,6 +267,10 @@ class AutoAnswersApp(QWidget):
 
     def start_answers(self):
         # 判断是否输入密码
+        if self.passwd_edit.text() == "":
+            QMessageBox.warning(self, "警告", "请输入访问密码！")
+            return
+
         password = self.passwd_edit.text().encode('utf-8')
         md5_hash = hashlib.md5()
         md5_hash.update(password)
@@ -262,7 +278,7 @@ class AutoAnswersApp(QWidget):
         logger.info(f"MD加密后的内容：{encrypted_result}")
         # 加密后的密码  adf0558822da93b55f6fc48790ff3137
         if encrypted_result != 'adf0558822da93b55f6fc48790ff3137':
-            QMessageBox.warning(self, "警告", "请输入访问密码！")
+            QMessageBox.warning(self, "警告", "密码错误！")
             return
         self.zone3_value = self.zone3_combo.currentText()
         self.zone4_value = self.zone4_combo.currentText()
@@ -290,6 +306,7 @@ class AutoAnswersApp(QWidget):
         logger.info("---- 开始进行自动答案 ----")
         for index in range(self.selected_number):
             logger.info(f"---- 自动答案第<{self.selected_number}>次 ----")
+            self.while_flag = True
             self.start()
 
     def start(self):
@@ -464,27 +481,7 @@ class AutoAnswersApp(QWidget):
         logger.info(f"设置<单位>:{self.company_value}")
 
         self.submit_auto_answers()
-        # 再添加一层校验
-        #city_value = city.get_attribute("value")
-        #county_value = county.get_attribute("value")
-        #countryside_value = countryside.get_attribute("value")
-        #age_group_value = age_group.get_attribute("value")
-        #sex_value = sex.get_attribute("value")
-        #education_status_value = education_status.get_attribute("value")
-        #metier_value = metier.get_attribute("value")
-        #logger.info(f"{city_value}-{county_value}-{countryside_value}-{age_group_value}-{sex_value}--{education_status_value}-{metier_value}")
-        #if (city_value != "" and
-        #    county_value != "" and
-        #    countryside_value != "" and
-        #    age_group_value != "" and
-        #    sex_value != "" and
-        #    education_status_value != "" and
-        #    metier_value != "") :
-        #    logger.info("---- 全部已选择，开始提交 ----")
-        #    self.submit_auto_answers()
-        #else:
-        #    self.while_flag = True
-        #    self.fill_person_info()
+
 
 
 
@@ -515,36 +512,37 @@ class AutoAnswersApp(QWidget):
     def submit_auto_answers(self):
 
         logger.info("---- 点击了<开始学习测评> ----")
+        try:
+            # 点击按钮
+            self.web_driver.find_element(By.ID, "log_img").click()
 
-        # 点击按钮
-        self.web_driver.find_element(By.ID, "log_img").click()
+            logger.info("currentHandle:", self.web_driver.current_window_handle)
+            self.web_driver.switch_to.window(self.web_driver.current_window_handle)
 
-        logger.info("currentHandle:", self.web_driver.current_window_handle)
-        self.web_driver.switch_to.window(self.web_driver.current_window_handle)
-
-        # 做题部分
-        subject = self.web_driver.find_element(By.ID, "subject")
-        lis = subject.find_elements(By.TAG_NAME, "li")
-        for ls in lis:
-            k_wait = ls.find_element(By.CLASS_NAME, "KWait")
-            input_radio = k_wait.find_elements(By.TAG_NAME, "input")
-            if len(input_radio) > 4:
-                i = random.randint(0, 3)
-                input_radio[i].click()
-                self.web_driver.find_element(By.ID, "btnNext").click()
-            else:
-                i = random.randint(0, 1)
-                input_radio[i].click()
-        # 交卷按钮
-        count = len(lis)
-        element = self.web_driver.find_element(By.ID, "btnAct" + str(count))
-        element.find_element(By.TAG_NAME, "input").click()
-        logger.info("---- 交卷成功 ----")
-        time.sleep(1)
-        # 接受弹窗确认
-        self.web_driver.switch_to.alert.accept()
-        time.sleep(1)
-
+            # 做题部分
+            subject = self.web_driver.find_element(By.ID, "subject")
+            lis = subject.find_elements(By.TAG_NAME, "li")
+            for ls in lis:
+                k_wait = ls.find_element(By.CLASS_NAME, "KWait")
+                input_radio = k_wait.find_elements(By.TAG_NAME, "input")
+                if len(input_radio) > 4:
+                    i = random.randint(0, 3)
+                    input_radio[i].click()
+                    self.web_driver.find_element(By.ID, "btnNext").click()
+                else:
+                    i = random.randint(0, 1)
+                    input_radio[i].click()
+            # 交卷按钮
+            count = len(lis)
+            element = self.web_driver.find_element(By.ID, "btnAct" + str(count))
+            element.find_element(By.TAG_NAME, "input").click()
+            logger.info("---- 交卷成功 ----")
+            time.sleep(1)
+            # 接受弹窗确认
+            self.web_driver.switch_to.alert.accept()
+            time.sleep(1)
+        except Exception as e:
+            logger.error(f"在开始评测中出现异常: {e}")
         # 关闭窗口
         self.web_driver.quit()
 
