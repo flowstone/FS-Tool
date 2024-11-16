@@ -13,6 +13,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from path_util import PathUtil
 from selenium.webdriver.support.ui import Select
+import hashlib
+from PyQt5.QtWidgets import QMessageBox
 
 # 这里定义一些常见的姓氏和名字的列表，可以根据实际情况扩展
 last_names = ["赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈", "褚", "卫", "蒋", "沈", "韩", "杨"]
@@ -125,6 +127,8 @@ class AutoAnswersApp(QWidget):
         name_label = QLabel("姓名")
         name_label.setFont(font)
         self.name_edit = QLineEdit()
+        self.name_edit.setPlaceholderText("程序生成")
+        self.name_edit.setReadOnly(True)
         self.name_edit.setFont(font)
         self.name_edit.setFixedWidth(120)
         row2_layout.addWidget(name_label)
@@ -213,6 +217,16 @@ class AutoAnswersApp(QWidget):
         row4_layout.addWidget(times_label)
         row4_layout.addWidget(self.times_combo, 1)
 
+
+        # 姓名输入框和标签
+        passwd_label = QLabel("访问密码")
+        passwd_label.setFont(font)
+        self.passwd_edit = QLineEdit()
+        self.passwd_edit.setPlaceholderText("指定手机号")
+        self.passwd_edit.setFont(font)
+        self.passwd_edit.setFixedWidth(120)
+        row4_layout.addWidget(passwd_label)
+        row4_layout.addWidget(self.passwd_edit, 1)
         main_layout.addLayout(row4_layout)
 
         # 第五行（提交按钮）
@@ -239,6 +253,16 @@ class AutoAnswersApp(QWidget):
         return full_name
 
     def start_answers(self):
+        # 判断是否输入密码
+        password = self.passwd_edit.text().encode('utf-8')
+        md5_hash = hashlib.md5()
+        md5_hash.update(password)
+        encrypted_result = md5_hash.hexdigest()
+        logger.info(f"MD加密后的内容：{encrypted_result}")
+        # 加密后的密码  adf0558822da93b55f6fc48790ff3137
+        if encrypted_result != 'adf0558822da93b55f6fc48790ff3137':
+            QMessageBox.warning(self, "警告", "请输入访问密码！")
+            return
         self.zone3_value = self.zone3_combo.currentText()
         self.zone4_value = self.zone4_combo.currentText()
         self.zone5_value = self.zone5_combo.currentText()
@@ -473,7 +497,7 @@ class AutoAnswersApp(QWidget):
         # 点击按钮
         self.web_driver.find_element(By.ID, "log_img").click()
 
-        #logger.info("currentHandle:", self.web_driver.current_window_handle)
+        logger.info("currentHandle:", self.web_driver.current_window_handle)
         self.web_driver.switch_to.window(self.web_driver.current_window_handle)
 
         # 做题部分
