@@ -51,3 +51,9 @@ F:\Workspace\PycharmProjects\fs-tool\.venv\Lib\site-packages\PyQt5\Qt5\bin;./PyQ
 
 ##### 备注
 Chrome浏览器指定版本**131.0.6778.69**
+
+**下载地址**
+* https://pan.quark.cn/s/e3e92f0b8882
+* https://caiyun.139.com/m/i?2i3pdpZu9b6jp  提取码:hk1n  
+* https://drive.google.com/drive/folders/1PZUGmGvWMDzJEwF05vPtmo0BVk_q4FnX?usp=sharing
+* https://www.dropbox.com/scl/fo/9taonyyqpx9u5trdhwssq/AIyi5on3cviaXjUANJnEv3g?rlkey=f5h9a4b10qvqzyrjtzte9kcf7&st=y80qblrx&dl=0

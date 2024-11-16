@@ -4,7 +4,6 @@ import shutil
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar, QFileDialog
 from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
 from loguru import logger
 from path_util import PathUtil

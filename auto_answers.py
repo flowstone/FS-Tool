@@ -4,7 +4,6 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont,QPixmap, QIcon
 import os
 
-from PySimpleGUI import MenuBar
 from loguru import logger
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -255,7 +254,7 @@ class AutoAnswersApp(QMainWindow):
         self.setLayout(main_layout)
 
     def show_instructions(self):
-        readme_text = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>HTML Editor-LDDGO.NET</title><link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/styles/default.min.css"type="text/css"></head><body><p>&nbsp;</p><h2 style="text-align: center;">说明</h2><h3><em><span style="color: #e03e2d;"><strong>私人使用</strong></span></em></h3><p>自动答题的工具，必须的条件，加上次数即可模仿用户点击答题</p><p>防止恶意操作，添加密码访问，密码是手机号</p><p>如果网站改版，功能将失效，可使用JS脚本代替</p><p><span style="background-color: #f1c40f;"><strong>【Chrome指定版本：131.0.6778.69】</strong></span></p><h3><strong>特殊说明</strong></h3><ol><li>当页面下拉框加载失败后，将重复刷新页面(最多10次，间隔2秒)</li><li>有异常出现，只有本次答题失败，继续执行下一次</li><li>存在程序闪崩情况</li></ol><h3><strong>试题地址</strong></h3><p>https://www.jscdc.cn<h3><strong>其它版本</strong></h3><p>【<a href="https://github.com/flowstone/Auto-Answers">Github</a>】：Java、JS脚本</p><p>&nbsp;</p><p><strong><span style="color: #e03e2d; font-size: 8pt; font-family: "courier new", courier, monospace;"><em>注：此版本，没有调用接口获得正确答案，所以分数大概不及格，</em></span></strong><br/><strong><span style="color: #e03e2d; font-size: 8pt; font-family: "courier new", courier, monospace;"><em>如果希望高分，可以使用JS脚本(青龙面板)</em></span></strong></p><p>&nbsp;</p><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"type="text/javascript"></script><script type="text/javascript">hljs.highlightAll();</script></body></html>'
+        readme_text = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>HTML Editor-LDDGO.NET</title><link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/styles/default.min.css"type="text/css"></head><body><p>&nbsp;</p><h2 style="text-align: center;">说明</h2><h3><em><span style="color: #e03e2d;"><strong>私人使用</strong></span></em></h3><p>自动答题的工具，必须的条件，加上次数即可模仿用户点击答题</p><p>防止恶意操作，添加密码访问，密码是手机号</p><p>如果网站改版，功能将失效，可使用JS脚本代替</p><p><span style="background-color: #f1c40f;"><strong>【Chrome指定版本：131.0.6778.69】</strong></span></p><p><strong>Chrome</strong>下载：<a href="https://pan.quark.cn/s/e3e92f0b8882">https://pan.quark.cn/s/e3e92f0b8882</a><h3><strong>特殊说明</strong></h3><ol><li>当页面下拉框加载失败后，将重复刷新页面(最多10次，间隔2秒)</li><li>有异常出现，只有本次答题失败，继续执行下一次</li><li>存在程序闪崩情况</li></ol><h3><strong>试题地址</strong></h3><p>https://www.jscdc.cn<h3><strong>其它版本</strong></h3><p>【<a href="https://github.com/flowstone/Auto-Answers">Github</a>】：Java、JS脚本</p><p>&nbsp;</p><p><strong><span style="color: #e03e2d; font-size: 8pt; font-family: "courier new", courier, monospace;"><em>注：此版本，没有调用接口获得正确答案，所以分数大概不及格，</em></span></strong><br/><strong><span style="color: #e03e2d; font-size: 8pt; font-family: "courier new", courier, monospace;"><em>如果希望高分，可以使用JS脚本(青龙面板)</em></span></strong></p><p>&nbsp;</p><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"type="text/javascript"></script><script type="text/javascript">hljs.highlightAll();</script></body></html>'
         QMessageBox.information(self, "说明", readme_text)
 
     @staticmethod
