@@ -1,35 +1,92 @@
-from sqlite_util import SQLiteTool
+import sys
+import sqlite3
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QTableWidget, QTableWidgetItem, QHBoxLayout, QLabel, QLineEdit
+from PyQt5.QtCore import Qt
+
 from fs_constants import FsConstants
+from sqlite_util import SQLiteTool
 from common_util import CommonUtil
-import datetime
 
-# 示例用法
-if __name__ == "__main__":
 
-    # 假设数据库文件名为test.db，可根据实际情况替换
-    db_tool = SQLiteTool(CommonUtil.get_db_full_path())
+class MainWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.init_ui()
 
-    # 创建操作示例
-    #data_to_create = {'error': 'Alice', 'age': 28}
-    #data_to_create = {'error': 1,'today':'2022-01-01'}
-    #db_tool.create('auto_answers_log', data_to_create)
+    def init_ui(self):
+        layout = QVBoxLayout()
 
-    # 读取操作示例
-    #result_read = db_tool.read_one('auto_answers_log',condition="today='2022-01-01'")
-    #print(result_read[1])
-    #print("读取到的记录:", result_read)
+        button = QPushButton('打开数据展示界面')
+        button.clicked.connect(self.open_data_window)
 
-    # 更新操作示例
-    #data_to_update = {'error': 4}
-    #condition_update = "today = '2022-01-01'"
-    #db_tool.update('auto_answers_log', data_to_update, condition_update)
+        layout.addWidget(button)
 
-    # 删除操作示例
-    #condition_delete = "id = '1'"
-    #db_tool.delete('users', condition_delete)
-    today = "2024-11-18"
-    update_dict = {'error': 1, 'success': 1, 'update_time': CommonUtil.get_current_time()}
-    db_tool.update(FsConstants.AUTO_ANSWERS_TABLE_NAME, update_dict,
-                       f"today = '{today}'")
-    db_tool.close()
-    print(CommonUtil.get_today())
+        self.setLayout(layout)
+        self.setWindowTitle('主界面')
+        self.show()
+
+    def open_data_window(self):
+        self.data_window = DataWindow()
+
+class DataWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.page_size = 1  # 每页显示的数据条数
+        self.current_page = 1  # 当前页码
+        self.init_ui()
+        self.load_data()
+
+    def init_ui(self):
+        layout = QVBoxLayout()
+
+        self.table = QTableWidget()
+        layout.addWidget(self.table)
+
+        button_layout = QHBoxLayout()
+
+        prev_button = QPushButton('上一页')
+        prev_button.clicked.connect(self.prev_page)
+        button_layout.addWidget(prev_button)
+
+        self.page_label = QLabel(f'第 {self.current_page} 页')
+        button_layout.addWidget(self.page_label)
+
+        next_button = QPushButton('下一页')
+        next_button.clicked.connect(self.next_page)
+        button_layout.addWidget(next_button)
+
+        layout.addLayout(button_layout)
+
+        self.setLayout(layout)
+        self.setWindowTitle('数据展示界面')
+        self.show()
+
+    def load_data(self):
+        offset = (self.current_page - 1) * self.page_size
+
+        results = sqlite.read_page(FsConstants.AUTO_ANSWERS_TABLE_NAME,page_size=self.page_size, page_num=offset)
+
+        self.table.setRowCount(len(results))
+        self.table.setColumnCount(len(results[0]))
+
+        for row_idx, row_data in enumerate(results):
+            for col_idx, col_data in enumerate(row_data):
+                item = QTableWidgetItem(str(col_data))
+                self.table.setItem(row_idx, col_idx, item)
+
+    def prev_page(self):
+        if self.current_page > 1:
+            self.current_page -= 1
+            self.load_data()
+            self.page_label.setText(f'第 {self.current_page} 页')
+
+    def next_page(self):
+        self.current_page += 1
+        self.load_data()
+        self.page_label.setText(f'第 {self.current_page} 页')
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    sqlite = SQLiteTool(CommonUtil.get_db_full_path())
+    main_window = MainWindow()
+    sys.exit(app.exec_())

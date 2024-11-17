@@ -15,6 +15,7 @@ from common_util import CommonUtil
 import hashlib
 from fs_constants import FsConstants
 from sqlite_util import SQLiteTool
+from auto_answers_list import AutoAnswersList
 
 # 这里定义一些常见的姓氏和名字的列表，可以根据实际情况扩展
 last_names = ["赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈", "褚", "卫", "蒋", "沈", "韩", "杨"]
@@ -248,19 +249,36 @@ class AutoAnswersApp(QMainWindow):
         main_layout.addLayout(row4_layout)
 
         # 第五行（提交按钮）
+        row5_layout = QHBoxLayout()
+
         submit_button = QPushButton("提交")
         submit_button.setFont(font)
         submit_button.setFixedSize(100, 30)
         # 为按钮添加样式，鼠标悬停时背景变色，按下时文字变色等效果示例（可根据喜好调整）
         submit_button.setStyleSheet(COMBO_BOX_STYLE)
-        main_layout.addWidget(submit_button, alignment=Qt.AlignCenter)
-
         submit_button.clicked.connect(self.start_answers)
+        row5_layout.addWidget(submit_button)
+
+        # 第五行（日志按钮）
+        log_btn = QPushButton("日志")
+        log_btn.setFont(font)
+        log_btn.setFixedSize(100, 30)
+        # 为按钮添加样式，鼠标悬停时背景变色，按下时文字变色等效果示例（可根据喜好调整）
+        log_btn.setStyleSheet(COMBO_BOX_STYLE)
+        row5_layout.addWidget(log_btn)
+
+        main_layout.addLayout(row5_layout)
+
+        log_btn.clicked.connect(self.look_logs)
 
         # 设置窗口整体样式，例如背景颜色（可按需修改）
         #self.setStyleSheet("QWidget { background-color: #f9f9f9; }")
 
         self.setLayout(main_layout)
+    @staticmethod
+    def look_logs(self):
+        auto_answers_list = AutoAnswersList()
+        #auto_answers_list.show()
 
     def show_instructions(self):
         readme_text = FsConstants.AUTO_ANSWER_TOOLBAR_README_TEXT

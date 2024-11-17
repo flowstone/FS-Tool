@@ -38,6 +38,24 @@ class SQLiteTool:
             sql += f" WHERE {condition}"
         self.cursor.execute(sql)
         return self.cursor.fetchall()
+    def read_page(self, table_name, columns='*', condition=None, page_size=None, page_num=None):
+        """
+        从指定表中读取记录
+        :param table_name: 表名
+        :param columns: 要读取的列名，默认为'*'（读取所有列），例如 'name, age'
+        :param condition: 查询条件，格式为SQL语句中的WHERE子句部分，例如 "age > 20"，默认为None（读取所有记录）
+        :param page_size: 每页显示的记录数量，若不传则不进行分页查询，读取所有满足条件的记录
+        :param page_num: 页码，若不传则不进行分页查询，读取所有满足条件的记录，页码从1开始计数
+        :return: 查询到的记录列表
+        """
+        sql = f"SELECT {columns} FROM {table_name}"
+        if condition:
+            sql += f" WHERE {condition}"
+        if page_size and page_num:
+            offset = (page_num - 1) * page_size
+            sql += f" ORDER BY id DESC LIMIT {page_size} OFFSET {offset}"
+        self.cursor.execute(sql)
+        return self.cursor.fetchall()
 
     def read_one(self, table_name, columns='*', condition=None):
         """
