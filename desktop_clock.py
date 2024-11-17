@@ -5,6 +5,7 @@ from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 from PyQt5.QtCore import Qt, QTimer
 from loguru import logger
 from path_util import PathUtil
+from fs_constants import FsConstants
 
 class DesktopClockApp(QWidget):
     def __init__(self):
@@ -17,11 +18,11 @@ class DesktopClockApp(QWidget):
         # 设置窗口无边框、无标题栏
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
         self.setAttribute(Qt.WA_TranslucentBackground, True)  # 设置窗口背景透明
-        self.setWindowTitle("透明时间")
+        self.setWindowTitle(FsConstants.DESKTOP_CLOCK_WINDOW_TITLE)
 
         # 设置窗口透明度
         self.setWindowOpacity(0.8)
-        self.setWindowIcon(QIcon(PathUtil.get_resource_path("resources/app.ico")))
+        self.setWindowIcon(QIcon(PathUtil.get_resource_path(FsConstants.APP_ICON_PATH)))
 
 
         self.setGeometry(0, 0, 200, 80)  # 设置窗口初始位置和大小，这里定位在桌面左上角并设置合适尺寸

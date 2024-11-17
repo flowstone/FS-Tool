@@ -11,6 +11,7 @@ import random
 import time
 from path_util import PathUtil
 import hashlib
+from fs_constants import FsConstants
 
 # 这里定义一些常见的姓氏和名字的列表，可以根据实际情况扩展
 last_names = ["赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈", "褚", "卫", "蒋", "沈", "韩", "杨"]
@@ -52,7 +53,7 @@ class AutoAnswersApp(QMainWindow):
         self.while_flag = True
         self.while_second_flag = True
 
-        self.setWindowTitle("自动答题")
+        self.setWindowTitle(FsConstants.AUTO_ANSWERS_WINDOW_TITLE)
         main_layout = QVBoxLayout()
         main_layout.setSpacing(15)  # 设置主垂直布局的间距为10像素，可根据实际调整
 
@@ -60,11 +61,11 @@ class AutoAnswersApp(QMainWindow):
         font = QFont()
         font.setPointSize(12)
 
-        self.setWindowIcon(QIcon(PathUtil.get_resource_path("resources/app.ico")))
+        self.setWindowIcon(QIcon(PathUtil.get_resource_path(FsConstants.APP_ICON_PATH)))
 
-        self.help_menu = self.addToolBar("帮助")
+        self.help_menu = self.addToolBar(FsConstants.TOOLBAR_HELP_TITLE)
         # 创建"打开"菜单项
-        readme_action = QAction("说明", self)
+        readme_action = QAction(FsConstants.TOOLBAR_README_TITLE, self)
         readme_action.triggered.connect(self.show_instructions)
         # 将菜单项添加到文件菜单
         self.help_menu.addAction(readme_action)
@@ -75,7 +76,7 @@ class AutoAnswersApp(QMainWindow):
 
         # 图片标签，单独占一行
         image_label = QLabel(self)
-        pixmap = QPixmap(PathUtil.get_resource_path("resources/auto_answers_title.png"))  # 替换为实际的图片路径
+        pixmap = QPixmap(PathUtil.get_resource_path(FsConstants.AUTO_ANSWERS_TITLE_IMAGE))  # 替换为实际的图片路径
         # 对图片进行缩放，这里示例将宽度缩放为300像素，高度按比例缩放，保持图片比例不变
         scaled_pixmap = pixmap.scaled(217, 217, Qt.KeepAspectRatio)
         image_label.setPixmap(scaled_pixmap)
@@ -254,8 +255,8 @@ class AutoAnswersApp(QMainWindow):
         self.setLayout(main_layout)
 
     def show_instructions(self):
-        readme_text = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>HTML Editor-LDDGO.NET</title><link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/styles/default.min.css"type="text/css"></head><body><p>&nbsp;</p><h2 style="text-align: center;">说明</h2><h3><em><span style="color: #e03e2d;"><strong>私人使用</strong></span></em></h3><p>自动答题的工具，必须的条件，加上次数即可模仿用户点击答题</p><p>防止恶意操作，添加密码访问，密码是手机号</p><p>如果网站改版，功能将失效，可使用JS脚本代替</p><p><span style="background-color: #f1c40f;"><strong>【Chrome指定版本：131.0.6778.69】</strong></span></p><p><strong>Chrome</strong>下载：<a href="https://pan.quark.cn/s/e3e92f0b8882">https://pan.quark.cn/s/e3e92f0b8882</a><h3><strong>特殊说明</strong></h3><ol><li>当页面下拉框加载失败后，将重复刷新页面(最多10次，间隔2秒)</li><li>有异常出现，只有本次答题失败，继续执行下一次</li><li>存在程序闪崩情况</li></ol><h3><strong>试题地址</strong></h3><p>https://www.jscdc.cn<h3><strong>其它版本</strong></h3><p>【<a href="https://github.com/flowstone/Auto-Answers">Github</a>】：Java、JS脚本</p><p>&nbsp;</p><p><strong><span style="color: #e03e2d; font-size: 8pt; font-family: "courier new", courier, monospace;"><em>注：此版本，没有调用接口获得正确答案，所以分数大概不及格，</em></span></strong><br/><strong><span style="color: #e03e2d; font-size: 8pt; font-family: "courier new", courier, monospace;"><em>如果希望高分，可以使用JS脚本(青龙面板)</em></span></strong></p><p>&nbsp;</p><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"type="text/javascript"></script><script type="text/javascript">hljs.highlightAll();</script></body></html>'
-        QMessageBox.information(self, "说明", readme_text)
+        readme_text = FsConstants.AUTO_ANSWER_TOOLBAR_README_TEXT
+        QMessageBox.information(self, FsConstants.TOOLBAR_README_TITLE, readme_text)
 
     @staticmethod
     def generate_name():
@@ -276,7 +277,7 @@ class AutoAnswersApp(QMainWindow):
         encrypted_result = md5_hash.hexdigest()
         logger.info(f"MD加密后的内容：{encrypted_result}")
         # 加密后的密码  adf0558822da93b55f6fc48790ff3137
-        if encrypted_result != 'adf0558822da93b55f6fc48790ff3137':
+        if encrypted_result != FsConstants.AUTO_ANSWERS_PASSWORD_MD5:
             QMessageBox.warning(self, "警告", "密码错误！")
             return
         self.zone3_value = self.zone3_combo.currentText()
@@ -313,10 +314,10 @@ class AutoAnswersApp(QMainWindow):
         logger.info("---- 开始配置chrome ----")
         # 获取当前脚本所在目录，用于构建驱动路径（可根据实际情况调整，如果驱动路径是固定的已知路径，可直接写具体路径）
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        driver_name = "chromedriver.exe"
+        driver_name = FsConstants.AUTO_ANSWERS_WIN_DRIVER_NAME
         if sys.platform.startswith('darwin') or sys.platform.startswith('linux'):
-            driver_name = "chromedriver"
-        driver_path = os.path.join(current_dir, "resources/driver",
+            driver_name = FsConstants.AUTO_ANSWERS_OTHER_DRIVER_NAME
+        driver_path = os.path.join(current_dir, FsConstants.AUTO_ANSWERS_DRIVER_PATH,
                                    driver_name)  # Windows系统下驱动文件名是chromedriver.exe，Mac系统下一般是chromedriver（无后缀），这里以Windows为例，根据实际情况替换
         service = webdriver.ChromeService(executable_path=driver_path)
 

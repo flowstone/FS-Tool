@@ -7,6 +7,7 @@ from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 from PyQt5.QtWidgets import QMessageBox
 from loguru import logger
 from path_util import PathUtil
+from fs_constants import FsConstants
 
 class CreateFolderApp(QWidget):
     def __init__(self):
@@ -15,7 +16,7 @@ class CreateFolderApp(QWidget):
 
     def init_ui(self):
         logger.info("---- 初始化创建文件夹并移动文件 ----")
-        self.setWindowTitle("批量移动文件")
+        self.setWindowTitle(FsConstants.CREATE_FOLDER_WINDOW_TITLE)
 
         # 设置窗口背景色为淡灰色
         self.setAutoFillBackground(True)
@@ -23,7 +24,7 @@ class CreateFolderApp(QWidget):
         palette.setColor(QPalette.Window, QColor("#F5F5F5"))
         self.setPalette(palette)
 
-        self.setWindowIcon(QIcon(PathUtil.get_resource_path("resources/app.ico")))
+        self.setWindowIcon(QIcon(PathUtil.get_resource_path(FsConstants.APP_ICON_PATH)))
 
         layout = QVBoxLayout()
 
@@ -82,10 +83,10 @@ class CreateFolderApp(QWidget):
 
         # 作者和Github信息文本
         author_font = QFont("楷体", 11)
-        author_label = QLabel("Author：xueyao.me@gmail.com")
+        author_label = QLabel(f"Author：{FsConstants.AUTHOR_BLOG}")
         author_label.setFont(author_font)
         author_label.setStyleSheet("color: #007BFF;")
-        github_label = QLabel("Github：https://github.com/flowstone/Tooool")
+        github_label = QLabel(f"Github：{FsConstants.PROJECT_ADDRESS}")
         github_label.setFont(author_font)
         github_label.setStyleSheet("color: #007BFF;")
 

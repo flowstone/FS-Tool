@@ -12,7 +12,7 @@ import  os
 from loguru import logger
 from path_util import PathUtil
 from app_menu_bar import AppMenuBar
-
+from fs_constants import FsConstants
 
 class MainWindow(QMainWindow):
     def __init__(self, tray_icon_visible=False):
@@ -24,8 +24,8 @@ class MainWindow(QMainWindow):
 
     def init_ui(self):
         logger.info(f"调用了主界面的初始化,任务栏托盘标志位 = {self.is_tray_icon_visible}")
-        self.setWindowTitle("流体石头的工具箱")
-        self.setGeometry(100, 100, 300, 250)
+        self.setWindowTitle(FsConstants.APP_WINDOW_TITLE)
+        self.resize(FsConstants.APP_WINDOW_WIDTH, FsConstants.APP_WINDOW_HEIGHT)
         self.setStyleSheet("background-color: #F5F5F5;")  # 设置窗口背景色为淡灰色
 
         layout = QVBoxLayout()
@@ -40,7 +40,7 @@ class MainWindow(QMainWindow):
 
         # 悬浮球可见状态，false可以创建悬浮球，反之。。。
         self.is_floating_ball_visible = False
-        self.setWindowIcon(QIcon(PathUtil.get_resource_path("resources/app.ico")))
+        self.setWindowIcon(QIcon(PathUtil.get_resource_path(FsConstants.APP_ICON_PATH)))
 
         # 透明时间
         time_btn = QPushButton("透明时间")
@@ -77,7 +77,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(img_conv_btn)
 
         # 文件夹创建师
-        create_folder_btn = QPushButton("文件夹创建师")
+        create_folder_btn = QPushButton(FsConstants.CREATE_FOLDER_WINDOW_TITLE)
         create_folder_btn.setFont(QFont('Arial', 14))
         create_folder_btn.setStyleSheet("""
             QPushButton {
@@ -94,7 +94,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(create_folder_btn)
 
         # 重命名使者
-        rename_file_btn = QPushButton("重命名使者")
+        rename_file_btn = QPushButton(FsConstants.FILE_RENAMER_WINDOW_TITLE)
         rename_file_btn.setFont(QFont('Arial', 14))
         rename_file_btn.setStyleSheet("""
             QPushButton {
@@ -112,7 +112,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(rename_file_btn)
 
         # 自动答题
-        auto_answers_btn = QPushButton("自动答题")
+        auto_answers_btn = QPushButton(FsConstants.AUTO_ANSWERS_WINDOW_TITLE)
         auto_answers_btn.setFont(QFont('Arial', 14))
         auto_answers_btn.setStyleSheet("""
                     QPushButton {
@@ -147,7 +147,7 @@ class MainWindow(QMainWindow):
         # 创建系统托盘图标
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(
-            QIcon(PathUtil.get_resource_path("resources/app_mini.ico")))  # 这里需要一个名为icon.png的图标文件，可以替换为真实路径
+            QIcon(PathUtil.get_resource_path(FsConstants.APP_MINI_ICON_PATH)))  # 这里需要一个名为icon.png的图标文件，可以替换为真实路径
         self.tray_icon.activated.connect(self.tray_icon_activated)
 
         # 创建托盘菜单
@@ -209,27 +209,27 @@ class MainWindow(QMainWindow):
                 self.is_floating_ball_visible = False
 
     def time_btn_clicked(self):
-        logger.info("---- 按钮<透明时间>被点击了 ----")
+        logger.info(f"---- 按钮<{FsConstants.DESKTOP_CLOCK_WINDOW_TITLE}>被点击了 ----")
         self.desktop_clock = DesktopClockApp()
         self.desktop_clock.show()
 
     def img_conv_btn_clicked(self):
-        logger.info("---- 按钮<图转大师>被点击了 ----")
+        logger.info(f"---- 按钮<{FsConstants.PIC_CONVERSION_WINDOW_TITLE}>被点击了 ----")
         self.pic_conversion=PicConversionApp()
         self.pic_conversion.show()
 
     def create_folder_btn_clicked(self):
-        logger.info("---- 按钮<文件夹创建师>被点击了 ----")
+        logger.info(f"---- 按钮<{FsConstants.CREATE_FOLDER_WINDOW_TITLE}>被点击了 ----")
         self.create_folder = CreateFolderApp()
         self.create_folder.show()
 
     def rename_file_btn_clicked(self):
-        logger.info("---- 按钮<重命名使者>被点击了 ----")
+        logger.info(f"---- 按钮<{FsConstants.FILE_RENAMER_WINDOW_TITLE}>被点击了 ----")
         self.rename_file = RenameFileApp()
         self.rename_file.show()
 
     def auto_answers_btn_clicked(self):
-        logger.info("---- 按钮<自动答题>被点击了 ----")
+        logger.info(f"---- 按钮<{FsConstants.AUTO_ANSWERS_WINDOW_TITLE}>被点击了 ----")
         self.auto_answers = AutoAnswersApp()
         self.auto_answers.show()
 

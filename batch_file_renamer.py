@@ -6,6 +6,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
 from loguru import logger
 from path_util import PathUtil
+from fs_constants import FsConstants
 
 class RenameFileApp(QWidget):
     def __init__(self):
@@ -14,8 +15,8 @@ class RenameFileApp(QWidget):
 
     def init_ui(self):
         logger.info("---- 初始化文件名批量修改工具 ----")
-        self.setWindowTitle("文件名批量修改工具")
-        self.setWindowIcon(QIcon(PathUtil.get_resource_path("resources/app.ico")))
+        self.setWindowTitle(FsConstants.FILE_RENAMER_WINDOW_TITLE)
+        self.setWindowIcon(QIcon(PathUtil.get_resource_path(FsConstants.APP_ICON_PATH)))
 
 
         layout = QVBoxLayout()
@@ -120,10 +121,10 @@ class RenameFileApp(QWidget):
 
         # 作者和Github信息文本
         author_font = QFont("楷体", 11)
-        self.author_label = QLabel("Author：xueyao.me@gmail.com")
+        self.author_label = QLabel(f"Author：{FsConstants.AUTHOR_BLOG}")
         self.author_label.setFont(author_font)
         self.author_label.setStyleSheet("color: #007BFF;")
-        self.github_label = QLabel("Github：https://github.com/flowstone/Tooool")
+        self.github_label = QLabel(f"Github：{FsConstants.PROJECT_ADDRESS}")
         self.github_label.setFont(author_font)
         self.github_label.setStyleSheet("color: #007BFF;")
 

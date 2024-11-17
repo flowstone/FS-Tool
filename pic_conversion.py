@@ -7,6 +7,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from loguru import logger
 from path_util import PathUtil
+from fs_constants import FsConstants
 
 class PicConversionApp(QWidget):
     def __init__(self):
@@ -15,22 +16,10 @@ class PicConversionApp(QWidget):
 
     def init_ui(self):
         logger.info("---- 初始化图片格式转换应用 ----")
-        self.setWindowTitle("图片格式转换应用")
+        self.setWindowTitle(FsConstants.PIC_CONVERSION_WINDOW_TITLE)
         self.setWindowIcon(QIcon(PathUtil.get_resource_path("resources/app.ico")))
 
-        # 获取屏幕尺寸
-        desktop = QDesktopWidget().availableGeometry()
-        screen_width = desktop.width()
-        screen_height = desktop.height()
-        # 设置主应用窗口大小
-        window_width = 500
-        window_height = 400
-        print(screen_width)
-        # 计算窗口在屏幕中心的位置
-        x_pos = (screen_width - window_width) // 2
-        y_pos = (screen_height - window_height) // 2
-
-        self.setGeometry( x_pos, y_pos, window_width, window_height)
+        self.resize(FsConstants.PIC_CONVERSION_WINDOW_WIDTH, FsConstants.PIC_CONVERSION_WINDOW_HEIGHT)
         self.setStyleSheet("""
             QWidget {
                 background-color: #F5F5F5;

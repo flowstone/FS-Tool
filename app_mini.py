@@ -6,6 +6,7 @@ from PyQt5 import QtCore
 import os
 from loguru import logger
 from path_util import PathUtil
+from fs_constants import FsConstants
 
 class FloatingBall(QWidget):
 
@@ -18,7 +19,7 @@ class FloatingBall(QWidget):
     def init_ui(self):
         logger.info("---- 悬浮球初始化 ----")
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
-        self.setGeometry(0, 0, 90, 90)  # 设置悬浮球大小
+        self.setGeometry(0, 0, FsConstants.APP_MINI_WINDOW_WIDTH, FsConstants.APP_MINI_WINDOW_HEIGHT)  # 设置悬浮球大小
         self.setAttribute(Qt.WA_TranslucentBackground, True)  # 设置窗口背景透明
 
         self.setWindowOpacity(0.8)  # 设置透明度
@@ -64,7 +65,7 @@ class FloatingBall(QWidget):
 
         layout = QVBoxLayout()
         # 这里使用一个示例图片路径，你可以替换为真实路径
-        pixmap = QPixmap(PathUtil.get_resource_path("resources/app_mini.ico"))
+        pixmap = QPixmap(PathUtil.get_resource_path(FsConstants.APP_MINI_ICON_PATH))
         pixmap = pixmap.scaled(self.size())
         self.background_label = QLabel(self)
         self.background_label.setPixmap(pixmap)
