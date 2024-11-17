@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QSystemTrayIcon, QMenu, QAction
 from PyQt5.QtCore import Qt, QPoint, QPropertyAnimation, pyqtProperty, QParallelAnimationGroup,QTimer, QEasingCurve, pyqtSignal
-from PyQt5.QtGui import QIcon, QCursor, QMouseEvent, QPixmap, QColor, QBrush, QPainter, QLinearGradient,QTransform
+from PyQt5.QtGui import QIcon, QCursor, QMouseEvent, QPixmap, QColor, QBrush, QPainter, QLinearGradient,QTransform,QGuiApplication
 from PyQt5 import QtCore
 import os
 from loguru import logger
@@ -10,8 +10,9 @@ from common_util import CommonUtil
 
 class FloatingBall(QWidget):
 
-    def __init__(self):
+    def __init__(self, main_window):
         super().__init__()
+        self.main_window = main_window
         self.init_ui()
 
 
@@ -19,13 +20,19 @@ class FloatingBall(QWidget):
     def init_ui(self):
         logger.info("---- 悬浮球初始化 ----")
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
-        self.setGeometry(0, 0, FsConstants.APP_MINI_WINDOW_WIDTH, FsConstants.APP_MINI_WINDOW_HEIGHT)  # 设置悬浮球大小
+        # 获取屏幕尺寸信息
+        screen_rect = QGuiApplication.primaryScreen().geometry()
+        screen_width = screen_rect.width()
+        screen_height = screen_rect.height()
+        x = screen_width - FsConstants.APP_MINI_WINDOW_WIDTH
+        y = 10
+        self.setGeometry(x, y, FsConstants.APP_MINI_WINDOW_WIDTH, FsConstants.APP_MINI_WINDOW_HEIGHT)  # 设置悬浮球大小
         self.setAttribute(Qt.WA_TranslucentBackground, True)  # 设置窗口背景透明
 
         self.setWindowOpacity(0.8)  # 设置透明度
 
         self.setup_background_image()
-        self.move_to_top_right()
+        #self.move_to_top_right()
 
         self.dragPosition = None
         self.setMouseTracking(True)
@@ -95,10 +102,8 @@ class FloatingBall(QWidget):
 
     def show_main_window(self):
         logger.info("---- 双击悬浮球，打开主界面 ----")
-        from main_window import MainWindow
-        main_window = MainWindow(True, True)
-        main_window.show()
-
+        self.main_window.show()
+        self.main_window.is_floating_ball_visible = False
         self.close()
 
     # 鼠标双击，打开主界面
