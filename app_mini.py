@@ -5,8 +5,8 @@ from PyQt5.QtGui import QIcon, QCursor, QMouseEvent, QPixmap, QColor, QBrush, QP
 from PyQt5 import QtCore
 import os
 from loguru import logger
-from path_util import PathUtil
 from fs_constants import FsConstants
+from common_util import CommonUtil
 
 class FloatingBall(QWidget):
 
@@ -65,7 +65,7 @@ class FloatingBall(QWidget):
 
         layout = QVBoxLayout()
         # 这里使用一个示例图片路径，你可以替换为真实路径
-        pixmap = QPixmap(PathUtil.get_resource_path(FsConstants.APP_MINI_ICON_PATH))
+        pixmap = QPixmap(CommonUtil.get_mini_ico_full_path())
         pixmap = pixmap.scaled(self.size())
         self.background_label = QLabel(self)
         self.background_label.setPixmap(pixmap)
@@ -96,7 +96,7 @@ class FloatingBall(QWidget):
     def show_main_window(self):
         logger.info("---- 双击悬浮球，打开主界面 ----")
         from main_window import MainWindow
-        main_window = MainWindow(True)
+        main_window = MainWindow(True, True)
         main_window.show()
 
         self.close()

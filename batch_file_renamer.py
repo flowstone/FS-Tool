@@ -5,7 +5,7 @@ from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
 from loguru import logger
-from path_util import PathUtil
+from common_util import CommonUtil
 from fs_constants import FsConstants
 
 class RenameFileApp(QWidget):
@@ -16,7 +16,7 @@ class RenameFileApp(QWidget):
     def init_ui(self):
         logger.info("---- 初始化文件名批量修改工具 ----")
         self.setWindowTitle(FsConstants.FILE_RENAMER_WINDOW_TITLE)
-        self.setWindowIcon(QIcon(PathUtil.get_resource_path(FsConstants.APP_ICON_PATH)))
+        self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
 
         layout = QVBoxLayout()

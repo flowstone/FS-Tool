@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout
 from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 from PyQt5.QtCore import Qt, QTimer
 from loguru import logger
-from path_util import PathUtil
+from common_util import CommonUtil
 from fs_constants import FsConstants
 
 class DesktopClockApp(QWidget):
@@ -22,7 +22,7 @@ class DesktopClockApp(QWidget):
 
         # 设置窗口透明度
         self.setWindowOpacity(0.8)
-        self.setWindowIcon(QIcon(PathUtil.get_resource_path(FsConstants.APP_ICON_PATH)))
+        self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
 
         self.setGeometry(0, 0, 200, 80)  # 设置窗口初始位置和大小，这里定位在桌面左上角并设置合适尺寸

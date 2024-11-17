@@ -9,7 +9,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import random
 import time
-from path_util import PathUtil
+from common_util import CommonUtil
 import hashlib
 from fs_constants import FsConstants
 
@@ -61,7 +61,7 @@ class AutoAnswersApp(QMainWindow):
         font = QFont()
         font.setPointSize(12)
 
-        self.setWindowIcon(QIcon(PathUtil.get_resource_path(FsConstants.APP_ICON_PATH)))
+        self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         self.help_menu = self.addToolBar(FsConstants.TOOLBAR_HELP_TITLE)
         # 创建"打开"菜单项
@@ -76,7 +76,7 @@ class AutoAnswersApp(QMainWindow):
 
         # 图片标签，单独占一行
         image_label = QLabel(self)
-        pixmap = QPixmap(PathUtil.get_resource_path(FsConstants.AUTO_ANSWERS_TITLE_IMAGE))  # 替换为实际的图片路径
+        pixmap = QPixmap(CommonUtil.get_resource_path(FsConstants.AUTO_ANSWERS_TITLE_IMAGE))  # 替换为实际的图片路径
         # 对图片进行缩放，这里示例将宽度缩放为300像素，高度按比例缩放，保持图片比例不变
         scaled_pixmap = pixmap.scaled(217, 217, Qt.KeepAspectRatio)
         image_label.setPixmap(scaled_pixmap)

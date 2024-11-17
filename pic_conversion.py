@@ -6,7 +6,7 @@ from PIL import Image
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from loguru import logger
-from path_util import PathUtil
+from common_util import CommonUtil
 from fs_constants import FsConstants
 
 class PicConversionApp(QWidget):
@@ -17,7 +17,7 @@ class PicConversionApp(QWidget):
     def init_ui(self):
         logger.info("---- 初始化图片格式转换应用 ----")
         self.setWindowTitle(FsConstants.PIC_CONVERSION_WINDOW_TITLE)
-        self.setWindowIcon(QIcon(PathUtil.get_resource_path("resources/app.ico")))
+        self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         self.resize(FsConstants.PIC_CONVERSION_WINDOW_WIDTH, FsConstants.PIC_CONVERSION_WINDOW_HEIGHT)
         self.setStyleSheet("""

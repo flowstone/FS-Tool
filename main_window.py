@@ -10,16 +10,16 @@ from PyQt5.QtGui import QIcon
 from app_mini import FloatingBall
 import  os
 from loguru import logger
-from path_util import PathUtil
+from common_util import CommonUtil
 from app_menu_bar import AppMenuBar
 from fs_constants import FsConstants
 
 class MainWindow(QMainWindow):
-    def __init__(self, tray_icon_visible=False):
+    def __init__(self, tray_icon_visible=False, is_shown=False):
         super().__init__()
         # 任务栏托盘标志位，False没有创建  True已创建
         self.is_tray_icon_visible = tray_icon_visible
-
+        self.is_shown = is_shown  # 新增属性用于标记窗口是否已显示
         self.init_ui()
 
     def init_ui(self):
@@ -40,7 +40,7 @@ class MainWindow(QMainWindow):
 
         # 悬浮球可见状态，false可以创建悬浮球，反之。。。
         self.is_floating_ball_visible = False
-        self.setWindowIcon(QIcon(PathUtil.get_resource_path(FsConstants.APP_ICON_PATH)))
+        self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         # 透明时间
         time_btn = QPushButton("透明时间")
@@ -147,7 +147,7 @@ class MainWindow(QMainWindow):
         # 创建系统托盘图标
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(
-            QIcon(PathUtil.get_resource_path(FsConstants.APP_MINI_ICON_PATH)))  # 这里需要一个名为icon.png的图标文件，可以替换为真实路径
+            QIcon(CommonUtil.get_mini_ico_full_path()))  # 这里需要一个名为icon.png的图标文件，可以替换为真实路径
         self.tray_icon.activated.connect(self.tray_icon_activated)
 
         # 创建托盘菜单
@@ -165,12 +165,12 @@ class MainWindow(QMainWindow):
     # 从托盘菜单点击显示窗口
     def tray_menu_show_main(self):
         logger.info("---- 托盘菜单点击显示窗口 ----")
-
-        self.show()
-        # 悬浮球退出
-        if  self.is_floating_ball_visible:
-            self.floating_ball.close()
-            self.is_floating_ball_visible = False
+        if not self.is_shown:
+            self.show()
+            # 悬浮球退出
+            if  self.is_floating_ball_visible:
+                self.floating_ball.close()
+                self.is_floating_ball_visible = False
 
 
     # 处理窗口关闭事件
@@ -202,11 +202,12 @@ class MainWindow(QMainWindow):
     def tray_icon_activated(self, reason):
         logger.info("---- 双击任务栏托盘，打开窗口 ----")
         if reason == QSystemTrayIcon.DoubleClick:
-            self.show()
-            # 悬浮球退出
-            if self.is_floating_ball_visible:
-                self.floating_ball.close()
-                self.is_floating_ball_visible = False
+            if not self.is_shown:
+                self.show()
+                # 悬浮球退出
+                if self.is_floating_ball_visible:
+                    self.floating_ball.close()
+                    self.is_floating_ball_visible = False
 
     def time_btn_clicked(self):
         logger.info(f"---- 按钮<{FsConstants.DESKTOP_CLOCK_WINDOW_TITLE}>被点击了 ----")

@@ -71,3 +71,9 @@ class FsConstants:
     AUTHOR_BLOG = "https://blog.xueyao.tech"
     AUTHOR_GITHUB = "https://github.com/flowstone"
     PROJECT_ADDRESS = "https://github.com/flowstone/FS-Tool"
+
+
+    # 保存文件路径
+    SAVE_FILE_PATH_WIN = "C:\\"
+    SAVE_FILE_PATH_MAC = "~"
+    DATABASE_FILE = "database.db"
