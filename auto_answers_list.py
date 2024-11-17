@@ -16,14 +16,12 @@ from PyQt5.QtGui import QFont, QColor, QBrush
 import sqlite3
 
 from fs_constants import FsConstants
-from sqlite_util import SQLiteTool
 from common_util import CommonUtil
 
 
 class AutoAnswersList(QWidget):
     def __init__(self):
         super().__init__()
-        self.sql_con = SQLiteTool(CommonUtil.get_db_full_path())
         self.page_size = 10  # 每页显示的数据条数，这里调整为更合理的值，可按需修改
         self.current_page = 1  # 当前页码
         self.total_pages = 1  # 总页数，初始化为1，后续会根据实际数据量计算更新
@@ -101,8 +99,16 @@ class AutoAnswersList(QWidget):
         self.show()
 
     def load_data(self):
-        results = self.sql_con.read_page(
-            FsConstants.AUTO_ANSWERS_TABLE_NAME, page_size=self.page_size, page_num=self.current_page)
+        conn = sqlite3.connect(CommonUtil.get_db_full_path())
+        cursor = conn.cursor()
+        sql = f"SELECT * FROM {FsConstants.AUTO_ANSWERS_TABLE_NAME}"
+        if self.page_size and self.current_page:
+            offset = (self.current_page - 1) * self.page_size
+            sql += f" ORDER BY id DESC LIMIT {self.page_size} OFFSET {offset}"
+        cursor.execute(sql)
+        results = cursor.fetchall()
+        cursor.close()
+        conn.close()
 
         # 获取列名（假设表结构固定，这里从第一条记录获取列名，实际可根据数据库元数据更灵活获取）
         if results:
@@ -143,19 +149,19 @@ class AutoAnswersList(QWidget):
         """
         通过查询数据库中数据的总记录数来计算总页数
         """
-        #tmp_conn = self.sql_con
-        #tmp_cursor = tmp_conn.cursor()
-        self.sql_con.cursor().execute(f"SELECT COUNT(*) FROM {FsConstants.AUTO_ANSWERS_TABLE_NAME}")
-        total_records = self.sql_con.cursor().fetchone()[0]
-        self.sql_con.cursor().close()
-        self.sql_con.close()
+        conn = sqlite3.connect(CommonUtil.get_db_full_path())
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT COUNT(*) FROM {FsConstants.AUTO_ANSWERS_TABLE_NAME}")
+        total_records = cursor.fetchone()[0]
+        cursor.close()
+        conn.close()
 
         #self.total_pages = total_records
         self.total_pages = math.ceil(total_records / self.page_size)
         #self.page_size + (1 if total_records % self.page_size > 0 else 0)
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    sqlite = SQLiteTool(CommonUtil.get_db_full_path())
     main_window = AutoAnswersList()
     main_window.show()
     sys.exit(app.exec_())

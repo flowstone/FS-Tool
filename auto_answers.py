@@ -273,12 +273,11 @@ class AutoAnswersApp(QMainWindow):
 
         # 设置窗口整体样式，例如背景颜色（可按需修改）
         #self.setStyleSheet("QWidget { background-color: #f9f9f9; }")
-
         self.setLayout(main_layout)
-    @staticmethod
+
     def look_logs(self):
-        auto_answers_list = AutoAnswersList()
-        #auto_answers_list.show()
+        self.auto_answers_list = AutoAnswersList()
+        self.auto_answers_list.show()
 
     def show_instructions(self):
         readme_text = FsConstants.AUTO_ANSWER_TOOLBAR_README_TEXT
