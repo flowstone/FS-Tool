@@ -20,31 +20,24 @@ class FloatingBall(QWidget):
     def init_ui(self):
         logger.info("---- 悬浮球初始化 ----")
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
-        # 获取屏幕尺寸信息
-        screen_rect = QGuiApplication.primaryScreen().geometry()
-        screen_width = screen_rect.width()
-        screen_height = screen_rect.height()
-        x = screen_width - FsConstants.APP_MINI_WINDOW_WIDTH
-        y = 10
-        self.setGeometry(x, y, FsConstants.APP_MINI_WINDOW_WIDTH, FsConstants.APP_MINI_WINDOW_HEIGHT)  # 设置悬浮球大小
+
+        self.setGeometry(0, 0, FsConstants.APP_MINI_WINDOW_WIDTH, FsConstants.APP_MINI_WINDOW_HEIGHT)  # 设置悬浮球大小
         self.setAttribute(Qt.WA_TranslucentBackground, True)  # 设置窗口背景透明
 
         self.setWindowOpacity(0.8)  # 设置透明度
 
         self.setup_background_image()
-        #self.move_to_top_right()
+        self.move_to_top_right()
 
         self.dragPosition = None
         self.setMouseTracking(True)
 
-        # 连接鼠标进入和离开事件，用于触发特效
-        #self.enterEvent = self.on_enter_event
-        #self.leaveEvent = self.on_leave_event
 
 
         # 启动呼吸灯效果（透明度周期性变化）
         self.breathing_light_window()
 
+    # 启动呼吸灯效果（透明度周期性变化）
     def breathing_light_window(self):
         logger.info("---- 悬浮球启动呼吸灯效果 ----")
         # 初始透明度
@@ -88,23 +81,29 @@ class FloatingBall(QWidget):
         y = 10
         self.move(x, y)
 
+    # 鼠标按下事件
     def mousePressEvent(self, event: QMouseEvent):
-        # 鼠标按下事件
         if event.button() == Qt.LeftButton:
             self.dragPosition = event.globalPos() - self.frameGeometry().topLeft()
             event.accept()
 
+    # 鼠标移动事件
     def mouseMoveEvent(self, event: QMouseEvent):
-        # 鼠标移动事件
         if event.buttons() == Qt.LeftButton and self.dragPosition:
             self.move(event.globalPos() - self.dragPosition)
             event.accept()
+
+    # 鼠标释放
+    def mouseReleaseEvent(self, event: QMouseEvent):
+        if event.button() == Qt.LeftButton:
+            self.dragPosition = None
 
     def show_main_window(self):
         logger.info("---- 双击悬浮球，打开主界面 ----")
         self.main_window.show()
         self.main_window.is_floating_ball_visible = False
-        self.close()
+        #self.close()
+        self.hide()
 
     # 鼠标双击，打开主界面
     def mouseDoubleClickEvent(self, event: QMouseEvent):
