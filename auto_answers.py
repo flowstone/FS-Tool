@@ -1,4 +1,6 @@
 import sys
+from datetime import datetime
+
 from PyQt5.QtWidgets import QApplication,QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QPushButton, QMenu, QSizePolicy,QMessageBox,QAction
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont,QPixmap, QIcon
@@ -12,6 +14,7 @@ import time
 from common_util import CommonUtil
 import hashlib
 from fs_constants import FsConstants
+from sqlite_util import SQLiteTool
 
 # 这里定义一些常见的姓氏和名字的列表，可以根据实际情况扩展
 last_names = ["赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈", "褚", "卫", "蒋", "沈", "韩", "杨"]
@@ -52,6 +55,11 @@ class AutoAnswersApp(QMainWindow):
         self.job_status = False
         self.while_flag = True
         self.while_second_flag = True
+
+        self.today = CommonUtil.get_today()
+        self.error = 0
+        self.success = 0
+        self.sqlite = SQLiteTool(CommonUtil.get_db_full_path())
 
         self.setWindowTitle(FsConstants.AUTO_ANSWERS_WINDOW_TITLE)
         main_layout = QVBoxLayout()
@@ -303,11 +311,26 @@ class AutoAnswersApp(QMainWindow):
         logger.info(f"职业: {self.job_value}")
         logger.info(f"公司: {self.company_value}")
 
-        logger.info("---- 开始进行自动答案 ----")
+        logger.info("---- 新增当天的答题记录 [START]----")
+        try:
+            data_one = self.sqlite.read_one(FsConstants.AUTO_ANSWERS_TABLE_NAME,"error,success",f"today = '{self.today}'")
+            if data_one:
+                self.error = data_one[0]
+                self.success = data_one[1]
+            else:
+                create_data = {'today': self.today,'create_time': CommonUtil.get_current_time()}
+                self.sqlite.create(FsConstants.AUTO_ANSWERS_TABLE_NAME,create_data)
+        except Exception as e:
+            logger.error(f"操作数据库遇到异常：{e}")
+        logger.info("---- 新增当天的答题记录 [END]----")
+
+        logger.info("---- 开始进行自动答题 ----")
         for index in range(self.selected_number):
-            logger.info(f"---- 自动答案第<{self.selected_number}>次 ----")
+            logger.info(f"---- 自动答题第<{index+1}>次 ----")
             self.while_flag = True
             self.start()
+        self.sqlite.close()
+        logger.info("---- 结束自动答题 ----")
 
     def start(self):
 
@@ -541,10 +564,22 @@ class AutoAnswersApp(QMainWindow):
             # 接受弹窗确认
             self.web_driver.switch_to.alert.accept()
             time.sleep(1)
+            self.success += 1
         except Exception as e:
             logger.error(f"在开始评测中出现异常: {e}")
+            self.error += 1
+
         # 关闭窗口
         self.web_driver.quit()
+        try:
+
+            logger.info("---- 插入答题次数到数据库 ----")
+            logger.info(f"---- 当前error={self.error}, success={self.success} ----")
+            update_dict = {'error': self.error, 'success': self.success, 'update_time': CommonUtil.get_current_time()}
+            self.sqlite.update(FsConstants.AUTO_ANSWERS_TABLE_NAME, update_dict,
+                                      f"today = '{self.today}'")
+        except Exception as e:
+            logger.warning(f"更新自动答题记录表失败，{e}")
 
     # 判断Select是不是全部选中
     def is_all_selected(self):

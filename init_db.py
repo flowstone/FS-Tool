@@ -17,10 +17,11 @@ class InitDB:
         创建users表，如果不存在的话
         """
         create_table_sql = '''
-        CREATE TABLE IF NOT EXISTS users (
+        CREATE TABLE IF NOT EXISTS auto_answers_log (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            age INTEGER,
+            error INTEGER DEFAULT 0, 
+            success INTEGER DEFAULT 0,
+            today CHAR COMMENT '今天时间' NOT NULL UNIQUE,
             create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )

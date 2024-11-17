@@ -39,6 +39,19 @@ class SQLiteTool:
         self.cursor.execute(sql)
         return self.cursor.fetchall()
 
+    def read_one(self, table_name, columns='*', condition=None):
+        """
+        从指定表中读取记录
+        :param table_name: 表名
+        :param columns: 要读取的列名，默认为'*'（读取所有列），例如 'name, age'
+        :param condition: 查询条件，格式为SQL语句中的WHERE子句部分，例如 "age > 20"，默认为None（读取所有记录）
+        :return: 查询到的记录列表
+        """
+        sql = f"SELECT {columns} FROM {table_name}"
+        if condition:
+            sql += f" WHERE {condition}"
+        self.cursor.execute(sql)
+        return self.cursor.fetchone()
     def update(self, table_name, data_dict, condition):
         """
         更新指定表中的记录
