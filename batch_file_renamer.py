@@ -1,6 +1,6 @@
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar,QFileDialog
+from PyQt5.QtWidgets import QApplication, QRadioButton,QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar,QFileDialog
 from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
@@ -11,6 +11,8 @@ from fs_constants import FsConstants
 class RenameFileApp(QWidget):
     def __init__(self):
         super().__init__()
+        # 选择的类型
+        self.check_radio_text = None
         self.init_ui()
 
     def init_ui(self):
@@ -18,8 +20,22 @@ class RenameFileApp(QWidget):
         self.setWindowTitle(FsConstants.FILE_RENAMER_WINDOW_TITLE)
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
-
         layout = QVBoxLayout()
+
+        radio_btn_layout = QHBoxLayout()
+        self.radio_label = QLabel("选择类型：")
+        # 创建两个单选按钮
+        self.file_rbtn = QRadioButton('文件')
+        self.folder_rbtn = QRadioButton('文件夹')
+        # 将两个单选按钮设置为互斥
+        self.check_radio_text = self.file_rbtn.text()
+        self.file_rbtn.setChecked(True)  # 默认选中选项1
+        self.file_rbtn.toggled.connect(self.radio_btn_toggled)
+        self.folder_rbtn.toggled.connect(self.radio_btn_toggled)
+        radio_btn_layout.addWidget(self.radio_label)
+        radio_btn_layout.addWidget(self.file_rbtn)
+        radio_btn_layout.addWidget(self.folder_rbtn)
+        layout.addLayout(radio_btn_layout)
 
 
 
@@ -169,6 +185,11 @@ class RenameFileApp(QWidget):
         self.setLayout(layout)
 
 
+    def radio_btn_toggled(self):
+        radio_button = self.sender()
+        if radio_button.isChecked():
+            self.check_radio_text = radio_button.text()
+            logger.info(f'当前选中：{radio_button.text()}')
 
     def browse_folder(self):
         folder_path = QFileDialog.getExistingDirectory(self, "选择文件夹")
@@ -183,14 +204,23 @@ class RenameFileApp(QWidget):
         char_to_find = self.char_to_find_entry.text()
         replace_char = self.replace_char_entry.text()
         if folder_path:
-            self.rename_files(folder_path, prefix, suffix, char_to_find, replace_char)
-            QMessageBox.information(self, "提示", "批量文件名修改完成！")
+            if self.check_radio_text == self.file_rbtn.text():
+                logger.info(f"你选择类型是:{FsConstants.FILE_RENAMER_TYPE_FILE}")
+                self.rename_files(folder_path, prefix, suffix, char_to_find, replace_char)
+            else:
+                logger.info(f"你选择的类型是：{FsConstants.FILE_RENAMER_TYPE_FOLDER}")
+                self.rename_folder(folder_path, prefix, suffix, char_to_find, replace_char)
+            QMessageBox.information(self, "提示", "批量改名完成！")
+            logger.info("批量改名完成")
+
         else:
             QMessageBox.warning(self, "警告", "请选择要修改的文件夹！")
+            logger.warning("请选择要修改的文件夹")
+
 
     # 修改文件名
     @staticmethod
-    def rename_files(self, folder_path, prefix, suffix, char_to_find, replace_char):
+    def rename_files(folder_path, prefix, suffix, char_to_find, replace_char):
         # 遍历文件夹下的文件名
         for filename in os.listdir(folder_path):
             old_path = os.path.join(folder_path, filename)
@@ -204,3 +234,16 @@ class RenameFileApp(QWidget):
                 new_path = os.path.join(folder_path, new_filename)
                 os.rename(old_path, new_path)
 
+    # 修改文件夹名
+    @staticmethod
+    def rename_folder(folder_path, prefix, suffix, char_to_find, replace_char):
+        for dir_name in os.listdir(folder_path):
+            old_path = os.path.join(folder_path, dir_name)
+            if os.path.isdir(old_path):
+                new_folder_name = f"{prefix}{dir_name}{suffix}"
+                # 判断是否需要进行文件替换操作
+                if char_to_find and replace_char:
+                    # 替换字符
+                    new_folder_name = new_folder_name.replace(char_to_find, replace_char)
+                new_path = os.path.join(folder_path, new_folder_name)
+                os.rename(old_path, new_path)
