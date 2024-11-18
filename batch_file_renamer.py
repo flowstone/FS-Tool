@@ -1,18 +1,21 @@
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QRadioButton,QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar,QFileDialog
+from PyQt5.QtWidgets import QApplication, QGroupBox,QRadioButton,QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar,QFileDialog
 from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
 from loguru import logger
+from select import select
+
 from common_util import CommonUtil
 from fs_constants import FsConstants
 
 class RenameFileApp(QWidget):
     def __init__(self):
         super().__init__()
-        # 选择的类型
-        self.check_radio_text = None
+        # 选择文件类型
+        self.check_type_text = None
+        self.check_serial_flag = False
         self.init_ui()
 
     def init_ui(self):
@@ -21,21 +24,38 @@ class RenameFileApp(QWidget):
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         layout = QVBoxLayout()
-
+        # 创建第一个单选按钮组
+        group_box = QGroupBox('文件类型')
         radio_btn_layout = QHBoxLayout()
-        self.radio_label = QLabel("选择类型：")
+        self.radio_label = QLabel("选择文件类型：")
+        self.radio_label.setStyleSheet("color: #333; font-size: 14px;")
+
         # 创建两个单选按钮
         self.file_rbtn = QRadioButton('文件')
         self.folder_rbtn = QRadioButton('文件夹')
         # 将两个单选按钮设置为互斥
-        self.check_radio_text = self.file_rbtn.text()
+        self.check_type_text = self.file_rbtn.text()
         self.file_rbtn.setChecked(True)  # 默认选中选项1
         self.file_rbtn.toggled.connect(self.radio_btn_toggled)
         self.folder_rbtn.toggled.connect(self.radio_btn_toggled)
         radio_btn_layout.addWidget(self.radio_label)
         radio_btn_layout.addWidget(self.file_rbtn)
         radio_btn_layout.addWidget(self.folder_rbtn)
-        layout.addLayout(radio_btn_layout)
+        group_box.setLayout(radio_btn_layout)
+        layout.addWidget(group_box)
+
+
+        radio_asc_layout = QHBoxLayout()
+        self.number_label = QLabel("选择序号：")
+        self.number_label.setStyleSheet("color: #333; font-size: 14px;")
+
+        # 创建两个单选按钮
+        self.number_rbtn = QRadioButton('数字，如1、2、3')
+        self.number_rbtn.toggled.connect(self.radio_serial_toggled)
+        radio_asc_layout.addWidget(self.number_label)
+        radio_asc_layout.addWidget(self.number_rbtn)
+        layout.addLayout(radio_asc_layout)
+
 
 
 
@@ -185,10 +205,21 @@ class RenameFileApp(QWidget):
         self.setLayout(layout)
 
 
+    # 序号Radio
+    def radio_serial_toggled(self):
+        if self.number_rbtn.isChecked():
+            self.check_serial_flag = True
+            logger.info(f'当前选中：{self.number_rbtn.text()}')
+        else:
+            self.check_serial_flag = False
+            logger.info(f'取消选中')
+
+
+    # 文件类型Radio
     def radio_btn_toggled(self):
         radio_button = self.sender()
         if radio_button.isChecked():
-            self.check_radio_text = radio_button.text()
+            self.check_type_text = radio_button.text()
             logger.info(f'当前选中：{radio_button.text()}')
 
     def browse_folder(self):
@@ -203,13 +234,22 @@ class RenameFileApp(QWidget):
         suffix = self.suffix_entry.text()
         char_to_find = self.char_to_find_entry.text()
         replace_char = self.replace_char_entry.text()
+        if self.check_serial_flag and (prefix != "" or suffix != "" or char_to_find != "" or replace_char != ""):
+            logger.info(f"选择序号时，不能同时修改其它信息")
+            QMessageBox.warning(self, "警告", "选择序号时，不能同时修改其它信息！")
+            return
         if folder_path:
-            if self.check_radio_text == self.file_rbtn.text():
+            if self.check_type_text == self.file_rbtn.text():
                 logger.info(f"你选择类型是:{FsConstants.FILE_RENAMER_TYPE_FILE}")
                 self.rename_files(folder_path, prefix, suffix, char_to_find, replace_char)
             else:
                 logger.info(f"你选择的类型是：{FsConstants.FILE_RENAMER_TYPE_FOLDER}")
                 self.rename_folder(folder_path, prefix, suffix, char_to_find, replace_char)
+
+            if self.check_serial_flag:
+                logger.info(f"选择序号单独走其它方法")
+                self.rename_serial(folder_path)
+
             QMessageBox.information(self, "提示", "批量改名完成！")
             logger.info("批量改名完成")
 
@@ -234,6 +274,7 @@ class RenameFileApp(QWidget):
                 new_path = os.path.join(folder_path, new_filename)
                 os.rename(old_path, new_path)
 
+
     # 修改文件夹名
     @staticmethod
     def rename_folder(folder_path, prefix, suffix, char_to_find, replace_char):
@@ -247,3 +288,33 @@ class RenameFileApp(QWidget):
                     new_folder_name = new_folder_name.replace(char_to_find, replace_char)
                 new_path = os.path.join(folder_path, new_folder_name)
                 os.rename(old_path, new_path)
+    # 添加序号
+    def rename_serial(self, folder_path):
+        # 用于记录重命名的序号，初始化为1
+        index = 1
+        if self.check_type_text == self.folder_rbtn.text():
+            logger.info("---- 开始为文件夹创建序号 ----")
+            # 获取当前文件夹下的所有子文件夹和文件
+            sub_dirs = [os.path.join(folder_path, d) for d in os.listdir(folder_path) if
+                        os.path.isdir(os.path.join(folder_path, d))]
+
+            # 重命名当前文件夹下的子文件夹
+            for dir_path in sub_dirs:
+                dir_name = os.path.basename(dir_path)
+                new_dir_name = str(index) + dir_name
+                new_dir_path = os.path.join(os.path.dirname(dir_path), new_dir_name)
+                os.rename(dir_path, new_dir_path)
+                index += 1
+
+
+        if self.check_type_text == self.file_rbtn.text():
+            logger.info("---- 开始为文件创建序号 ----")
+            files = [os.path.join(folder_path, f) for f in os.listdir(folder_path) if
+                     os.path.isfile(os.path.join(folder_path, f))]
+            # 重命名当前文件夹下的文件
+            for file_path in files:
+                file_name = os.path.basename(file_path)
+                new_file_name = str(index) + file_name
+                new_file_path = os.path.join(os.path.dirname(file_path), new_file_name)
+                os.rename(file_path, new_file_path)
+                index += 1
