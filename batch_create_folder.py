@@ -150,15 +150,16 @@ class CreateFolderApp(QWidget):
         slice_char = self.slice_entry.text()
 
         if folder_path:
-            self.create_folder_move_files(folder_path, slice_char)
+            if slice_char != "":
+                logger.info("---- 有分割字符，开始执行操作 ----")
+                self.create_folder_move_files(folder_path, slice_char)
             QMessageBox.information(self, "提示", "移动文件完成！")
         else:
             QMessageBox.warning(self, "警告", "请选择要操作的文件夹！")
 
     # 创建文件夹，并移动到指定目录下
     @staticmethod
-    def create_folder_move_files(self, folder_path, slice_char):
-
+    def create_folder_move_files(folder_path, slice_char):
         # 遍历文件夹下的文件名
         for filename in os.listdir(folder_path):
             source_path = os.path.join(folder_path, filename)
