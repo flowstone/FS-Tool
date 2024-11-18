@@ -2,7 +2,7 @@ import sys
 import sqlite3
 from PyQt5.QtWidgets import QApplication, QMessageBox,QWidget, QVBoxLayout, QPushButton, QTableWidget, QTableWidgetItem, QHBoxLayout, QLabel, QLineEdit
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QColor, QBrush
+from PyQt5.QtGui import QFont, QColor, QBrush,QIcon
 from loguru import logger
 from fs_constants import FsConstants
 from sqlite_util import SQLiteTool
@@ -32,6 +32,7 @@ class AutoAnswersList(QWidget):
     def init_ui(self):
         layout = QVBoxLayout()
         self.setFixedSize(730, 600)  # 设置窗口固定大小为宽700像素，高600像素
+        self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         self.table = QTableWidget()
 
