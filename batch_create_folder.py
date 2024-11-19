@@ -3,6 +3,7 @@ import os
 import shutil
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar, QFileDialog
 from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
+from PyQt5.QtCore import Qt
 
 from PyQt5.QtWidgets import QMessageBox
 from loguru import logger
@@ -17,6 +18,7 @@ class CreateFolderApp(QWidget):
     def init_ui(self):
         logger.info("---- 初始化创建文件夹并移动文件 ----")
         self.setWindowTitle(FsConstants.CREATE_FOLDER_WINDOW_TITLE)
+        self.setWindowFlags(self.windowFlags() | Qt.MSWindowsFixedSizeDialogHint)
 
         # 设置窗口背景色为淡灰色
         self.setAutoFillBackground(True)

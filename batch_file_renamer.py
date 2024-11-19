@@ -22,6 +22,7 @@ class RenameFileApp(QWidget):
         logger.info("---- 初始化文件名批量修改工具 ----")
         self.setWindowTitle(FsConstants.FILE_RENAMER_WINDOW_TITLE)
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
+        self.setWindowFlags(self.windowFlags() | Qt.MSWindowsFixedSizeDialogHint)
 
         layout = QVBoxLayout()
         # 创建第一个单选按钮组

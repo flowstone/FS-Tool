@@ -27,7 +27,7 @@ class MainWindow(QMainWindow):
 
         logger.info(f"调用了主界面的初始化,悬浮球标志位 = {self.is_floating_ball_visible}")
         self.setWindowTitle(FsConstants.APP_WINDOW_TITLE)
-        self.resize(FsConstants.APP_WINDOW_WIDTH, FsConstants.APP_WINDOW_HEIGHT)
+        self.setFixedSize(FsConstants.APP_WINDOW_WIDTH, FsConstants.APP_WINDOW_HEIGHT)
         self.setStyleSheet("background-color: #F5F5F5;")  # 设置窗口背景色为淡灰色
 
         layout = QVBoxLayout()

@@ -19,7 +19,7 @@ class PicConversionApp(QWidget):
         self.setWindowTitle(FsConstants.PIC_CONVERSION_WINDOW_TITLE)
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
-        self.resize(FsConstants.PIC_CONVERSION_WINDOW_WIDTH, FsConstants.PIC_CONVERSION_WINDOW_HEIGHT)
+        self.setFixedSize(FsConstants.PIC_CONVERSION_WINDOW_WIDTH, FsConstants.PIC_CONVERSION_WINDOW_HEIGHT)
         self.setStyleSheet("""
             QWidget {
                 background-color: #F5F5F5;

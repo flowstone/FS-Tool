@@ -63,6 +63,8 @@ class AutoAnswersApp(QMainWindow):
         self.sqlite = SQLiteTool(CommonUtil.get_db_full_path())
 
         self.setWindowTitle(FsConstants.AUTO_ANSWERS_WINDOW_TITLE)
+        self.setWindowFlags(self.windowFlags() | Qt.MSWindowsFixedSizeDialogHint)
+
         main_layout = QVBoxLayout()
         main_layout.setSpacing(15)  # 设置主垂直布局的间距为10像素，可根据实际调整
 
