@@ -6,7 +6,7 @@ class FsConstants:
     """
     # 主窗口相关常量
     APP_WINDOW_WIDTH = 300
-    APP_WINDOW_HEIGHT = 250
+    APP_WINDOW_HEIGHT = 300
     APP_WINDOW_TITLE = "流体石头的工具箱"
 
     # 悬浮球相关常量
@@ -40,6 +40,12 @@ class FsConstants:
     FILE_RENAMER_WINDOW_TITLE = "重命名使者"
     FILE_RENAMER_TYPE_FILE = "文件"
     FILE_RENAMER_TYPE_FOLDER = "文件夹"
+
+    # 批量HEIC转JPG
+    HEIC_JPG_WINDOW_WIDTH = 0
+    HEIC_JPG_WINDOW_HEIGHT = 0
+    HEIC_JPG_WINDOW_TITLE = "批量HEIC转JPG(递归)"
+    HEIC_JPG_BUTTON_TITLE = "HEIC作家"
 
     # 图片转换相关常量
     PIC_CONVERSION_WINDOW_WIDTH = 500

@@ -1,6 +1,8 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QSystemTrayIcon, QMenu, QAction, QToolBar, QMainWindow
 from PyQt5.QtGui import QFont, QPalette, QColor
+
+from batch_heic_jpg import HeicToJpgApp
 from desktop_clock import DesktopClockApp
 from pic_conversion import PicConversionApp
 from batch_file_renamer import RenameFileApp
@@ -111,6 +113,24 @@ class MainWindow(QMainWindow):
         rename_file_btn.clicked.connect(self.rename_file_btn_clicked)
 
         layout.addWidget(rename_file_btn)
+
+        # HEIC转JPG
+        heic_jpg_btn = QPushButton(FsConstants.HEIC_JPG_BUTTON_TITLE)
+        heic_jpg_btn.setFont(QFont('Arial', 14))
+        heic_jpg_btn.setStyleSheet("""
+                    QPushButton {
+                        background-color: #FF6A6A;
+                        color: white;
+                        border-radius: 8px;
+                        padding: 10px;
+                    }
+                    QPushButton:hover {
+                        background-color: #CD5555;
+                    }
+                """)
+        heic_jpg_btn.clicked.connect(self.heic_jpg_btn_clicked)
+
+        layout.addWidget(heic_jpg_btn)
 
         # 自动答题
         auto_answers_btn = QPushButton(FsConstants.AUTO_ANSWERS_WINDOW_TITLE)
@@ -223,6 +243,11 @@ class MainWindow(QMainWindow):
         logger.info(f"---- 按钮<{FsConstants.FILE_RENAMER_WINDOW_TITLE}>被点击了 ----")
         self.rename_file = RenameFileApp()
         self.rename_file.show()
+
+    def heic_jpg_btn_clicked(self):
+        logger.info(f"---- 按钮<{FsConstants.HEIC_JPG_WINDOW_TITLE}>被点击了 ----")
+        self.heic_to_jpg = HeicToJpgApp()
+        self.heic_to_jpg.show()
 
     def auto_answers_btn_clicked(self):
         logger.info(f"---- 按钮<{FsConstants.AUTO_ANSWERS_WINDOW_TITLE}>被点击了 ----")
