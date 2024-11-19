@@ -16,6 +16,7 @@ class RenameFileApp(QWidget):
         # 选择文件类型
         self.check_type_text = None
         self.check_serial_flag = False
+        self.check_clear_flag = False
         self.init_ui()
 
     def init_ui(self):
@@ -28,7 +29,7 @@ class RenameFileApp(QWidget):
         # 创建第一个单选按钮组
         group_box = QGroupBox('文件类型')
         radio_btn_layout = QHBoxLayout()
-        self.radio_label = QLabel("选择文件类型：")
+        self.radio_label = QLabel("*选择文件类型：")
         self.radio_label.setStyleSheet("color: #333; font-size: 14px;")
 
         # 创建两个单选按钮
@@ -45,7 +46,7 @@ class RenameFileApp(QWidget):
         group_box.setLayout(radio_btn_layout)
         layout.addWidget(group_box)
 
-
+        number_box = QGroupBox('序号')
         radio_asc_layout = QHBoxLayout()
         self.number_label = QLabel("选择序号：")
         self.number_label.setStyleSheet("color: #333; font-size: 14px;")
@@ -55,14 +56,24 @@ class RenameFileApp(QWidget):
         self.number_rbtn.toggled.connect(self.radio_serial_toggled)
         radio_asc_layout.addWidget(self.number_label)
         radio_asc_layout.addWidget(self.number_rbtn)
-        layout.addLayout(radio_asc_layout)
+        number_box.setLayout(radio_asc_layout)
+        layout.addWidget(number_box)
 
+        radio_clear_layout = QHBoxLayout()
+        self.name_label = QLabel("清空文件名：")
+        self.name_label.setStyleSheet("color: #333; font-size: 14px;")
 
+        # 创建两个单选按钮
+        self.name_clear_rbtn = QRadioButton('是')
+        self.name_clear_rbtn.toggled.connect(self.radio_name_clear_toggled)
+        radio_clear_layout.addWidget(self.name_label)
+        radio_clear_layout.addWidget(self.name_clear_rbtn)
+        layout.addLayout(radio_clear_layout)
 
 
         # 选择文件夹相关部件
         folder_path_layout = QHBoxLayout()
-        self.folder_path_label = QLabel("选择文件夹：")
+        self.folder_path_label = QLabel("*选择文件夹：")
         self.folder_path_label.setStyleSheet("color: #333; font-size: 14px;")
         self.folder_path_entry = QLineEdit()
         self.folder_path_entry.setFixedWidth(300)
@@ -206,6 +217,15 @@ class RenameFileApp(QWidget):
         self.setLayout(layout)
 
 
+    # 清空原名称，只限序号时使用
+    def radio_name_clear_toggled(self):
+        if self.name_clear_rbtn.isChecked():
+            self.check_clear_flag = True
+            logger.info(f'当前选中：{self.name_clear_rbtn.text()}')
+        else:
+            self.check_clear_flag = False
+            logger.info(f'取消选中')
+
     # 序号Radio
     def radio_serial_toggled(self):
         if self.number_rbtn.isChecked():
@@ -235,6 +255,10 @@ class RenameFileApp(QWidget):
         suffix = self.suffix_entry.text()
         char_to_find = self.char_to_find_entry.text()
         replace_char = self.replace_char_entry.text()
+        if self.check_clear_flag and self.check_serial_flag == False:
+            logger.info(f"选择清空选项时，必须选择序号!")
+            QMessageBox.warning(self, "警告", "选择清空选项时，选择序号必选！")
+            return
         if self.check_serial_flag and (prefix != "" or suffix != "" or char_to_find != "" or replace_char != ""):
             logger.info(f"选择序号时，不能同时修改其它信息")
             QMessageBox.warning(self, "警告", "选择序号时，不能同时修改其它信息！")
@@ -301,7 +325,7 @@ class RenameFileApp(QWidget):
 
             # 重命名当前文件夹下的子文件夹
             for dir_path in sub_dirs:
-                dir_name = os.path.basename(dir_path)
+                dir_name = "" if self.check_clear_flag  else os.path.basename(dir_path)
                 new_dir_name = str(index) + dir_name
                 new_dir_path = os.path.join(os.path.dirname(dir_path), new_dir_name)
                 os.rename(dir_path, new_dir_path)
@@ -315,6 +339,8 @@ class RenameFileApp(QWidget):
             # 重命名当前文件夹下的文件
             for file_path in files:
                 file_name = os.path.basename(file_path)
+                if self.check_clear_flag:
+                    _, file_name = os.path.splitext(file_path)
                 new_file_name = str(index) + file_name
                 new_file_path = os.path.join(os.path.dirname(file_path), new_file_name)
                 os.rename(file_path, new_file_path)
