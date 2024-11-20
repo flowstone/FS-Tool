@@ -11,11 +11,16 @@ from common_util import CommonUtil
 from fs_constants import FsConstants
 import whatimage
 import pillow_heif
-from PIL import Image
+from PIL import Image,ImageOps
+from pillow_heif import register_heif_opener
+
+# 注册HEIC文件 opener，使得PIL能够识别并打开HEIC格式文件，仅限V2方法使用
+register_heif_opener()
 
 class HeicToJpgApp(QWidget):
     def __init__(self):
         super().__init__()
+
         self.init_ui()
 
     def init_ui(self):
@@ -75,8 +80,8 @@ class HeicToJpgApp(QWidget):
 
         # 操作按钮
         button_layout = QHBoxLayout()
-        start_button = QPushButton("开始")
-        start_button.setStyleSheet("""
+        self.start_button = QPushButton("开始")
+        self.start_button.setStyleSheet("""
             QPushButton {
                 background-color: #008CBA;
                 color: white;
@@ -87,7 +92,7 @@ class HeicToJpgApp(QWidget):
                 background-color: #007B9A;
             }
         """)
-        start_button.clicked.connect(self.start_operation)
+        self.start_button.clicked.connect(self.start_operation)
         exit_button = QPushButton("退出")
         exit_button.setStyleSheet("""
             QPushButton {
@@ -102,7 +107,7 @@ class HeicToJpgApp(QWidget):
         """)
         exit_button.clicked.connect(self.close)
 
-        button_layout.addWidget(start_button)
+        button_layout.addWidget(self.start_button)
         button_layout.addWidget(exit_button)
 
         layout.addLayout(folder_path_layout)
@@ -126,13 +131,18 @@ class HeicToJpgApp(QWidget):
 
 
         if folder_path:
-            logger.info("---- 有分割字符，开始执行操作 ----")
-            self.heic_to_jpg(folder_path)
+            logger.info("---- 有选择文件夹，开始执行操作 ----")
+            self.start_button.setEnabled(False)  # 禁用按钮，防止多次点击
+            self.heic_to_jpg_v2(folder_path)
             QMessageBox.information(self, "提示", "移动文件完成！")
+            self.start_button.setEnabled(True)  # 禁用按钮，防止多次点击
         else:
             QMessageBox.warning(self, "警告", "请选择要操作的文件夹！")
 
     # 创建文件夹，并移动到指定目录下
+    # import whatimage
+    # import pillow_heif
+    # 但是个别HEIC图片无法识别
     @staticmethod
     def heic_to_jpg(folder_path):
         if folder_path:
@@ -152,5 +162,29 @@ class HeicToJpgApp(QWidget):
                                 logger.info(f'已将 {file_path} 转换为 {new_file_path}')
                             except Exception as e:
                                 logger.error(f'转换 {file_path} 时出错: {e}')
-
-
+    # +++++ 最新方法 +++++
+    # PIL导入Image
+    #from PIL import Image,ImageOps
+    #from pillow_heif import register_heif_opener
+    # 注册HEIC文件 opener，使得PIL能够识别并打开HEIC格式文件
+    #register_heif_opener()
+    @staticmethod
+    def heic_to_jpg_v2(folder_path):
+        if folder_path:
+            for root, dirs, files in os.walk(folder_path):
+                for file in files:
+                    if file.endswith('.HEIC') or file.endswith('.heic'):
+                        file_path = os.path.join(root, file)
+                        try:
+                            image = Image.open(file_path)
+                            # 使用exif_transpose方法根据EXIF信息调整图像方向
+                            image = ImageOps.exif_transpose(image)
+                            file_name = file.split('.')[0] + '.jpg'
+                            output_path = os.path.join(root, file_name)
+                            image.convert('RGB').save(output_path, 'JPEG')
+                            logger.info(f"{file_path} 已成功转换为 {output_path}")
+                        except FileNotFoundError:
+                            logger.error(f"文件 {file_path} 不存在，请检查路径。")
+                        except IOError as e:
+                            logger.warning(f"处理 {file_path} 时出现错误: {str(e)}")
+            logger.info("所有HEIC图片转换完成！")
