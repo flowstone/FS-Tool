@@ -3,7 +3,7 @@ import os
 import shutil
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar, QFileDialog
 from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt,pyqtSignal, QObject, QThread
 
 from PyQt5.QtWidgets import QMessageBox
 from loguru import logger
@@ -13,14 +13,13 @@ import whatimage
 import pillow_heif
 from PIL import Image,ImageOps
 from pillow_heif import register_heif_opener
-
+import loading_util
 # 注册HEIC文件 opener，使得PIL能够识别并打开HEIC格式文件，仅限V2方法使用
 register_heif_opener()
 
 class HeicToJpgApp(QWidget):
     def __init__(self):
         super().__init__()
-
         self.init_ui()
 
     def init_ui(self):
@@ -98,11 +97,31 @@ class HeicToJpgApp(QWidget):
         if folder_path:
             logger.info("---- 有选择文件夹，开始执行操作 ----")
             self.setEnabled(False)  # 禁用按钮，防止多次点击
-            self.heic_to_jpg_v2(folder_path)
-            QMessageBox.information(self, "提示", "移动文件完成！")
-            self.setEnabled(True)  # 禁用按钮，防止多次点击
+
+            self.worker = Worker()
+            self.worker.folder_path = folder_path
+
+            self.thread = QThread()
+            self.worker.moveToThread(self.thread)
+            self.worker.finished_signal.connect(self.worker_finished)
+            self.worker.error_signal.connect(self.worker_error)  # 连接异常信号处理方法
+            self.thread.started.connect(self.worker.do_work)
+
+            self.thread.start()
         else:
+
             QMessageBox.warning(self, "警告", "请选择要操作的文件夹！")
+    def worker_finished(self):
+        self.setEnabled(True)
+        self.thread.quit()  # 任务完成后，退出线程
+        self.thread.wait()  # 等待线程真正结束，释放资源
+        QMessageBox.information(self, "提示", "移动文件完成！")
+
+    def worker_error(self, error_msg):
+        logger.warning(f'任务出现错误: {error_msg}')
+        self.setEnabled(True)
+        self.thread.quit()
+        self.thread.wait()
     # 创建文件夹，并移动到指定目录下
     # import whatimage
     # import pillow_heif
@@ -126,12 +145,28 @@ class HeicToJpgApp(QWidget):
                                 logger.info(f'已将 {file_path} 转换为 {new_file_path}')
                             except Exception as e:
                                 logger.error(f'转换 {file_path} 时出错: {e}')
-    # +++++ 最新方法 +++++
-    # PIL导入Image
-    #from PIL import Image,ImageOps
-    #from pillow_heif import register_heif_opener
-    # 注册HEIC文件 opener，使得PIL能够识别并打开HEIC格式文件
-    #register_heif_opener()
+
+
+
+
+class Worker(QObject):
+    finished_signal = pyqtSignal()
+    error_signal = pyqtSignal(str)  # 新增信号，用于发送错误信息
+
+    def do_work(self):
+        try:
+            self.heic_to_jpg_v2(self.folder_path)
+            self.finished_signal.emit()
+        except Exception as e:
+            self.error_signal.emit(str(e))  # 如果出现异常，发送异常信息
+
+        # +++++ 最新方法 +++++
+        # PIL导入Image
+        # from PIL import Image,ImageOps
+        # from pillow_heif import register_heif_opener
+        # 注册HEIC文件 opener，使得PIL能够识别并打开HEIC格式文件
+        # register_heif_opener()
+
     @staticmethod
     def heic_to_jpg_v2(folder_path):
         if folder_path:

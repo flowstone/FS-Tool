@@ -75,6 +75,7 @@ class FsConstants:
     # 共用的常量，应用图标
     APP_ICON_PATH = "resources/app.ico"
     APP_MINI_ICON_PATH = "resources/app_mini.ico"
+    LOADING_PATH = "resources/loading.gif"
     AUTHOR_MAIL = "xueyao.me@gmail.com"
     AUTHOR_BLOG = "https://blog.xueyao.tech"
     AUTHOR_GITHUB = "https://github.com/flowstone"

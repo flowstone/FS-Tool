@@ -33,6 +33,10 @@ class CommonUtil:
     def get_mini_ico_full_path():
         return CommonUtil.get_resource_path(FsConstants.APP_MINI_ICON_PATH)
 
+    # 获得Loading
+    @staticmethod
+    def get_loading_full_path():
+        return CommonUtil.get_resource_path(FsConstants.LOADING_PATH)
     # 获得数据库文件全路径
     @staticmethod
     def get_db_full_path():
