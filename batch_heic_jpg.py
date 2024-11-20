@@ -45,33 +45,17 @@ class HeicToJpgApp(QWidget):
         # 选择文件夹相关部件
         folder_path_layout = QHBoxLayout()
         folder_path_label = QLabel("选择文件夹：")
-        folder_path_label.setStyleSheet("color: #333; font-size: 14px;")
-        self.folder_path_entry = QLineEdit()
-        self.folder_path_entry.setFixedWidth(300)
-        self.folder_path_entry.setStyleSheet("""
-            QLineEdit {
-                border: 1px solid #ccc;
-                border-radius: 3px;
-                padding: 2px 5px;
-            }
-        """)
+        self.folder_path_input = QLineEdit()
+        self.folder_path_input.setFixedWidth(300)
+        self.folder_path_input.setObjectName("folder_path_input")
+
 
         browse_button = QPushButton("浏览")
-        browse_button.setStyleSheet("""
-            QPushButton {
-                background-color: #4CAF50;
-                color: white;
-                border-radius: 3px;
-                padding: 5px 10px;
-            }
-            QPushButton:hover {
-                background-color: #45a049;
-            }
-        """)
+        browse_button.setObjectName("browse_button")
         browse_button.clicked.connect(self.browse_folder)
 
         folder_path_layout.addWidget(folder_path_label)
-        folder_path_layout.addWidget(self.folder_path_entry)
+        folder_path_layout.addWidget(self.folder_path_input)
         folder_path_layout.addWidget(browse_button)
 
 
@@ -80,34 +64,15 @@ class HeicToJpgApp(QWidget):
 
         # 操作按钮
         button_layout = QHBoxLayout()
-        self.start_button = QPushButton("开始")
-        self.start_button.setStyleSheet("""
-            QPushButton {
-                background-color: #008CBA;
-                color: white;
-                border-radius: 3px;
-                padding: 5px 15px;
-            }
-            QPushButton:hover {
-                background-color: #007B9A;
-            }
-        """)
-        self.start_button.clicked.connect(self.start_operation)
+        start_button = QPushButton("开始")
+        start_button.setObjectName("start_button")
+        start_button.clicked.connect(self.start_operation)
+
         exit_button = QPushButton("退出")
-        exit_button.setStyleSheet("""
-            QPushButton {
-                background-color: #F44336;
-                color: white;
-                border-radius: 3px;
-                padding: 5px 15px;
-            }
-            QPushButton:hover {
-                background-color: #D32F2F;
-            }
-        """)
+        exit_button.setObjectName("exit_button")
         exit_button.clicked.connect(self.close)
 
-        button_layout.addWidget(self.start_button)
+        button_layout.addWidget(start_button)
         button_layout.addWidget(exit_button)
 
         layout.addLayout(folder_path_layout)
@@ -121,24 +86,23 @@ class HeicToJpgApp(QWidget):
     def browse_folder(self):
         logger.info("---- 开始选择文件夹 ----")
         folder_path = QFileDialog.getExistingDirectory(self, "选择文件夹")
-        self.folder_path_entry.setText(folder_path)
+        self.folder_path_input.setText(folder_path)
 
 
 
     def start_operation(self):
         logger.info("---- 开始执行操作 ----")
-        folder_path = self.folder_path_entry.text()
+        folder_path = self.folder_path_input.text()
 
 
         if folder_path:
             logger.info("---- 有选择文件夹，开始执行操作 ----")
-            self.start_button.setEnabled(False)  # 禁用按钮，防止多次点击
+            self.setEnabled(False)  # 禁用按钮，防止多次点击
             self.heic_to_jpg_v2(folder_path)
             QMessageBox.information(self, "提示", "移动文件完成！")
-            self.start_button.setEnabled(True)  # 禁用按钮，防止多次点击
+            self.setEnabled(True)  # 禁用按钮，防止多次点击
         else:
             QMessageBox.warning(self, "警告", "请选择要操作的文件夹！")
-
     # 创建文件夹，并移动到指定目录下
     # import whatimage
     # import pillow_heif

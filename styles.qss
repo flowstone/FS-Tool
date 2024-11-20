@@ -1,0 +1,54 @@
+/* 通用按钮样式 */
+
+QLabel {
+    color: #333;
+    font-size: 14px;
+}
+
+QLineEdit {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 2px 5px;
+}
+
+QPushButton#browse_button {
+    background-color: #008CBA;
+    color: white;
+    border-radius: 3px;
+    padding: 5px 15px;
+}
+QPushButton#browse_button:hover {
+    background-color: #007B9A;
+}
+
+QLineEdit#folder_path_input {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 2px 5px;
+}
+
+
+QPushButton#start_button {
+    background-color: #008CBA;
+    color: white;
+    border-radius: 3px;
+    padding: 5px 15px;
+}
+QPushButton#start_button:hover {
+    background-color: #007B9A;
+}
+QPushButton#start_button:disabled {
+    background-color: gray;
+    color: white;
+}
+
+
+QPushButton#exit_button {
+    background-color: #F44336;
+    color: white;
+    border-radius: 3px;
+    padding: 5px 15px;
+}
+QPushButton#exit_button:hover {
+    background-color: #D32F2F;
+}

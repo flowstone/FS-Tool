@@ -257,7 +257,7 @@ class AutoAnswersApp(QMainWindow):
         submit_button.setFont(font)
         submit_button.setFixedSize(100, 30)
         # 为按钮添加样式，鼠标悬停时背景变色，按下时文字变色等效果示例（可根据喜好调整）
-        submit_button.setStyleSheet(COMBO_BOX_STYLE)
+        submit_button.setObjectName("start_button")
         submit_button.clicked.connect(self.start_answers)
         row5_layout.addWidget(submit_button)
 
@@ -344,12 +344,14 @@ class AutoAnswersApp(QMainWindow):
         logger.info("---- 新增当天的答题记录 [END]----")
 
         logger.info("---- 开始进行自动答题 ----")
+        self.setEnabled(False)
         for index in range(self.selected_number):
             logger.info(f"---- 自动答题第<{index+1}>次 ----")
             self.while_flag = True
             self.start()
         self.sqlite.close()
         logger.info("---- 结束自动答题 ----")
+        self.setEnabled(True)
 
     def start(self):
 

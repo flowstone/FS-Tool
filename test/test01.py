@@ -1,90 +1,66 @@
 import sys
-import os
-import whatimage
-import pillow_heif
-from PIL import Image
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton,QLabel
+from PyQt5.QtGui import QMovie
+from PyQt5.QtCore import Qt
+import time
 
 
-class ImageConverter(QWidget):
+class LoadingMaskExample(QWidget):
     def __init__(self):
         super().__init__()
+
         self.initUI()
 
     def initUI(self):
         layout = QVBoxLayout()
-
-        # 选择文件夹按钮
-        self.select_folder_button = QPushButton('选择文件夹')
-        self.select_folder_button.clicked.connect(self.selectFolder)
-        # 设置按钮样式
-        self.select_folder_button.setStyleSheet(
-            "QPushButton {"
-            "    background-color: #007BFF;"
-            "    color: white;"
-            "    border: none;"
-            "    padding: 10px 20px;"
-            "    border-radius: 5px;"
-            "}"
-            "QPushButton:hover {"
-            "    background-color: #0056b3;"
-            "}"
-        )
-        layout.addWidget(self.select_folder_button)
-
-        # 开始转换按钮
-        self.start_button = QPushButton('开始')
-        self.start_button.clicked.connect(self.startConversion)
-        self.start_button.setEnabled(False)
-        # 设置按钮样式
-        self.start_button.setStyleSheet(
-            "QPushButton {"
-            "    background-color: #28a745;"
-            "    color: white;"
-            "    border: none;"
-            "    padding: 10px 20px;"
-            "    border-radius: 5px;"
-            "}"
-            "QPushButton:hover {"
-            "    background-color: #218838;"
-            "}"
-        )
-        layout.addWidget(self.start_button)
+        self.setFixedSize(500,600)
+        # 创建按钮
+        self.button = QPushButton('点击触发加载')
+        self.button.clicked.connect(self.show_loading_mask)
+        layout.addWidget(self.button)
 
         self.setLayout(layout)
-        self.setWindowTitle('HEIC转JPG工具')
-        # 设置窗口大小
-        self.setFixedSize(400, 200)
+
+        self.setWindowTitle('点击按钮触发遮罩示例')
         self.show()
 
-        self.folder_path = None
+    def show_loading_mask(self):
+        print("----------------")
+        # 创建遮罩层窗口（QWidget），设置为半透明且覆盖整个父窗口
+        self.mask_widget = QWidget()
+        self.mask_widget.setGeometry(self.geometry())
+        self.mask_widget.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+        self.mask_widget.setAttribute(Qt.WA_TranslucentBackground)
 
-    def selectFolder(self):
-        self.folder_path = QFileDialog.getExistingDirectory(self, '选择包含HEIC图片的文件夹')
-        if self.folder_path:
-            self.start_button.setEnabled(True)
+        # 创建布局用于放置加载动画的QLabel
+        mask_layout = QVBoxLayout()
 
-    def startConversion(self):
-        if self.folder_path:
-            for root, dirs, files in os.walk(self.folder_path):
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    with open(file_path, 'rb') as f:
-                        file_data = f.read()
-                        fmt = whatimage.identify_image(file_data)
-                        if fmt == 'heic':
-                            try:
-                                heif_file = pillow_heif.read_heif(file_path)
-                                image = Image.frombytes(mode=heif_file.mode, size=heif_file.size, data=heif_file.data)
-                                new_file_name = os.path.splitext(file)[0] + '.jpg'
-                                new_file_path = os.path.join(root, new_file_name)
-                                image.save(new_file_path, 'JPEG')
-                                print(f'已将 {file_path} 转换为 {new_file_path}')
-                            except Exception as e:
-                                print(f'转换 {file_path} 时出错: {e}')
+        # 创建QLabel用于显示加载动画
+        self.loading_label = QLabel(self.mask_widget)
+        movie = QMovie('loading.gif')
+        movie.start()
+        self.loading_label.setMovie(movie)
+
+        # 将QLabel添加到布局中，并使其在中间显示
+        mask_layout.addWidget(self.loading_label, 0, Qt.AlignCenter)
+        self.mask_widget.setLayout(mask_layout)
+
+        # 禁用整个窗口的交互（除了遮罩层本身关闭等相关操作）
+        #self.setEnabled(False)
+
+        # 显示遮罩层
+        self.mask_widget.show()
+
+        # 模拟耗时操作，实际应用中可替换为真实的耗时任务，比如网络请求、文件读取等
+        time.sleep(3)
+
+        # 操作完成后，移除遮罩层并恢复窗口交互
+        #self.mask_widget.hide()
+        #self.setEnabled(True)
+        #self.mask_widget.deleteLater()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = ImageConverter()
+    ex = LoadingMaskExample()
     sys.exit(app.exec_())

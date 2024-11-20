@@ -40,27 +40,10 @@ class CreateFolderApp(QWidget):
         # 选择文件夹相关部件
         folder_path_layout = QHBoxLayout()
         folder_path_label = QLabel("选择文件夹：")
-        folder_path_label.setStyleSheet("color: #333; font-size: 14px;")
         self.folder_path_entry = QLineEdit()
-        self.folder_path_entry.setStyleSheet("""
-            QLineEdit {
-                border: 1px solid #ccc;
-                border-radius: 3px;
-                padding: 2px 5px;
-            }
-        """)
+        self.folder_path_entry.setObjectName("folder_path_input")
         browse_button = QPushButton("浏览")
-        browse_button.setStyleSheet("""
-            QPushButton {
-                background-color: #4CAF50;
-                color: white;
-                border-radius: 3px;
-                padding: 5px 10px;
-            }
-            QPushButton:hover {
-                background-color: #45a049;
-            }
-        """)
+        browse_button.setObjectName("browse_button")
         browse_button.clicked.connect(self.browse_folder)
 
         folder_path_layout.addWidget(folder_path_label)
@@ -70,16 +53,7 @@ class CreateFolderApp(QWidget):
         # 指定分割字符相关部件
         slice_layout = QHBoxLayout()
         slice_label = QLabel("指定分割字符：")
-        slice_label.setStyleSheet("color: #333; font-size: 14px;")
         self.slice_entry = QLineEdit()
-        self.slice_entry.setStyleSheet("""
-            QLineEdit {
-                border: 1px solid #ccc;
-                border-radius: 3px;
-                padding: 2px 5px;
-            }
-        """)
-
         slice_layout.addWidget(slice_label)
         slice_layout.addWidget(self.slice_entry)
 
@@ -99,30 +73,11 @@ class CreateFolderApp(QWidget):
         # 操作按钮
         button_layout = QHBoxLayout()
         start_button = QPushButton("开始")
-        start_button.setStyleSheet("""
-            QPushButton {
-                background-color: #008CBA;
-                color: white;
-                border-radius: 3px;
-                padding: 5px 15px;
-            }
-            QPushButton:hover {
-                background-color: #007B9A;
-            }
-        """)
+        start_button.setObjectName("start_button")
         start_button.clicked.connect(self.start_operation)
+
         exit_button = QPushButton("退出")
-        exit_button.setStyleSheet("""
-            QPushButton {
-                background-color: #F44336;
-                color: white;
-                border-radius: 3px;
-                padding: 5px 15px;
-            }
-            QPushButton:hover {
-                background-color: #D32F2F;
-            }
-        """)
+        exit_button.setObjectName("exit_button")
         exit_button.clicked.connect(self.close)
 
         button_layout.addWidget(start_button)
@@ -152,10 +107,12 @@ class CreateFolderApp(QWidget):
         slice_char = self.slice_entry.text()
 
         if folder_path:
+            self.setEnabled(False)
             if slice_char != "":
                 logger.info("---- 有分割字符，开始执行操作 ----")
                 self.create_folder_move_files(folder_path, slice_char)
             QMessageBox.information(self, "提示", "移动文件完成！")
+            self.setEnabled(True)
         else:
             QMessageBox.warning(self, "警告", "请选择要操作的文件夹！")
 

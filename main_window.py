@@ -159,8 +159,6 @@ class MainWindow(QMainWindow):
         self.closeEvent = self.handle_close_event
 
 
-
-
     # 初始化应用托盘图标
     def init_tray_menu(self):
         logger.info("---- 初始化任务栏图标 ----")

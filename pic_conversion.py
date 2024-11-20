@@ -20,29 +20,7 @@ class PicConversionApp(QWidget):
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         self.setFixedSize(FsConstants.PIC_CONVERSION_WINDOW_WIDTH, FsConstants.PIC_CONVERSION_WINDOW_HEIGHT)
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #F5F5F5;
-            }
-            QPushButton {
-                background-color: #4CAF50;
-                color: white;
-                border-radius: 5px;
-                padding: 5px 10px;
-                width: 100px;  /* 设置按钮宽度 */
-            }
-            QPushButton:hover {
-                background-color: #45a049;
-            }
-            QCheckBox {
-                spacing: 10px;
-            }
-            QLabel {
-                background-color: white;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-            }
-        """)
+
 
         # 用于存储上传的图片路径
         self.image_path = None
@@ -52,6 +30,7 @@ class PicConversionApp(QWidget):
 
         # 创建上传图片按钮
         self.upload_button = QPushButton("上传图片")
+        self.upload_button.setObjectName("browse_button")
         self.upload_button.clicked.connect(self.upload_image)
         layout.addWidget(self.upload_button, alignment=Qt.AlignCenter)
         # 创建用于显示上传图片的标签
@@ -81,12 +60,14 @@ class PicConversionApp(QWidget):
 
         # 创建转换按钮
         self.convert_button = QPushButton("转换")
-        self.convert_button.clicked.connect(self.convert_image)
         self.convert_button.setEnabled(False)
+        self.convert_button.setObjectName("start_button")
+        self.convert_button.clicked.connect(self.convert_image)
         button_layout.addWidget(self.convert_button)
 
         # 创建关闭按钮
         self.close_button = QPushButton("关闭")
+        self.close_button.setObjectName("exit_button")
         self.close_button.clicked.connect(self.close)
         button_layout.addWidget(self.close_button)
 
@@ -117,9 +98,9 @@ class PicConversionApp(QWidget):
 
         # 根据是否有复选框被选中来更新转换按钮的状态
         if len(self.selected_formats) > 0:
-            self.convert_button.setEnabled(True)
+            self.setEnabled(True)
         else:
-            self.convert_button.setEnabled(False)
+            self.setEnabled(False)
 
     def convert_image(self):
         if not self.image_path:
@@ -127,6 +108,7 @@ class PicConversionApp(QWidget):
             return
 
         try:
+            self.setEnabled(False)
             image = Image.open(self.image_path)
 
             for target_format in self.selected_formats:
@@ -145,4 +127,4 @@ class PicConversionApp(QWidget):
             logger.info(f"图片已成功转换为所选格式，保存路径分别为: {[f'{base_name}.{f.lower()}' for f in self.selected_formats]}")
         except Exception as e:
             logger.error(f"转换图片时出错: {e}")
-
+        self.setEnabled(True)

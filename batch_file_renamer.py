@@ -30,7 +30,6 @@ class RenameFileApp(QWidget):
         group_box = QGroupBox('文件类型')
         radio_btn_layout = QHBoxLayout()
         self.radio_label = QLabel("*选择文件类型：")
-        self.radio_label.setStyleSheet("color: #333; font-size: 14px;")
 
         # 创建两个单选按钮
         self.file_rbtn = QRadioButton('文件')
@@ -49,7 +48,6 @@ class RenameFileApp(QWidget):
         number_box = QGroupBox('序号')
         radio_asc_layout = QHBoxLayout()
         self.number_label = QLabel("选择序号：")
-        self.number_label.setStyleSheet("color: #333; font-size: 14px;")
 
         # 创建两个单选按钮
         self.number_rbtn = QRadioButton('数字，如1、2、3')
@@ -61,7 +59,6 @@ class RenameFileApp(QWidget):
 
         radio_clear_layout = QHBoxLayout()
         self.name_label = QLabel("清空文件名：")
-        self.name_label.setStyleSheet("color: #333; font-size: 14px;")
 
         # 创建两个单选按钮
         self.name_clear_rbtn = QRadioButton('是')
@@ -74,28 +71,12 @@ class RenameFileApp(QWidget):
         # 选择文件夹相关部件
         folder_path_layout = QHBoxLayout()
         self.folder_path_label = QLabel("*选择文件夹：")
-        self.folder_path_label.setStyleSheet("color: #333; font-size: 14px;")
         self.folder_path_entry = QLineEdit()
         self.folder_path_entry.setFixedWidth(300)
-        self.folder_path_entry.setStyleSheet("""
-            QLineEdit {
-                border: 1px solid #ccc;
-                border-radius: 3px;
-                padding: 2px 5px;
-            }
-        """)
+        self.folder_path_entry.setObjectName("folder_path_input")
+
         self.browse_button = QPushButton("浏览")
-        self.browse_button.setStyleSheet("""
-            QPushButton {
-                background-color: #4CAF50;
-                color: white;
-                border-radius: 3px;
-                padding: 5px 10px;
-            }
-            QPushButton:hover {
-                background-color: #45a049;
-            }
-        """)
+        self.browse_button.setObjectName("browse_button")
         self.browse_button.clicked.connect(self.browse_folder)
 
         folder_path_layout.addWidget(self.folder_path_label)
@@ -106,15 +87,8 @@ class RenameFileApp(QWidget):
         # 文件名前缀输入部件
         prefix_layout = QHBoxLayout()
         self.prefix_label = QLabel("文件名前缀：")
-        self.prefix_label.setStyleSheet("color: #333; font-size: 14px;")
         self.prefix_entry = QLineEdit()
-        self.prefix_entry.setStyleSheet("""
-            QLineEdit {
-                border: 1px solid #ccc;
-                border-radius: 3px;
-                padding: 2px 5px;
-            }
-        """)
+
         prefix_layout.addWidget(self.prefix_label)
         prefix_layout.addWidget(self.prefix_entry)
         layout.addLayout(prefix_layout)
@@ -122,15 +96,8 @@ class RenameFileApp(QWidget):
         # 文件名后缀输入部件
         suffix_layout = QHBoxLayout()
         self.suffix_label = QLabel("文件名后缀：")
-        self.suffix_label.setStyleSheet("color: #333; font-size: 14px;")
         self.suffix_entry = QLineEdit()
-        self.suffix_entry.setStyleSheet("""
-            QLineEdit {
-                border: 1px solid #ccc;
-                border-radius: 3px;
-                padding: 2px 5px;
-            }
-        """)
+
         suffix_layout.addWidget(self.suffix_label)
         suffix_layout.addWidget(self.suffix_entry)
         layout.addLayout(suffix_layout)
@@ -138,15 +105,8 @@ class RenameFileApp(QWidget):
         # 查找字符输入部件
         char_to_find_layout = QHBoxLayout()
         self.char_to_find_label = QLabel("查找字符：")
-        self.char_to_find_label.setStyleSheet("color: #333; font-size: 14px;")
         self.char_to_find_entry = QLineEdit()
-        self.char_to_find_entry.setStyleSheet("""
-            QLineEdit {
-                border: 1px solid #ccc;
-                border-radius: 3px;
-                padding: 2px 5px;
-            }
-        """)
+
         char_to_find_layout.addWidget(self.char_to_find_label)
         char_to_find_layout.addWidget(self.char_to_find_entry)
         layout.addLayout(char_to_find_layout)
@@ -154,15 +114,8 @@ class RenameFileApp(QWidget):
         # 替换字符输入部件
         replace_char_layout = QHBoxLayout()
         self.replace_char_label = QLabel("替换字符：")
-        self.replace_char_label.setStyleSheet("color: #333; font-size: 14px;")
         self.replace_char_entry = QLineEdit()
-        self.replace_char_entry.setStyleSheet("""
-            QLineEdit {
-                border: 1px solid #ccc;
-                border-radius: 3px;
-                padding: 2px 5px;
-            }
-        """)
+
         replace_char_layout.addWidget(self.replace_char_label)
         replace_char_layout.addWidget(self.replace_char_entry)
         layout.addLayout(replace_char_layout)
@@ -184,30 +137,11 @@ class RenameFileApp(QWidget):
         # 操作按钮
         button_layout = QHBoxLayout()
         self.start_button = QPushButton("开始")
-        self.start_button.setStyleSheet("""
-            QPushButton {
-                background-color: #008CBA;
-                color: white;
-                border-radius: 3px;
-                padding: 5px 15px;
-            }
-            QPushButton:hover {
-                background-color: #007B9A;
-            }
-        """)
+        self.start_button.setObjectName("start_button")
         self.start_button.clicked.connect(self.start_operation)
+
         self.exit_button = QPushButton("退出")
-        self.exit_button.setStyleSheet("""
-            QPushButton {
-                background-color: #F44336;
-                color: white;
-                border-radius: 3px;
-                padding: 5px 15px;
-            }
-            QPushButton:hover {
-                background-color: #D32F2F;
-            }
-        """)
+        self.exit_button.setObjectName("exit_button")
         self.exit_button.clicked.connect(self.close)
 
         button_layout.addWidget(self.start_button)
@@ -264,6 +198,7 @@ class RenameFileApp(QWidget):
             QMessageBox.warning(self, "警告", "选择序号时，不能同时修改其它信息！")
             return
         if folder_path:
+            self.setEnabled(False)
             if self.check_type_text == self.file_rbtn.text():
                 logger.info(f"你选择类型是:{FsConstants.FILE_RENAMER_TYPE_FILE}")
                 self.rename_files(folder_path, prefix, suffix, char_to_find, replace_char)
@@ -277,7 +212,7 @@ class RenameFileApp(QWidget):
 
             QMessageBox.information(self, "提示", "批量改名完成！")
             logger.info("批量改名完成")
-
+            self.setEnabled(True)
         else:
             QMessageBox.warning(self, "警告", "请选择要修改的文件夹！")
             logger.warning("请选择要修改的文件夹")
