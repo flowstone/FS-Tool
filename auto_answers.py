@@ -1,7 +1,7 @@
 import sys
 from datetime import datetime
 
-from PyQt5.QtWidgets import QApplication,QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QPushButton, QMenu, QSizePolicy,QMessageBox,QAction
+from PyQt5.QtWidgets import QApplication,QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QPushButton, QMenu, QProgressBar,QMessageBox,QAction
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont,QPixmap, QIcon
 import os
@@ -268,10 +268,19 @@ class AutoAnswersApp(QMainWindow):
         # 为按钮添加样式，鼠标悬停时背景变色，按下时文字变色等效果示例（可根据喜好调整）
         log_btn.setStyleSheet(COMBO_BOX_STYLE)
         row5_layout.addWidget(log_btn)
-
         main_layout.addLayout(row5_layout)
-
         log_btn.clicked.connect(self.look_logs)
+
+        # 进度条（初始隐藏）
+        row6_layout = QHBoxLayout()
+        self.progressBar = QProgressBar(self)
+        # self.progressBar.setRange(0, 100)
+        # 设置为不确定模式
+        self.progressBar.setMinimum(0)
+        self.progressBar.setMaximum(0)
+        self.progressBar.hide()
+        row6_layout.addWidget(self.progressBar)
+        main_layout.addLayout(row6_layout)
 
         # 设置窗口整体样式，例如背景颜色（可按需修改）
         #self.setStyleSheet("QWidget { background-color: #f9f9f9; }")
@@ -293,6 +302,9 @@ class AutoAnswersApp(QMainWindow):
         return full_name
 
     def start_answers(self):
+
+        #self.progressBar.show()
+
         # 判断是否输入密码
         if self.passwd_edit.text() == "":
             QMessageBox.warning(self, "警告", "请输入访问密码！")
@@ -351,6 +363,7 @@ class AutoAnswersApp(QMainWindow):
             self.start()
         self.sqlite.close()
         logger.info("---- 结束自动答题 ----")
+        #self.progressBar.hide()
         self.setEnabled(True)
 
     def start(self):
