@@ -1,5 +1,18 @@
 /* 通用按钮样式 */
 
+QProgressBar {
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 12px;
+    color: white;
+    background-color: #f0f0f0;
+}
+QProgressBar::chunk {
+    border-radius: 5px;
+    background-color: #007BFF;
+}
+
 QLabel {
     color: #333;
     font-size: 14px;

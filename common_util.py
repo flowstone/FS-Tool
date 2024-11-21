@@ -67,3 +67,40 @@ class CommonUtil:
 
         # 格式化时间为指定格式
         return current_datetime.strftime(format)
+
+    #递归函数来遍历文件夹及其子文件夹中的所有文件
+    @staticmethod
+    def count_files_recursive(folder_path:str):
+        """
+        递归函数来遍历文件夹及其子文件夹中的所有文件
+        """
+        count = 0
+        for root, dirs, files in os.walk(folder_path):
+            count += len(files)
+        return count
+
+    # 遍历文件夹的所有文件
+    @staticmethod
+    def count_files_in_folder(folder_path: str):
+        """
+        统计指定文件夹下文件的个数（不进入子文件夹统计）
+        """
+        file_count = 0
+        for item in os.listdir(folder_path):
+            item_path = os.path.join(folder_path, item)
+            if os.path.isfile(item_path):
+                file_count += 1
+        return file_count
+
+    # 统计文件夹下的所有文件夹总数
+    @staticmethod
+    def count_folders_in_folder(folder_path: str):
+        """
+        统计指定文件夹下的文件夹数量（不进入子文件夹统计）
+        """
+        folder_count = 0
+        for item in os.listdir(folder_path):
+            item_path = os.path.join(folder_path, item)
+            if os.path.isdir(item_path):
+                folder_count += 1
+        return folder_count

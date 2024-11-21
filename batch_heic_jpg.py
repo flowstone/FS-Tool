@@ -1,7 +1,7 @@
 import sys
 import os
 import shutil
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar, QFileDialog
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar, QFileDialog,QProgressBar
 from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 from PyQt5.QtCore import Qt,pyqtSignal, QObject, QThread
 
@@ -75,7 +75,15 @@ class HeicToJpgApp(QWidget):
         button_layout.addWidget(exit_button)
 
         layout.addLayout(folder_path_layout)
+        # 进度条（初始隐藏）
+        self.progressBar = QProgressBar(self)
+        #self.progressBar.setRange(0, 100)
+        # 设置为不确定模式
+        self.progressBar.setMinimum(0)
+        self.progressBar.setMaximum(0)
+        self.progressBar.hide()
         layout.addLayout(button_layout)
+        layout.addWidget(self.progressBar)
 
         self.setLayout(layout)
 
@@ -100,7 +108,7 @@ class HeicToJpgApp(QWidget):
 
             self.worker = Worker()
             self.worker.folder_path = folder_path
-
+            self.worker.progressBar = self.progressBar
             self.thread = QThread()
             self.worker.moveToThread(self.thread)
             self.worker.finished_signal.connect(self.worker_finished)
@@ -112,6 +120,7 @@ class HeicToJpgApp(QWidget):
 
             QMessageBox.warning(self, "警告", "请选择要操作的文件夹！")
     def worker_finished(self):
+        self.progressBar.hide()
         self.setEnabled(True)
         self.thread.quit()  # 任务完成后，退出线程
         self.thread.wait()  # 等待线程真正结束，释放资源
@@ -155,6 +164,7 @@ class Worker(QObject):
 
     def do_work(self):
         try:
+            self.progressBar.show()
             self.heic_to_jpg_v2(self.folder_path)
             self.finished_signal.emit()
         except Exception as e:

@@ -33,9 +33,7 @@ class FileRenameApp(QWidget):
 
         # 进度条（初始隐藏）
         self.progressBar = QProgressBar(self)
-        #self.progressBar.setRange(0, 100)
-        self.progressBar.setMaximum(0)
-        self.progressBar.setMinimum(0)
+        self.progressBar.setRange(0, 100)
         # 为进度条设置样式表进行美化
         self.progressBar.setStyleSheet(
             """
@@ -70,6 +68,7 @@ class FileRenameApp(QWidget):
     def startRenaming(self):
         new_name = self.newNameEdit.text()
         folder_path = self.folderPathEdit.text()
+        # 统计文件夹下的文件总数
         file_count = len([f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))])
         # 显示进度条
         self.progressBar.show()
