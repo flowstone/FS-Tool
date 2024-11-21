@@ -1,7 +1,7 @@
 import sys
 import os
 import shutil
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar, QFileDialog
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QProgressBar, QFileDialog
 from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 from PyQt5.QtCore import Qt
 
@@ -35,7 +35,7 @@ class CreateFolderApp(QWidget):
         # 说明文本
         description_label = QLabel("说明：根据输入的分割字符，取前部分创建文件夹，符合相关的文件都移动到对应文件夹中")
         description_label.setFont(QFont("楷体", 10))
-        description_label.setStyleSheet("color: white;")
+        description_label.setStyleSheet("color: black;")
 
         # 选择文件夹相关部件
         folder_path_layout = QHBoxLayout()
@@ -89,6 +89,15 @@ class CreateFolderApp(QWidget):
         layout.addLayout(info_layout)
         layout.addLayout(button_layout)
 
+        # 进度条（初始隐藏）
+        self.progressBar = QProgressBar(self)
+        # self.progressBar.setRange(0, 100)
+        # 设置为不确定模式
+        self.progressBar.setMinimum(0)
+        self.progressBar.setMaximum(0)
+        self.progressBar.hide()
+
+        layout.addWidget(self.progressBar)
         self.setLayout(layout)
 
 
@@ -108,10 +117,12 @@ class CreateFolderApp(QWidget):
 
         if folder_path:
             self.setEnabled(False)
+            self.progressBar.show()
             if slice_char != "":
                 logger.info("---- 有分割字符，开始执行操作 ----")
                 self.create_folder_move_files(folder_path, slice_char)
             QMessageBox.information(self, "提示", "移动文件完成！")
+            self.progressBar.hide()
             self.setEnabled(True)
         else:
             QMessageBox.warning(self, "警告", "请选择要操作的文件夹！")

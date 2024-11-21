@@ -1,6 +1,6 @@
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QGroupBox,QRadioButton,QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar,QFileDialog
+from PyQt5.QtWidgets import QProgressBar, QGroupBox,QRadioButton,QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar,QFileDialog
 from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
@@ -148,6 +148,14 @@ class RenameFileApp(QWidget):
         button_layout.addWidget(self.exit_button)
         layout.addLayout(button_layout)
 
+        # 进度条（初始隐藏）
+        self.progressBar = QProgressBar(self)
+        # self.progressBar.setRange(0, 100)
+        # 设置为不确定模式
+        self.progressBar.setMinimum(0)
+        self.progressBar.setMaximum(0)
+        self.progressBar.hide()
+        layout.addWidget(self.progressBar)
         self.setLayout(layout)
 
 
@@ -216,6 +224,7 @@ class RenameFileApp(QWidget):
         else:
             QMessageBox.warning(self, "警告", "请选择要修改的文件夹！")
             logger.warning("请选择要修改的文件夹")
+
 
 
     # 修改文件名
