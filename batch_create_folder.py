@@ -118,10 +118,15 @@ class CreateFolderApp(QWidget):
         if folder_path:
             self.setEnabled(False)
             self.progressBar.show()
-            if slice_char != "":
-                logger.info("---- 有分割字符，开始执行操作 ----")
-                self.create_folder_move_files(folder_path, slice_char)
-            QMessageBox.information(self, "提示", "移动文件完成！")
+            try:
+                if slice_char != "":
+                    logger.info("---- 有分割字符，开始执行操作 ----")
+                    self.create_folder_move_files(folder_path, slice_char)
+                    QMessageBox.information(self, "提示", "移动文件完成！")
+            except OSError as e:
+                logger.error(f"出现操作系统相关异常：{str(e)}")
+                QMessageBox.information(self, "警告", "遇到异常停止工作")
+
             self.progressBar.hide()
             self.setEnabled(True)
         else:

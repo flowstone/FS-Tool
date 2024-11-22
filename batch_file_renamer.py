@@ -207,19 +207,23 @@ class RenameFileApp(QWidget):
             return
         if folder_path:
             self.setEnabled(False)
-            if self.check_type_text == self.file_rbtn.text():
-                logger.info(f"你选择类型是:{FsConstants.FILE_RENAMER_TYPE_FILE}")
-                self.rename_files(folder_path, prefix, suffix, char_to_find, replace_char)
-            else:
-                logger.info(f"你选择的类型是：{FsConstants.FILE_RENAMER_TYPE_FOLDER}")
-                self.rename_folder(folder_path, prefix, suffix, char_to_find, replace_char)
+            try:
+                if self.check_type_text == self.file_rbtn.text():
+                    logger.info(f"你选择类型是:{FsConstants.FILE_RENAMER_TYPE_FILE}")
+                    self.rename_files(folder_path, prefix, suffix, char_to_find, replace_char)
+                else:
+                    logger.info(f"你选择的类型是：{FsConstants.FILE_RENAMER_TYPE_FOLDER}")
+                    self.rename_folder(folder_path, prefix, suffix, char_to_find, replace_char)
 
-            if self.check_serial_flag:
-                logger.info(f"选择序号单独走其它方法")
-                self.rename_serial(folder_path)
+                if self.check_serial_flag:
+                    logger.info(f"选择序号单独走其它方法")
+                    self.rename_serial(folder_path)
 
-            QMessageBox.information(self, "提示", "批量改名完成！")
-            logger.info("批量改名完成")
+                QMessageBox.information(self, "提示", "批量改名完成！")
+                logger.info("批量改名完成")
+            except OSError as e:
+                logger.error(f"出现操作系统相关异常：{str(e)}")
+                QMessageBox.information(self, "警告", "遇到异常停止工作")
             self.setEnabled(True)
         else:
             QMessageBox.warning(self, "警告", "请选择要修改的文件夹！")
