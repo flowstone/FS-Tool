@@ -80,7 +80,7 @@ class FsConstants:
     AUTHOR_BLOG = "https://blog.xueyao.tech"
     AUTHOR_GITHUB = "https://github.com/flowstone"
     PROJECT_ADDRESS = "https://github.com/flowstone/FS-Tool"
-
+    BASE_QSS_PATH = "resources/qss/styles.qss"
 
     # 保存文件路径
     SAVE_FILE_PATH_WIN = "C:\\"
