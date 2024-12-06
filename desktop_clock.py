@@ -67,8 +67,8 @@ class DesktopClockApp(QWidget):
         self.current_time.setText(current_time)
         # 计时器
         self.elapsed_time += 1
-        hours = self.elapsed_time # 3600
-        minutes = (self.elapsed_time % 3600) # 60
+        hours = self.elapsed_time // 3600
+        minutes = (self.elapsed_time % 3600) // 60
         seconds = self.elapsed_time % 60
         time_str = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
         self.count_time.setText(time_str)
