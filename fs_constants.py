@@ -81,6 +81,7 @@ class FsConstants:
     AUTHOR_GITHUB = "https://github.com/flowstone"
     PROJECT_ADDRESS = "https://github.com/flowstone/FS-Tool"
     BASE_QSS_PATH = "resources/qss/styles.qss"
+    BASE_COLOR_MAP = "resources/img_colormap.gif"
 
     # 保存文件路径
     SAVE_FILE_PATH_WIN = "C:\\"
