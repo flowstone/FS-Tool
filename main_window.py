@@ -4,6 +4,7 @@ from PyQt5.QtGui import QFont, QPalette, QColor
 
 from batch_heic_jpg import HeicToJpgApp
 from desktop_clock import DesktopClockApp
+from desktop_clock import ColorSettingDialog
 from pic_conversion import PicConversionApp
 from batch_file_renamer import RenameFileApp
 from batch_create_folder import CreateFolderApp
@@ -224,7 +225,7 @@ class MainWindow(QMainWindow):
 
     def time_btn_clicked(self):
         logger.info(f"---- 按钮<{FsConstants.DESKTOP_CLOCK_WINDOW_TITLE}>被点击了 ----")
-        self.desktop_clock = DesktopClockApp()
+        self.desktop_clock = ColorSettingDialog()
         self.desktop_clock.show()
 
     def img_conv_btn_clicked(self):

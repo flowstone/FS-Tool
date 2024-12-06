@@ -67,8 +67,8 @@ class DesktopClockApp(QWidget):
         self.current_time.setText(current_time)
         # 计时器
         self.elapsed_time += 1
-        hours = self.elapsed_time // 3600
-        minutes = (self.elapsed_time % 3600) // 60
+        hours = self.elapsed_time # 3600
+        minutes = (self.elapsed_time % 3600) # 60
         seconds = self.elapsed_time % 60
         time_str = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
         self.count_time.setText(time_str)
@@ -138,7 +138,7 @@ class ColorSettingDialog(QDialog):
         layout.addSpacing(10)
 
         ok_button = QPushButton("确定")
-        ok_button.clicked.connect(self.accept)
+        ok_button.clicked.connect(self.start_operation)
         layout.addWidget(ok_button)
 
         self.setLayout(layout)
@@ -149,15 +149,25 @@ class ColorSettingDialog(QDialog):
     def get_selected_timer_color(self):
         return self.timer_color_combobox.currentText()
 
+    def start_operation(self):
+        print("你点击了按钮")
+        time_color = self.get_selected_time_color()
+        timer_color = self.get_selected_timer_color()
+
+        self.window = DesktopClockApp()
+        self.window.show_with_colors(time_color, timer_color)
+        self.hide()
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     setting_dialog = ColorSettingDialog()
-    if setting_dialog.exec_():
-        time_color = setting_dialog.get_selected_time_color()
-        timer_color = setting_dialog.get_selected_timer_color()
-
-        window = DesktopClockApp()
-        window.show_with_colors(time_color, timer_color)
+    setting_dialog.show()
+    # if setting_dialog.exec_():
+    #     time_color = setting_dialog.get_selected_time_color()
+    #     timer_color = setting_dialog.get_selected_timer_color()
+    #
+    #     window = DesktopClockApp()
+    #     window.show_with_colors(time_color, timer_color)
 
     sys.exit(app.exec_())

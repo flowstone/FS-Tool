@@ -4,6 +4,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar, QFileDialog,QProgressBar
 from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 from PyQt5.QtCore import Qt,pyqtSignal, QObject, QThread
+from progress_tool import ProgressTool
 
 from PyQt5.QtWidgets import QMessageBox
 from loguru import logger
@@ -92,25 +93,31 @@ class HeicToJpgApp(QWidget):
 
     def start_operation(self):
         logger.info("---- 开始执行操作 ----")
+        self.progress_tool = ProgressTool(self)
+
         folder_path = self.folder_path_input.text()
 
 
         if folder_path:
             logger.info("---- 有选择文件夹，开始执行操作 ----")
             self.setEnabled(False)  # 禁用按钮，防止多次点击
-            self.worker = HeicToJpgAppThread(folder_path)
+            self.worker = HeicToJpgAppThread(folder_path, self.progress_tool)
             self.worker.finished_signal.connect(self.operation_finished)
             self.worker.error_signal.connect(self.operation_error)  # 连接异常信号处理方法
             self.worker.start()
+            self.progress_tool.show()
+
         else:
             QMessageBox.warning(self, "警告", "请选择要操作的文件夹！")
 
     def operation_finished(self):
+        self.progress_tool.hide()
         self.setEnabled(True)
         QMessageBox.information(self, "提示", "移动文件完成！")
 
     def operation_error(self, error_msg):
         logger.error(f"出现异常：{error_msg}")
+        self.progress_tool.hide()
         self.setEnabled(True)
         QMessageBox.information(self, "警告", "遇到异常停止工作")
 
@@ -122,14 +129,15 @@ class HeicToJpgAppThread(QThread):
     finished_signal = pyqtSignal()
     error_signal = pyqtSignal(str)  # 新增信号，用于发送错误信息
 
-    def __init__(self, folder_path):
+    def __init__(self, folder_path, progress_tool):
         super().__init__()
         self.folder_path = folder_path
+        self.progress_tool = progress_tool
 
     def run(self):
         try:
-            logger.info("正在休眠3秒")
-            time.sleep(3)  # 线程休眠3秒
+            self.progress_tool.set_range(0, 0)
+
             self.heic_to_jpg_v2(self.folder_path)
             self.finished_signal.emit()
         except Exception as e:

@@ -10,6 +10,7 @@ from select import select
 
 from common_util import CommonUtil
 from fs_constants import FsConstants
+from progress_tool import ProgressTool
 
 class RenameFileApp(QWidget):
     def __init__(self):
@@ -184,6 +185,8 @@ class RenameFileApp(QWidget):
 
 
     def start_operation(self):
+        self.progress_tool = ProgressTool(self)
+
         folder_path = self.folder_path_entry.text()
         prefix = self.prefix_entry.text()
         suffix = self.suffix_entry.text()
@@ -201,21 +204,25 @@ class RenameFileApp(QWidget):
             self.setEnabled(False)
             self.worker_thread = FileRenameThread(folder_path, prefix, suffix, char_to_find, replace_char,
                                                   self.check_type_text, self.check_serial_flag,
-                                                  self.check_clear_flag)
+                                                  self.check_clear_flag, self.progress_tool)
             self.worker_thread.finished_signal.connect(self.operation_finished)
             self.worker_thread.error_signal.connect(self.operation_error)
             self.worker_thread.start()
+            self.progress_tool.show()
+
         else:
             QMessageBox.warning(self, "警告", "请选择要修改的文件夹！")
             logger.warning("请选择要修改的文件夹")
 
     def operation_finished(self):
         logger.info("---- 操作完成 ----")
+        self.progress_tool.hide()
         self.setEnabled(True)
         QMessageBox.information(self, "提示", "批量改名完成！")
 
     def operation_error(self, error_msg):
         logger.error(f"出现异常：{error_msg}")
+        self.progress_tool.hide()
         self.setEnabled(True)
         QMessageBox.information(self, "警告", "遇到异常停止工作")
 
@@ -224,7 +231,7 @@ class FileRenameThread(QThread):
     error_signal = pyqtSignal(str)
 
     def __init__(self, folder_path, prefix, suffix, char_to_find, replace_char, check_type_text, check_serial_flag,
-                 check_clear_flag):
+                 check_clear_flag, progress_tool):
         super().__init__()
         self.folder_path = folder_path
         self.prefix = prefix
@@ -234,11 +241,12 @@ class FileRenameThread(QThread):
         self.check_type_text = check_type_text
         self.check_serial_flag = check_serial_flag
         self.check_clear_flag = check_clear_flag
+        self.progress_tool = progress_tool
 
     def run(self):
         try:
-            logger.info("正在休眠3秒")
-            time.sleep(3)  # 线程休眠3秒
+            self.progress_tool.set_range(0, 0)
+
             if self.check_type_text == "文件":
                 logger.info(f"你选择类型是:{FsConstants.FILE_RENAMER_TYPE_FILE}")
                 self.rename_files()

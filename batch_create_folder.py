@@ -9,6 +9,7 @@ from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from loguru import logger
 from common_util import CommonUtil
 from fs_constants import FsConstants
+from progress_tool import ProgressTool
 
 class CreateFolderApp(QWidget):
     def __init__(self):
@@ -89,6 +90,7 @@ class CreateFolderApp(QWidget):
         layout.addLayout(info_layout)
         layout.addLayout(button_layout)
 
+
         self.setLayout(layout)
 
 
@@ -103,25 +105,29 @@ class CreateFolderApp(QWidget):
 
     def start_operation(self):
         logger.info("---- 开始执行操作 ----")
+        self.progress_tool = ProgressTool(self)
         folder_path = self.folder_path_entry.text()
         slice_char = self.slice_entry.text()
 
         if folder_path:
             self.setEnabled(False)
-            self.worker_thread = FileOperationThread(folder_path, slice_char)
+            self.worker_thread = FileOperationThread(folder_path, slice_char,self.progress_tool)
             self.worker_thread.finished_signal.connect(self.operation_finished)
             self.worker_thread.error_signal.connect(self.operation_error)
             self.worker_thread.start()
+            self.progress_tool.show()
         else:
             QMessageBox.warning(self, "警告", "请选择要操作的文件夹！")
 
     def operation_finished(self):
         logger.info("---- 操作完成 ----")
+        self.progress_tool.hide()
         self.setEnabled(True)
         QMessageBox.information(self, "提示", "移动文件完成！")
 
     def operation_error(self, error_msg):
         logger.error(f"出现异常：{error_msg}")
+        self.progress_tool.hide()
         self.setEnabled(True)
         QMessageBox.information(self, "警告", "遇到异常停止工作")
 
@@ -129,17 +135,19 @@ class FileOperationThread(QThread):
     finished_signal = pyqtSignal()
     error_signal = pyqtSignal(str)
 
-    def __init__(self, folder_path, slice_char):
+    def __init__(self, folder_path, slice_char, progress_tool):
         super().__init__()
         self.folder_path = folder_path
         self.slice_char = slice_char
+        self.progress_tool = progress_tool
 
     def run(self):
         try:
-            logger.info("正在休眠3秒")
-            time.sleep(3)  # 线程休眠3秒
+
             if self.slice_char != "":
                 logger.info("---- 有分割字符，开始执行操作 ----")
+                self.progress_tool.set_range(0,0)
+
                 self.create_folder_move_files(self.folder_path, self.slice_char)
             else:
                 logger.info("---- 分割字符为空，不执行操作 ----")

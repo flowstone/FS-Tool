@@ -16,6 +16,7 @@ import hashlib
 from fs_constants import FsConstants
 from sqlite_util import SQLiteTool
 from auto_answers_list import AutoAnswersList
+from progress_tool import ProgressTool
 
 # 这里定义一些常见的姓氏和名字的列表，可以根据实际情况扩展
 last_names = ["赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈", "褚", "卫", "蒋", "沈", "韩", "杨"]
@@ -290,6 +291,7 @@ class AutoAnswersApp(QMainWindow):
         return full_name
 
     def start_answers(self):
+        self.progress_tool = ProgressTool(self)
 
         # 判断是否输入密码
         if self.passwd_edit.text() == "":
@@ -348,19 +350,22 @@ class AutoAnswersApp(QMainWindow):
 
         self.worker_thread = AutoAnswerThread(self.zone3_value, self.zone4_value, self.zone5_value, self.name_value,
                                               self.age_value, self.gender_value, self.culture_value, self.job_value,
-                                              self.company_value, self.selected_number)
+                                              self.company_value, self.selected_number, self.progress_tool)
         self.worker_thread.finished_signal.connect(self.auto_answer_finished)
         self.worker_thread.error_signal.connect(self.auto_answer_error)
         self.worker_thread.start()
+        self.progress_tool.show()
 
     def auto_answer_finished(self):
         logger.info("---- 自动答题完成 ----")
+        self.progress_tool.hide()
         self.setEnabled(True)
         self.update_sqlite_log()
         QMessageBox.information(self, "提示", "自动答题已完成！")
 
     def auto_answer_error(self, error_msg):
         logger.error(f"自动答题出现异常: {error_msg}")
+        self.progress_tool.hide()
         self.setEnabled(True)
         self.update_sqlite_log()
         QMessageBox.warning(self, "警告", "自动答题过程中出现异常，请查看日志！")
@@ -384,8 +389,9 @@ class AutoAnswerThread(QThread):
 
     def __init__(self, zone3_value, zone4_value, zone5_value, name_value, age_value, gender_value,
                  culture_value,
-                 job_value, company_value, selected_number):
+                 job_value, company_value, selected_number, progress_tool):
         super().__init__()
+        self.progress_tool = progress_tool
 
         self.zone3_status = False
         self.zone4_status = False
@@ -414,8 +420,8 @@ class AutoAnswerThread(QThread):
         try:
             for index in range(self.selected_number):
                 logger.info(f"---- 自动答题第<{index + 1}>次 ----")
+                self.progress_tool.set_range(0,0)
                 self.do_auto_answer()
-                progress = int((index + 1) / self.selected_number * 100)
             self.finished_signal.emit()
         except Exception as e:
             self.error_signal.emit(str(e))
