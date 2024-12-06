@@ -1,6 +1,6 @@
-import sys
+import time
 import os
-import shutil
+import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar, QFileDialog,QProgressBar
 from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 from PyQt5.QtCore import Qt,pyqtSignal, QObject, QThread
@@ -75,15 +75,8 @@ class HeicToJpgApp(QWidget):
         button_layout.addWidget(exit_button)
 
         layout.addLayout(folder_path_layout)
-        # 进度条（初始隐藏）
-        self.progressBar = QProgressBar(self)
-        #self.progressBar.setRange(0, 100)
-        # 设置为不确定模式
-        self.progressBar.setMinimum(0)
-        self.progressBar.setMaximum(0)
-        self.progressBar.hide()
+
         layout.addLayout(button_layout)
-        layout.addWidget(self.progressBar)
 
         self.setLayout(layout)
 
@@ -105,66 +98,38 @@ class HeicToJpgApp(QWidget):
         if folder_path:
             logger.info("---- 有选择文件夹，开始执行操作 ----")
             self.setEnabled(False)  # 禁用按钮，防止多次点击
-
-            self.worker = Worker()
-            self.worker.folder_path = folder_path
-            self.worker.progressBar = self.progressBar
-            self.thread = QThread()
-            self.worker.moveToThread(self.thread)
-            self.worker.finished_signal.connect(self.worker_finished)
-            self.worker.error_signal.connect(self.worker_error)  # 连接异常信号处理方法
-            self.thread.started.connect(self.worker.do_work)
-
-            self.thread.start()
+            self.worker = HeicToJpgAppThread(folder_path)
+            self.worker.finished_signal.connect(self.operation_finished)
+            self.worker.error_signal.connect(self.operation_error)  # 连接异常信号处理方法
+            self.worker.start()
         else:
-
             QMessageBox.warning(self, "警告", "请选择要操作的文件夹！")
-    def worker_finished(self):
-        self.progressBar.hide()
+
+    def operation_finished(self):
         self.setEnabled(True)
-        self.thread.quit()  # 任务完成后，退出线程
-        self.thread.wait()  # 等待线程真正结束，释放资源
         QMessageBox.information(self, "提示", "移动文件完成！")
 
-    def worker_error(self, error_msg):
-        logger.warning(f'任务出现错误: {error_msg}')
+    def operation_error(self, error_msg):
+        logger.error(f"出现异常：{error_msg}")
         self.setEnabled(True)
-        self.thread.quit()
-        self.thread.wait()
-    # 创建文件夹，并移动到指定目录下
-    # import whatimage
-    # import pillow_heif
-    # 但是个别HEIC图片无法识别
-    @staticmethod
-    def heic_to_jpg(folder_path):
-        if folder_path:
-            for root, dirs, files in os.walk(folder_path):
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    with open(file_path, 'rb') as f:
-                        file_data = f.read()
-                        fmt = whatimage.identify_image(file_data)
-                        if fmt == 'heic':
-                            try:
-                                heif_file = pillow_heif.read_heif(file_path)
-                                image = Image.frombytes(mode=heif_file.mode, size=heif_file.size, data=heif_file.data)
-                                new_file_name = os.path.splitext(file)[0] + '.jpg'
-                                new_file_path = os.path.join(root, new_file_name)
-                                image.save(new_file_path, 'JPEG')
-                                logger.info(f'已将 {file_path} 转换为 {new_file_path}')
-                            except Exception as e:
-                                logger.error(f'转换 {file_path} 时出错: {e}')
+        QMessageBox.information(self, "警告", "遇到异常停止工作")
 
 
 
 
-class Worker(QObject):
+
+class HeicToJpgAppThread(QThread):
     finished_signal = pyqtSignal()
     error_signal = pyqtSignal(str)  # 新增信号，用于发送错误信息
 
-    def do_work(self):
+    def __init__(self, folder_path):
+        super().__init__()
+        self.folder_path = folder_path
+
+    def run(self):
         try:
-            self.progressBar.show()
+            logger.info("正在休眠3秒")
+            time.sleep(3)  # 线程休眠3秒
             self.heic_to_jpg_v2(self.folder_path)
             self.finished_signal.emit()
         except Exception as e:
@@ -179,21 +144,41 @@ class Worker(QObject):
 
     @staticmethod
     def heic_to_jpg_v2(folder_path):
-        if folder_path:
-            for root, dirs, files in os.walk(folder_path):
-                for file in files:
-                    if file.endswith('.HEIC') or file.endswith('.heic'):
-                        file_path = os.path.join(root, file)
-                        try:
-                            image = Image.open(file_path)
-                            # 使用exif_transpose方法根据EXIF信息调整图像方向
-                            image = ImageOps.exif_transpose(image)
-                            file_name = file.split('.')[0] + '.jpg'
-                            output_path = os.path.join(root, file_name)
-                            image.convert('RGB').save(output_path, 'JPEG')
-                            logger.info(f"{file_path} 已成功转换为 {output_path}")
-                        except FileNotFoundError:
-                            logger.error(f"文件 {file_path} 不存在，请检查路径。")
-                        except IOError as e:
-                            logger.warning(f"处理 {file_path} 时出现错误: {str(e)}")
-            logger.info("所有HEIC图片转换完成！")
+        for root, dirs, files in os.walk(folder_path):
+            for file in files:
+                if file.endswith('.HEIC') or file.endswith('.heic'):
+                    file_path = os.path.join(root, file)
+                    image = Image.open(file_path)
+                    # 使用exif_transpose方法根据EXIF信息调整图像方向
+                    image = ImageOps.exif_transpose(image)
+                    file_name = file.split('.')[0] + '.jpg'
+                    output_path = os.path.join(root, file_name)
+                    image.convert('RGB').save(output_path, 'JPEG')
+                    logger.info(f"{file_path} 已成功转换为 {output_path}")
+        logger.info("所有HEIC图片转换完成！")
+
+    # 创建文件夹，并移动到指定目录下
+    # import whatimage
+    # import pillow_heif
+    # 但是个别HEIC图片无法识别
+    @staticmethod
+    def heic_to_jpg(folder_path):
+        for root, dirs, files in os.walk(folder_path):
+            for file in files:
+                file_path = os.path.join(root, file)
+                with open(file_path, 'rb') as f:
+                    file_data = f.read()
+                    fmt = whatimage.identify_image(file_data)
+                    if fmt == 'heic':
+                        heif_file = pillow_heif.read_heif(file_path)
+                        image = Image.frombytes(mode=heif_file.mode, size=heif_file.size, data=heif_file.data)
+                        new_file_name = os.path.splitext(file)[0] + '.jpg'
+                        new_file_path = os.path.join(root, new_file_name)
+                        image.save(new_file_path, 'JPEG')
+                        logger.info(f'已将 {file_path} 转换为 {new_file_path}')
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = HeicToJpgApp()
+    window.show()
+    sys.exit(app.exec_())

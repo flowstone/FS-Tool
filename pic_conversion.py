@@ -1,10 +1,10 @@
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QCheckBox, QFileDialog, QHBoxLayout,QDesktopWidget
+import time
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QCheckBox, QFileDialog, QHBoxLayout, QMessageBox
 from PyQt5.QtGui import QPixmap, QIcon
 from PIL import Image
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
+from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from loguru import logger
 from common_util import CommonUtil
 from fs_constants import FsConstants
@@ -95,20 +95,50 @@ class PicConversionApp(QWidget):
             self.selected_formats.append(format)
         else:
             self.selected_formats.remove(format) if format in self.selected_formats else None
-
+        logger.info(f"----{self.selected_formats}")
         # 根据是否有复选框被选中来更新转换按钮的状态
         if len(self.selected_formats) > 0:
-            self.setEnabled(True)
+            self.convert_button.setEnabled(True)
         else:
-            self.setEnabled(False)
+            self.convert_button.setEnabled(False)
 
     def convert_image(self):
         if not self.image_path:
             logger.warning("---- 请先上传图片! ----")
             return
 
+        self.setEnabled(False)
+        self.worker_thread = ImageConversionThread(self.image_path, self.selected_formats)
+        self.worker_thread.finished_signal.connect(self.conversion_finished)
+        self.worker_thread.error_signal.connect(self.conversion_error)
+        self.worker_thread.start()
+
+    def conversion_finished(self):
+        logger.info("---- 图片转换完成 ----")
+        self.setEnabled(True)
+        logger.info(
+            f"图片已成功转换为所选格式，保存路径分别为: {[f'{os.path.splitext(self.image_path)[0]}.{f.lower()}' for f in self.selected_formats]}")
+        QMessageBox.information(self, "提示", "移动文件完成！")
+
+
+    def conversion_error(self, error_msg):
+        logger.error(f"转换图片时出错: {error_msg}")
+        self.setEnabled(True)
+        QMessageBox.information(self, "警告", "遇到异常停止工作")
+
+class ImageConversionThread(QThread):
+    finished_signal = pyqtSignal()
+    error_signal = pyqtSignal(str)
+
+    def __init__(self, image_path, selected_formats):
+        super().__init__()
+        self.image_path = image_path
+        self.selected_formats = selected_formats
+
+    def run(self):
         try:
-            self.setEnabled(False)
+            logger.info("正在休眠3秒")
+            time.sleep(3)  # 线程休眠3秒
             image = Image.open(self.image_path)
 
             for target_format in self.selected_formats:
@@ -124,7 +154,12 @@ class PicConversionApp(QWidget):
                     image = image.convert('RGB') if image.mode!= 'RGB' else image
                 image.save(new_image_path)
 
-            logger.info(f"图片已成功转换为所选格式，保存路径分别为: {[f'{base_name}.{f.lower()}' for f in self.selected_formats]}")
+            self.finished_signal.emit()
         except Exception as e:
-            logger.error(f"转换图片时出错: {e}")
-        self.setEnabled(True)
+            self.error_signal.emit(str(e))
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = PicConversionApp()
+    window.show()
+    sys.exit(app.exec_())

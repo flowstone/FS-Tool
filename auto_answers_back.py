@@ -2,7 +2,7 @@ import sys
 from datetime import datetime
 
 from PyQt5.QtWidgets import QApplication,QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QPushButton, QMenu, QProgressBar,QMessageBox,QAction
-from PyQt5.QtCore import Qt, pyqtSignal, QThread
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont,QPixmap, QIcon
 import os
 
@@ -20,8 +20,6 @@ from auto_answers_list import AutoAnswersList
 # 这里定义一些常见的姓氏和名字的列表，可以根据实际情况扩展
 last_names = ["赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈", "褚", "卫", "蒋", "沈", "韩", "杨"]
 first_names = ["强", "伟", "芳", "娜", "秀英", "敏", "静", "丽", "军", "磊", "超", "鹏", "慧", "勇", "杰"]
-error = 0
-success = 0
 
 class AutoAnswersApp(QMainWindow):
     def __init__(self):
@@ -49,7 +47,15 @@ class AutoAnswersApp(QMainWindow):
                 image: url(down_arrow.png);
             }
         """
-
+        self.zone3_status = False
+        self.zone4_status = False
+        self.zone5_status = False
+        self.age_status = False
+        self.gender_status = False
+        self.culture_status = False
+        self.job_status = False
+        self.while_flag = True
+        self.while_second_flag = True
 
         self.today = CommonUtil.get_today()
         self.error = 0
@@ -267,7 +273,13 @@ class AutoAnswersApp(QMainWindow):
 
         # 进度条（初始隐藏）
         row6_layout = QHBoxLayout()
-
+        self.progressBar = QProgressBar(self)
+        # self.progressBar.setRange(0, 100)
+        # 设置为不确定模式
+        self.progressBar.setMinimum(0)
+        self.progressBar.setMaximum(0)
+        self.progressBar.hide()
+        row6_layout.addWidget(self.progressBar)
         main_layout.addLayout(row6_layout)
 
         # 设置窗口整体样式，例如背景颜色（可按需修改）
@@ -290,6 +302,8 @@ class AutoAnswersApp(QMainWindow):
         return full_name
 
     def start_answers(self):
+
+        #self.progressBar.show()
 
         # 判断是否输入密码
         if self.passwd_edit.text() == "":
@@ -329,13 +343,11 @@ class AutoAnswersApp(QMainWindow):
         logger.info(f"公司: {self.company_value}")
 
         logger.info("---- 新增当天的答题记录 [START]----")
-        global error
-        global success
         try:
             data_one = self.sqlite.read_one(FsConstants.AUTO_ANSWERS_TABLE_NAME,"error,success",f"today = '{self.today}'")
             if data_one:
-                error = data_one[0]
-                success = data_one[1]
+                self.error = data_one[0]
+                self.success = data_one[1]
             else:
                 create_data = {'today': self.today,'create_time': CommonUtil.get_current_time()}
                 self.sqlite.create(FsConstants.AUTO_ANSWERS_TABLE_NAME,create_data)
@@ -345,83 +357,16 @@ class AutoAnswersApp(QMainWindow):
 
         logger.info("---- 开始进行自动答题 ----")
         self.setEnabled(False)
-
-        self.worker_thread = AutoAnswerThread(self.zone3_value, self.zone4_value, self.zone5_value, self.name_value,
-                                              self.age_value, self.gender_value, self.culture_value, self.job_value,
-                                              self.company_value, self.selected_number)
-        self.worker_thread.finished_signal.connect(self.auto_answer_finished)
-        self.worker_thread.error_signal.connect(self.auto_answer_error)
-        self.worker_thread.start()
-
-    def auto_answer_finished(self):
-        logger.info("---- 自动答题完成 ----")
+        for index in range(self.selected_number):
+            logger.info(f"---- 自动答题第<{index+1}>次 ----")
+            self.while_flag = True
+            self.start()
+        self.sqlite.close()
+        logger.info("---- 结束自动答题 ----")
+        #self.progressBar.hide()
         self.setEnabled(True)
-        self.update_sqlite_log()
-        QMessageBox.information(self, "提示", "自动答题已完成！")
 
-    def auto_answer_error(self, error_msg):
-        logger.error(f"自动答题出现异常: {error_msg}")
-        self.setEnabled(True)
-        self.update_sqlite_log()
-        QMessageBox.warning(self, "警告", "自动答题过程中出现异常，请查看日志！")
-
-    def update_sqlite_log(self):
-        global error
-        global success
-        try:
-            logger.info("---- 更新答题记录到数据库 ----")
-            logger.info(f"error = {error},success = {success}")
-            update_dict = {'error': error, 'success': success,
-                           'update_time': CommonUtil.get_current_time()}
-            self.sqlite.update(FsConstants.AUTO_ANSWERS_TABLE_NAME, update_dict,
-                               f"today = '{self.today}'")
-        except Exception as e:
-            logger.warning(f"更新自动答题记录表失败，{e}")
-
-class AutoAnswerThread(QThread):
-    finished_signal = pyqtSignal()
-    error_signal = pyqtSignal(str)
-
-    def __init__(self, zone3_value, zone4_value, zone5_value, name_value, age_value, gender_value,
-                 culture_value,
-                 job_value, company_value, selected_number):
-        super().__init__()
-
-        self.zone3_status = False
-        self.zone4_status = False
-        self.zone5_status = False
-        self.age_status = False
-        self.gender_status = False
-        self.culture_status = False
-        self.job_status = False
-        self.while_flag = True
-        self.while_second_flag = True
-
-        self.zone3_value = zone3_value
-        self.zone4_value = zone4_value
-        self.zone5_value = zone5_value
-        self.name_value = name_value
-        self.age_value = age_value
-        self.gender_value = gender_value
-        self.culture_value = culture_value
-        self.job_value = job_value
-        self.company_value = company_value
-        self.selected_number = selected_number
-        self.today = CommonUtil.get_today()
-
-
-    def run(self):
-        try:
-            for index in range(self.selected_number):
-                logger.info(f"---- 自动答题第<{index + 1}>次 ----")
-                self.do_auto_answer()
-                progress = int((index + 1) / self.selected_number * 100)
-            self.finished_signal.emit()
-        except Exception as e:
-            self.error_signal.emit(str(e))
-
-    # 开始自动答题
-    def do_auto_answer(self):
+    def start(self):
 
         logger.info("---- 开始配置chrome ----")
         # 获取当前脚本所在目录，用于构建驱动路径（可根据实际情况调整，如果驱动路径是固定的已知路径，可直接写具体路径）
@@ -459,13 +404,12 @@ class AutoAnswerThread(QThread):
         for handle in self.web_driver.window_handles:
             if handle != current_handle:
                 self.web_driver.switch_to.window(handle)
+        self.fill_person_info()
 
-        self.load_person_info()
-        self.set_person_option()
-        self.submit_auto_answers()
-        self.web_driver.quit()
+        self.set_auto_option()
 
-    # 判断页面必要条件是否加载全
+
+
     def check_is_refresh(self):
         logger.info("---- 判断页面下拉框是否加载完全 ----")
         # 市  地区
@@ -508,14 +452,15 @@ class AutoAnswerThread(QThread):
         logger.info(f"下拉框加载状态-culture_status:{self.culture_status}")
 
 
+
+
         # 职业
         metier = self.web_driver.find_element(By.ID, "metier")
         metier_options = metier.find_elements(By.TAG_NAME, "option")
         self.job_status = len(metier_options) > 0
         logger.info(f"job_status:{self.job_status}")
 
-    # 设置用户信息
-    def set_person_option(self):
+    def set_auto_option(self):
         logger.info("---- 全部加载完全，开始设置下拉框 ----")
         # 市  地区
         city = self.web_driver.find_element(By.ID, "zone3")
@@ -529,6 +474,7 @@ class AutoAnswerThread(QThread):
         # 县  地区
         county = self.web_driver.find_element(By.ID, "zone4")
         county_options = county.find_elements(By.TAG_NAME, "option")
+        self.zone4_status = len(county_options) > 0
         for county_option in county_options:
             if county_option.text == self.zone4_value:
                 county_option.click()
@@ -591,20 +537,19 @@ class AutoAnswerThread(QThread):
         org_name.send_keys(self.company_value)
         logger.info(f"设置<单位>:{self.company_value}")
 
+        self.submit_auto_answers()
 
 
 
 
-    # 开始加载页面数据
-    def load_person_info(self):
-        logger.info("---- 获取个人初始化信息 ----")
+
+    def fill_person_info(self):
+        logger.info("---- 开始填充个人数据 ----")
         max_retries = 10  # 定义最大重试次数，可以根据实际情况调整
         retry_count = 0
         while self.while_flag and retry_count < max_retries:
             try:
-                # 获得下拉框列表状态
                 self.check_is_refresh()
-                # 下拉框列表没有加载完全
                 if not self.is_all_selected():
                     logger.info("---- 缺失部分下拉选择，刷新页面 ----")
                     self.web_driver.refresh()
@@ -621,10 +566,8 @@ class AutoAnswerThread(QThread):
 
 
 
-    # 开始答题操作
     def submit_auto_answers(self):
-        global error
-        global success
+
         logger.info("---- 点击了<开始学习测评> ----")
         try:
             # 点击按钮
@@ -655,11 +598,22 @@ class AutoAnswerThread(QThread):
             # 接受弹窗确认
             self.web_driver.switch_to.alert.accept()
             time.sleep(1)
-            success += 1
+            self.success += 1
         except Exception as e:
             logger.error(f"在开始评测中出现异常: {e}")
-            error += 1
-        logger.info(f"error = {error},success = {success}")
+            self.error += 1
+
+        # 关闭窗口
+        self.web_driver.quit()
+        try:
+
+            logger.info("---- 插入答题次数到数据库 ----")
+            logger.info(f"---- 当前error={self.error}, success={self.success} ----")
+            update_dict = {'error': self.error, 'success': self.success, 'update_time': CommonUtil.get_current_time()}
+            self.sqlite.update(FsConstants.AUTO_ANSWERS_TABLE_NAME, update_dict,
+                                      f"today = '{self.today}'")
+        except Exception as e:
+            logger.warning(f"更新自动答题记录表失败，{e}")
 
     # 判断Select是不是全部选中
     def is_all_selected(self):
@@ -680,10 +634,3 @@ class AutoAnswerThread(QThread):
                 self.culture_status and
                 self.job_status
         )
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = AutoAnswersApp()
-    window.show()
-    sys.exit(app.exec_())

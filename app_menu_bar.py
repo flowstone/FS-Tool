@@ -44,8 +44,8 @@ class AppMenuBar(QMenuBar):
         QMessageBox.information(self, FsConstants.TOOLBAR_AUTHOR_TITLE, author_text)
 
 
-#if __name__ == '__main__':
-#    app = QApplication(sys.argv)
-#    window = AppMenuBar()
-#    window.show()
-#    sys.exit(app.exec_())
+if __name__ == '__main__':
+   app = QApplication(sys.argv)
+   window = AppMenuBar()
+   window.show()
+   sys.exit(app.exec_())

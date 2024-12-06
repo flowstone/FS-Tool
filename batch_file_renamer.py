@@ -1,8 +1,9 @@
 import sys
 import os
-from PyQt5.QtWidgets import QProgressBar, QGroupBox,QRadioButton,QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar,QFileDialog
+import time
+from PyQt5.QtWidgets import QApplication, QGroupBox,QRadioButton,QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar,QFileDialog
 from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from PyQt5.QtWidgets import QMessageBox
 from loguru import logger
 from select import select
@@ -147,15 +148,6 @@ class RenameFileApp(QWidget):
         button_layout.addWidget(self.start_button)
         button_layout.addWidget(self.exit_button)
         layout.addLayout(button_layout)
-
-        # 进度条（初始隐藏）
-        self.progressBar = QProgressBar(self)
-        # self.progressBar.setRange(0, 100)
-        # 设置为不确定模式
-        self.progressBar.setMinimum(0)
-        self.progressBar.setMaximum(0)
-        self.progressBar.hide()
-        layout.addWidget(self.progressBar)
         self.setLayout(layout)
 
 
@@ -207,83 +199,112 @@ class RenameFileApp(QWidget):
             return
         if folder_path:
             self.setEnabled(False)
-            try:
-                if self.check_type_text == self.file_rbtn.text():
-                    logger.info(f"你选择类型是:{FsConstants.FILE_RENAMER_TYPE_FILE}")
-                    self.rename_files(folder_path, prefix, suffix, char_to_find, replace_char)
-                else:
-                    logger.info(f"你选择的类型是：{FsConstants.FILE_RENAMER_TYPE_FOLDER}")
-                    self.rename_folder(folder_path, prefix, suffix, char_to_find, replace_char)
-
-                if self.check_serial_flag:
-                    logger.info(f"选择序号单独走其它方法")
-                    self.rename_serial(folder_path)
-
-                QMessageBox.information(self, "提示", "批量改名完成！")
-                logger.info("批量改名完成")
-            except OSError as e:
-                logger.error(f"出现操作系统相关异常：{str(e)}")
-                QMessageBox.information(self, "警告", "遇到异常停止工作")
-            self.setEnabled(True)
+            self.worker_thread = FileRenameThread(folder_path, prefix, suffix, char_to_find, replace_char,
+                                                  self.check_type_text, self.check_serial_flag,
+                                                  self.check_clear_flag)
+            self.worker_thread.finished_signal.connect(self.operation_finished)
+            self.worker_thread.error_signal.connect(self.operation_error)
+            self.worker_thread.start()
         else:
             QMessageBox.warning(self, "警告", "请选择要修改的文件夹！")
             logger.warning("请选择要修改的文件夹")
 
+    def operation_finished(self):
+        logger.info("---- 操作完成 ----")
+        self.setEnabled(True)
+        QMessageBox.information(self, "提示", "批量改名完成！")
 
+    def operation_error(self, error_msg):
+        logger.error(f"出现异常：{error_msg}")
+        self.setEnabled(True)
+        QMessageBox.information(self, "警告", "遇到异常停止工作")
 
-    # 修改文件名
-    @staticmethod
-    def rename_files(folder_path, prefix, suffix, char_to_find, replace_char):
+class FileRenameThread(QThread):
+    finished_signal = pyqtSignal()
+    error_signal = pyqtSignal(str)
+
+    def __init__(self, folder_path, prefix, suffix, char_to_find, replace_char, check_type_text, check_serial_flag,
+                 check_clear_flag):
+        super().__init__()
+        self.folder_path = folder_path
+        self.prefix = prefix
+        self.suffix = suffix
+        self.char_to_find = char_to_find
+        self.replace_char = replace_char
+        self.check_type_text = check_type_text
+        self.check_serial_flag = check_serial_flag
+        self.check_clear_flag = check_clear_flag
+
+    def run(self):
+        try:
+            logger.info("正在休眠3秒")
+            time.sleep(3)  # 线程休眠3秒
+            if self.check_type_text == "文件":
+                logger.info(f"你选择类型是:{FsConstants.FILE_RENAMER_TYPE_FILE}")
+                self.rename_files()
+            else:
+                logger.info(f"你选择的类型是：{FsConstants.FILE_RENAMER_TYPE_FOLDER}")
+                self.rename_folder()
+
+            if self.check_serial_flag:
+                logger.info(f"选择序号单独走其它方法")
+                self.rename_serial()
+
+            self.finished_signal.emit()
+        except OSError as e:
+            self.error_signal.emit(str(e))
+
+    def rename_files(self):
         # 遍历文件夹下的文件名
-        for filename in os.listdir(folder_path):
-            old_path = os.path.join(folder_path, filename)
+
+        for filename in os.listdir(self.folder_path):
+            old_path = os.path.join(self.folder_path, filename)
             # 判断是否是文件
             if os.path.isfile(old_path):
-                new_filename = f"{prefix}{filename}{suffix}"
+                new_filename = f"{self.prefix}{filename}{self.suffix}"
                 # 判断是否需要进行文件替换操作
-                if char_to_find and replace_char:
+                if self.char_to_find and self.replace_char:
                     # 替换字符
-                    new_filename = new_filename.replace(char_to_find, replace_char)
-                new_path = os.path.join(folder_path, new_filename)
+                    new_filename = new_filename.replace(self.char_to_find, self.replace_char)
+                new_path = os.path.join(self.folder_path, new_filename)
                 os.rename(old_path, new_path)
 
 
-    # 修改文件夹名
-    @staticmethod
-    def rename_folder(folder_path, prefix, suffix, char_to_find, replace_char):
-        for dir_name in os.listdir(folder_path):
-            old_path = os.path.join(folder_path, dir_name)
+    def rename_folder(self):
+
+        for dir_name in os.listdir(self.folder_path):
+            old_path = os.path.join(self.folder_path, dir_name)
             if os.path.isdir(old_path):
-                new_folder_name = f"{prefix}{dir_name}{suffix}"
+                new_folder_name = f"{self.prefix}{dir_name}{self.suffix}"
                 # 判断是否需要进行文件替换操作
-                if char_to_find and replace_char:
+                if self.char_to_find and self.replace_char:
                     # 替换字符
-                    new_folder_name = new_folder_name.replace(char_to_find, replace_char)
-                new_path = os.path.join(folder_path, new_folder_name)
+                    new_folder_name = new_folder_name.replace(self.char_to_find, self.replace_char)
+                new_path = os.path.join(self.folder_path, new_folder_name)
                 os.rename(old_path, new_path)
-    # 添加序号
-    def rename_serial(self, folder_path):
+
+
+    def rename_serial(self):
         # 用于记录重命名的序号，初始化为1
         index = 1
-        if self.check_type_text == self.folder_rbtn.text():
+        if self.check_type_text == "文件夹":
             logger.info("---- 开始为文件夹创建序号 ----")
             # 获取当前文件夹下的所有子文件夹和文件
-            sub_dirs = [os.path.join(folder_path, d) for d in os.listdir(folder_path) if
-                        os.path.isdir(os.path.join(folder_path, d))]
+            sub_dirs = [os.path.join(self.folder_path, d) for d in os.listdir(self.folder_path) if
+                        os.path.isdir(os.path.join(self.folder_path, d))]
 
             # 重命名当前文件夹下的子文件夹
             for dir_path in sub_dirs:
-                dir_name = "" if self.check_clear_flag  else os.path.basename(dir_path)
+                dir_name = "" if self.check_clear_flag else os.path.basename(dir_path)
                 new_dir_name = str(index) + dir_name
                 new_dir_path = os.path.join(os.path.dirname(dir_path), new_dir_name)
                 os.rename(dir_path, new_dir_path)
                 index += 1
 
-
-        if self.check_type_text == self.file_rbtn.text():
+        if self.check_type_text == "文件":
             logger.info("---- 开始为文件创建序号 ----")
-            files = [os.path.join(folder_path, f) for f in os.listdir(folder_path) if
-                     os.path.isfile(os.path.join(folder_path, f))]
+            files = [os.path.join(self.folder_path, f) for f in os.listdir(self.folder_path) if
+                     os.path.isfile(os.path.join(self.folder_path, f))]
             # 重命名当前文件夹下的文件
             for file_path in files:
                 file_name = os.path.basename(file_path)
@@ -293,3 +314,10 @@ class RenameFileApp(QWidget):
                 new_file_path = os.path.join(os.path.dirname(file_path), new_file_name)
                 os.rename(file_path, new_file_path)
                 index += 1
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = RenameFileApp()
+    window.show()
+    sys.exit(app.exec_())

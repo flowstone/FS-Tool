@@ -1,11 +1,11 @@
 import sys
 import os
 import shutil
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QProgressBar, QFileDialog
+import time
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QProgressBar, QFileDialog, QMessageBox
 from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal, QThread
 
-from PyQt5.QtWidgets import QMessageBox
 from loguru import logger
 from common_util import CommonUtil
 from fs_constants import FsConstants
@@ -89,15 +89,6 @@ class CreateFolderApp(QWidget):
         layout.addLayout(info_layout)
         layout.addLayout(button_layout)
 
-        # 进度条（初始隐藏）
-        self.progressBar = QProgressBar(self)
-        # self.progressBar.setRange(0, 100)
-        # 设置为不确定模式
-        self.progressBar.setMinimum(0)
-        self.progressBar.setMaximum(0)
-        self.progressBar.hide()
-
-        layout.addWidget(self.progressBar)
         self.setLayout(layout)
 
 
@@ -117,22 +108,46 @@ class CreateFolderApp(QWidget):
 
         if folder_path:
             self.setEnabled(False)
-            self.progressBar.show()
-            try:
-                if slice_char != "":
-                    logger.info("---- 有分割字符，开始执行操作 ----")
-                    self.create_folder_move_files(folder_path, slice_char)
-                    QMessageBox.information(self, "提示", "移动文件完成！")
-            except OSError as e:
-                logger.error(f"出现操作系统相关异常：{str(e)}")
-                QMessageBox.information(self, "警告", "遇到异常停止工作")
-
-            self.progressBar.hide()
-            self.setEnabled(True)
+            self.worker_thread = FileOperationThread(folder_path, slice_char)
+            self.worker_thread.finished_signal.connect(self.operation_finished)
+            self.worker_thread.error_signal.connect(self.operation_error)
+            self.worker_thread.start()
         else:
             QMessageBox.warning(self, "警告", "请选择要操作的文件夹！")
 
-    # 创建文件夹，并移动到指定目录下
+    def operation_finished(self):
+        logger.info("---- 操作完成 ----")
+        self.setEnabled(True)
+        QMessageBox.information(self, "提示", "移动文件完成！")
+
+    def operation_error(self, error_msg):
+        logger.error(f"出现异常：{error_msg}")
+        self.setEnabled(True)
+        QMessageBox.information(self, "警告", "遇到异常停止工作")
+
+class FileOperationThread(QThread):
+    finished_signal = pyqtSignal()
+    error_signal = pyqtSignal(str)
+
+    def __init__(self, folder_path, slice_char):
+        super().__init__()
+        self.folder_path = folder_path
+        self.slice_char = slice_char
+
+    def run(self):
+        try:
+            logger.info("正在休眠3秒")
+            time.sleep(3)  # 线程休眠3秒
+            if self.slice_char != "":
+                logger.info("---- 有分割字符，开始执行操作 ----")
+                self.create_folder_move_files(self.folder_path, self.slice_char)
+            else:
+                logger.info("---- 分割字符为空，不执行操作 ----")
+            self.finished_signal.emit()
+
+        except OSError as e:
+            self.error_signal.emit(str(e))
+
     @staticmethod
     def create_folder_move_files(folder_path, slice_char):
         # 遍历文件夹下的文件名
@@ -142,7 +157,7 @@ class CreateFolderApp(QWidget):
             if os.path.isfile(source_path):
                 # 找到分割的位置，如'-'
                 index = filename.find(slice_char)
-                if index!= -1:
+                if index != -1:
                     # 提取 '-' 前面的部分作为文件夹名
                     folder_name = filename[:index]
                     # 如果文件夹不存在，则创建
@@ -153,4 +168,8 @@ class CreateFolderApp(QWidget):
                     destination_path = os.path.join(target_folder, filename)
                     shutil.move(source_path, destination_path)
 
-
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = CreateFolderApp()
+    window.show()
+    sys.exit(app.exec_())
