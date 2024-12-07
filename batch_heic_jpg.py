@@ -14,7 +14,6 @@ import whatimage
 import pillow_heif
 from PIL import Image,ImageOps
 from pillow_heif import register_heif_opener
-import loading_util
 # 注册HEIC文件 opener，使得PIL能够识别并打开HEIC格式文件，仅限V2方法使用
 register_heif_opener()
 
