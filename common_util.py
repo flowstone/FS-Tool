@@ -124,3 +124,9 @@ class CommonUtil:
         data_path = FsConstants.AUTO_ANSWERS_WIN_DRIVER_NAME if CommonUtil.check_win_os() else FsConstants.AUTO_ANSWERS_OTHER_DRIVER_NAME
         full_path =os.path.join(FsConstants.AUTO_ANSWERS_DRIVER_PATH, data_path)
         return CommonUtil.get_resource_path(full_path)
+
+    # 获得按钮小图标全路径
+    @staticmethod
+    def get_button_ico_path(button_icon):
+        full_path = os.path.join(FsConstants.BUTTON_ICON_PATH, button_icon)
+        return CommonUtil.get_resource_path(full_path)

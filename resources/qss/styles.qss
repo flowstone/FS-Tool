@@ -1,5 +1,7 @@
 /* 通用按钮样式 */
 
+
+
 QProgressBar {
     border: 2px solid #ccc;
     border-radius: 5px;
@@ -77,6 +79,26 @@ QLabel#current_time {
 QLabel#count_time {
     font-size: 14px;
     font-weight: bold;
+}
+/*
+ ------END ------------
+ */
+
+/*
+ 主界面所有按钮颜色 --------
+ */
+ QPushButton#feature {
+    background-color: #008CBA;
+    color: white;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: 'Arial';
+    margin: 5px;
+}
+QPushButton#feature:hover {
+    background-color: #007B9A;
 }
 /*
  ------END ------------

@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QSystemTrayIcon, QMenu, QAction, QToolBar, QMainWindow
 from PyQt5.QtGui import QFont, QPalette, QColor
+from PyQt5.Qt import QStyle
 
 from batch_heic_jpg import HeicToJpgApp
 from desktop_clock import ColorSettingDialog
@@ -28,11 +29,12 @@ class MainWindow(QMainWindow):
 
     def init_ui(self):
 
+
+
         logger.info(f"调用了主界面的初始化,悬浮球标志位 = {self.is_floating_ball_visible}")
         self.setWindowTitle(FsConstants.APP_WINDOW_TITLE)
         #self.setFixedSize(FsConstants.APP_WINDOW_WIDTH, FsConstants.APP_WINDOW_HEIGHT)
         self.setFixedWidth(FsConstants.APP_WINDOW_WIDTH)
-        self.setStyleSheet("background-color: #F5F5F5;")  # 设置窗口背景色为淡灰色
 
         layout = QVBoxLayout()
 
@@ -48,126 +50,45 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         # 透明时间
-        time_btn = QPushButton("透明时间")
-        time_btn.setFont(QFont('Arial', 14))  # 设置字体
-        time_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #008CBA;
-                color: white;
-                border-radius: 8px;
-                padding: 10px;
-            }
-            QPushButton:hover {
-                background-color: #007B9A;
-            }
-        """)
+        time_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_TIME_ICON)),FsConstants.DESKTOP_CLOCK_WINDOW_TITLE)
+        time_btn.setObjectName("feature")
         time_btn.clicked.connect(self.time_btn_clicked)
         layout.addWidget(time_btn)
 
         # 图转大师
-        img_conv_btn = QPushButton("图转大师")
-        img_conv_btn.setFont(QFont('Arial', 14))
-        img_conv_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #4CAF50;
-                color: white;
-                border-radius: 8px;
-                padding: 10px;
-            }
-            QPushButton:hover {
-                background-color: #45a049;
-            }
-        """)
+        img_conv_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_PIC_ICON)),FsConstants.PIC_CONVERSION_WINDOW_TITLE)
+        img_conv_btn.setObjectName("feature")
         img_conv_btn.clicked.connect(self.img_conv_btn_clicked)
         layout.addWidget(img_conv_btn)
 
         # 文件夹创建师
-        create_folder_btn = QPushButton(FsConstants.CREATE_FOLDER_WINDOW_TITLE)
-        create_folder_btn.setFont(QFont('Arial', 14))
-        create_folder_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #F44336;
-                color: white;
-                border-radius: 8px;
-                padding: 10px;
-            }
-            QPushButton:hover {
-                background-color: #D32F2F;
-            }
-        """)
+        create_folder_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FOLDER_ICON)),FsConstants.CREATE_FOLDER_WINDOW_TITLE)
+        create_folder_btn.setObjectName("feature")
         create_folder_btn.clicked.connect(self.create_folder_btn_clicked)
         layout.addWidget(create_folder_btn)
 
         # 重命名使者
-        rename_file_btn = QPushButton(FsConstants.FILE_RENAMER_WINDOW_TITLE)
-        rename_file_btn.setFont(QFont('Arial', 14))
-        rename_file_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #9C27B0;
-                color: white;
-                border-radius: 8px;
-                padding: 10px;
-            }
-            QPushButton:hover {
-                background-color: #8E24AA;
-            }
-        """)
+        rename_file_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FILE_ICON)),FsConstants.FILE_RENAMER_WINDOW_TITLE)
+        rename_file_btn.setObjectName("feature")
         rename_file_btn.clicked.connect(self.rename_file_btn_clicked)
-
         layout.addWidget(rename_file_btn)
 
         # HEIC转JPG
-        heic_jpg_btn = QPushButton(FsConstants.HEIC_JPG_BUTTON_TITLE)
-        heic_jpg_btn.setFont(QFont('Arial', 14))
-        heic_jpg_btn.setStyleSheet("""
-                    QPushButton {
-                        background-color: #FF6A6A;
-                        color: white;
-                        border-radius: 8px;
-                        padding: 10px;
-                    }
-                    QPushButton:hover {
-                        background-color: #CD5555;
-                    }
-                """)
+        heic_jpg_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_HEIC_ICON)),FsConstants.HEIC_JPG_BUTTON_TITLE)
+        heic_jpg_btn.setObjectName("feature")
         heic_jpg_btn.clicked.connect(self.heic_jpg_btn_clicked)
-
         layout.addWidget(heic_jpg_btn)
 
         # 自动答题
-        auto_answers_btn = QPushButton(FsConstants.AUTO_ANSWERS_WINDOW_TITLE)
-        auto_answers_btn.setFont(QFont('Arial', 14))
-        auto_answers_btn.setStyleSheet("""
-                    QPushButton {
-                        background-color: #96CDCD;
-                        color: white;
-                        border-radius: 8px;
-                        padding: 10px;
-                    }
-                    QPushButton:hover {
-                        background-color: #668B8B;
-                    }
-                """)
+        auto_answers_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_ANSWERS_ICON)),FsConstants.AUTO_ANSWERS_WINDOW_TITLE)
+        auto_answers_btn.setObjectName("feature")
         auto_answers_btn.clicked.connect(self.auto_answers_btn_clicked)
-
         layout.addWidget(auto_answers_btn)
 
         # 快捷便签
-        stick_note_btn = QPushButton(FsConstants.STICK_NOTE_WINDOW_TITLE)
-        stick_note_btn.setFont(QFont('Arial', 14))
-        stick_note_btn.setStyleSheet("""
-                        QPushButton {
-                            background-color: #96CDCD;
-                            color: white;
-                            border-radius: 8px;
-                            padding: 10px;
-                        }
-                        QPushButton:hover {
-                            background-color: #668B8B;
-                        }
-                    """)
+        stick_note_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_STICK_NOTE_ICON)),FsConstants.STICK_NOTE_WINDOW_TITLE)
+        stick_note_btn.setObjectName("feature")
         stick_note_btn.clicked.connect(self.stick_note_btn_clicked)
-
         layout.addWidget(stick_note_btn)
 
 

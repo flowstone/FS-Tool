@@ -90,6 +90,15 @@ class FsConstants:
     BASE_QSS_PATH = "resources/qss/styles.qss"
     BASE_COLOR_MAP = "resources/img_colormap.gif"
 
+    BUTTON_ICON_PATH = "resources/icon/"
+    BUTTON_TIME_ICON = "time-icon.svg"
+    BUTTON_PIC_ICON = "association-icon.svg"
+    BUTTON_FOLDER_ICON = "folder-icon.svg"
+    BUTTON_FILE_ICON = "move-icon.svg"
+    BUTTON_HEIC_ICON = "pictures-icon.svg"
+    BUTTON_ANSWERS_ICON = "unlock-icon.svg"
+    BUTTON_STICK_NOTE_ICON = "business-icon.svg"
+
     # 保存文件路径
     SAVE_FILE_PATH_WIN = "C:\\"
     SAVE_FILE_PATH_MAC = "~"
