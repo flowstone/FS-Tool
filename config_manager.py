@@ -14,8 +14,8 @@ class ConfigManager:
         try:
             with open('config.json', 'r') as file:
                 config = json.load(file)
-                self.window = config['DatabaseLocation']['window']
-                self.macos = config['DatabaseLocation']['macos']
-                print(f"SQLite位置,Window = {self.window}, MacOS = {self.macos}")
+                self.db_location = config['database']['location']
+                self.answer_pwd = config['AutoAnswers']['password']
+                self.answer_driver = config['AutoAnswers']['driver']
         except (FileNotFoundError, KeyError):
             print("配置文件有误")

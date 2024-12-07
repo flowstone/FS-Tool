@@ -17,6 +17,7 @@ from fs_constants import FsConstants
 from sqlite_util import SQLiteTool
 from auto_answers_list import AutoAnswersList
 from progress_tool import ProgressTool
+from config_manager import ConfigManager
 
 # 这里定义一些常见的姓氏和名字的列表，可以根据实际情况扩展
 last_names = ["赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈", "褚", "卫", "蒋", "沈", "韩", "杨"]
@@ -51,6 +52,9 @@ class AutoAnswersApp(QMainWindow):
             }
         """
 
+        config_manager = ConfigManager()
+        self.answer_pwd = config_manager.answer_pwd
+        self.answer_driver = config_manager.answer_driver
 
         self.today = CommonUtil.get_today()
         self.error = 0
@@ -304,7 +308,8 @@ class AutoAnswersApp(QMainWindow):
         encrypted_result = md5_hash.hexdigest()
         logger.info(f"MD加密后的内容：{encrypted_result}")
         # 加密后的密码  adf0558822da93b55f6fc48790ff3137
-        if encrypted_result != FsConstants.AUTO_ANSWERS_PASSWORD_MD5:
+        md5_password = self.answer_pwd if self.answer_pwd else FsConstants.AUTO_ANSWERS_PASSWORD_MD5
+        if encrypted_result != md5_password:
             QMessageBox.warning(self, "警告", "密码错误！")
             return
         self.zone3_value = self.zone3_combo.currentText()
@@ -430,14 +435,8 @@ class AutoAnswerThread(QThread):
     def do_auto_answer(self):
 
         logger.info("---- 开始配置chrome ----")
-        # 获取当前脚本所在目录，用于构建驱动路径（可根据实际情况调整，如果驱动路径是固定的已知路径，可直接写具体路径）
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        driver_name = FsConstants.AUTO_ANSWERS_WIN_DRIVER_NAME
-        if sys.platform.startswith('darwin') or sys.platform.startswith('linux'):
-            driver_name = FsConstants.AUTO_ANSWERS_OTHER_DRIVER_NAME
-        driver_path = os.path.join(current_dir, FsConstants.AUTO_ANSWERS_DRIVER_PATH,
-                                   driver_name)  # Windows系统下驱动文件名是chromedriver.exe，Mac系统下一般是chromedriver（无后缀），这里以Windows为例，根据实际情况替换
-        service = webdriver.ChromeService(executable_path=driver_path)
+        print(CommonUtil.get_chrome_driver_path())
+        service = webdriver.ChromeService(executable_path=CommonUtil.get_chrome_driver_path())
 
         options = webdriver.ChromeOptions()
         # 窗口最大化，等同于Java中窗口全屏操作

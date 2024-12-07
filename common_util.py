@@ -42,10 +42,9 @@ class CommonUtil:
     def get_db_full_path():
         # 读取配置文件
         config_manager = ConfigManager()
-        window = config_manager.window
-        macos = config_manager.macos
-        if window and macos:
-            return window if CommonUtil.check_win_os() else macos
+        db_location = config_manager.db_location
+        if db_location:
+            return db_location
 
         # 使用内置配置路径
         data_path = FsConstants.SAVE_FILE_PATH_WIN if CommonUtil.check_win_os() else CommonUtil.get_mac_user_path()
@@ -111,3 +110,17 @@ class CommonUtil:
             if os.path.isdir(item_path):
                 folder_count += 1
         return folder_count
+
+    # 获得Chrome Driver全路径
+    @staticmethod
+    def get_chrome_driver_path():
+        # 读取配置文件
+        config_manager = ConfigManager()
+        answer_driver = config_manager.answer_driver
+        if answer_driver:
+            return answer_driver
+
+        # 使用内置配置路径
+        data_path = FsConstants.AUTO_ANSWERS_WIN_DRIVER_NAME if CommonUtil.check_win_os() else FsConstants.AUTO_ANSWERS_OTHER_DRIVER_NAME
+        full_path =os.path.join(FsConstants.AUTO_ANSWERS_DRIVER_PATH, data_path)
+        return CommonUtil.get_resource_path(full_path)

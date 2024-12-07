@@ -1,6 +1,9 @@
 {
-   "DatabaseLocation": {
-     "window": "C:\\database.db",
-     "macos": ""
-   }
+   "database": {
+     "location": ""
+   },
+  "AutoAnswers": {
+    "password": "",
+    "driver": ""
+  }
 }
