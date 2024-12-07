@@ -3,7 +3,7 @@ import os
 import datetime
 
 from fs_constants import FsConstants
-
+from config_manager import ConfigManager
 
 class CommonUtil:
 
@@ -40,7 +40,14 @@ class CommonUtil:
     # 获得数据库文件全路径
     @staticmethod
     def get_db_full_path():
-        # 判断系统
+        # 读取配置文件
+        config_manager = ConfigManager()
+        window = config_manager.window
+        macos = config_manager.macos
+        if window and macos:
+            return window if CommonUtil.check_win_os() else macos
+
+        # 使用内置配置路径
         data_path = FsConstants.SAVE_FILE_PATH_WIN if CommonUtil.check_win_os() else CommonUtil.get_mac_user_path()
         # 构建数据库文件的相对路径,假设数据库文件名为database.db
         return os.path.join(data_path, FsConstants.DATABASE_FILE)
