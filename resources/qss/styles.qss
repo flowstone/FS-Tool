@@ -18,6 +18,7 @@ QLabel {
     font-size: 14px;
 }
 
+
 QLineEdit {
     border: 1px solid #ccc;
     border-radius: 3px;
@@ -65,3 +66,18 @@ QPushButton#exit_button {
 QPushButton#exit_button:hover {
     background-color: #D32F2F;
 }
+
+/*
+ 透明时间 ------------
+ */
+QLabel#current_time {
+    font-size: 24px;
+}
+
+QLabel#count_time {
+    font-size: 14px;
+    font-weight: bold;
+}
+/*
+ ------END ------------
+ */

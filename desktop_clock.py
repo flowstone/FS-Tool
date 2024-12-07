@@ -27,12 +27,12 @@ class DesktopClockApp(QWidget):
         layout = QVBoxLayout()
 
         self.current_time = QLabel(self)
-        self.current_time.setFont(QFont('Arial', 18))
+        self.current_time.setObjectName("current_time")
         self.current_time.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.current_time)
 
         self.count_time = QLabel(self)
-        self.count_time.setFont(QFont('Arial', 12, 75))
+        self.count_time.setObjectName("count_time")
         self.count_time.setAlignment(Qt.AlignRight | Qt.AlignBottom)
         layout.addWidget(self.count_time)
 
@@ -150,7 +150,6 @@ class ColorSettingDialog(QDialog):
         return self.timer_color_combobox.currentText()
 
     def start_operation(self):
-        print("你点击了按钮")
         time_color = self.get_selected_time_color()
         timer_color = self.get_selected_timer_color()
 
