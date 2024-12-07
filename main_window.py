@@ -3,12 +3,12 @@ from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QSy
 from PyQt5.QtGui import QFont, QPalette, QColor
 
 from batch_heic_jpg import HeicToJpgApp
-from desktop_clock import DesktopClockApp
 from desktop_clock import ColorSettingDialog
 from pic_conversion import PicConversionApp
 from batch_file_renamer import RenameFileApp
 from batch_create_folder import CreateFolderApp
 from auto_answers import AutoAnswersApp
+from stick_note import StickyNoteApp
 from PyQt5.QtGui import QIcon
 from app_mini import FloatingBall
 import  os
@@ -30,7 +30,8 @@ class MainWindow(QMainWindow):
 
         logger.info(f"调用了主界面的初始化,悬浮球标志位 = {self.is_floating_ball_visible}")
         self.setWindowTitle(FsConstants.APP_WINDOW_TITLE)
-        self.setFixedSize(FsConstants.APP_WINDOW_WIDTH, FsConstants.APP_WINDOW_HEIGHT)
+        #self.setFixedSize(FsConstants.APP_WINDOW_WIDTH, FsConstants.APP_WINDOW_HEIGHT)
+        self.setFixedWidth(FsConstants.APP_WINDOW_WIDTH)
         self.setStyleSheet("background-color: #F5F5F5;")  # 设置窗口背景色为淡灰色
 
         layout = QVBoxLayout()
@@ -151,6 +152,25 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(auto_answers_btn)
 
+        # 快捷便签
+        stick_note_btn = QPushButton(FsConstants.STICK_NOTE_WINDOW_TITLE)
+        stick_note_btn.setFont(QFont('Arial', 14))
+        stick_note_btn.setStyleSheet("""
+                        QPushButton {
+                            background-color: #96CDCD;
+                            color: white;
+                            border-radius: 8px;
+                            padding: 10px;
+                        }
+                        QPushButton:hover {
+                            background-color: #668B8B;
+                        }
+                    """)
+        stick_note_btn.clicked.connect(self.stick_note_btn_clicked)
+
+        layout.addWidget(stick_note_btn)
+
+
         self.setLayout(layout)
         # 初始化应用托盘图标
         self.init_tray_menu()
@@ -252,4 +272,9 @@ class MainWindow(QMainWindow):
         logger.info(f"---- 按钮<{FsConstants.AUTO_ANSWERS_WINDOW_TITLE}>被点击了 ----")
         self.auto_answers = AutoAnswersApp()
         self.auto_answers.show()
+
+    def stick_note_btn_clicked(self):
+        logger.info(f"---- 按钮<{FsConstants.STICK_NOTE_WINDOW_TITLE}>被点击了 ----")
+        self.stick_note = StickyNoteApp()
+        self.stick_note.show()
 

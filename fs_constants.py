@@ -62,6 +62,13 @@ class FsConstants:
     AUTO_ANSWERS_WIN_DRIVER_NAME = "chromedriver.exe"
     AUTO_ANSWERS_OTHER_DRIVER_NAME = "chromedriver"
 
+    #快捷便签相关常量
+    STICK_NOTE_WINDOW_WIDTH = 400
+    STICK_NOTE_WINDOW_HEIGHT = 300
+    STICK_NOTE_WINDOW_MIN_WIDTH = 300
+    STICK_NOTE_WINDOW_MIN_HEIGHT = 200
+    STICK_NOTE_WINDOW_TITLE = "快捷便签"
+
     # 颜色相关常量
     BACKGROUND_COLOR = "#f0f0f0"
     BUTTON_COLOR_NORMAL = "#3498db"
