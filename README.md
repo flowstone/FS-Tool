@@ -7,6 +7,7 @@
 
 在项目根目录下运行脚本
 ``` bash
+pyinstaller --name "流体石头的工具箱" --onefile  --add-data "F:\Workspace\PycharmProjects\fs-tool\.venv\Lib\site-packages\PyQt5\Qt5\bin;./PyQt5/Qt/bin" --add-data "F:\Workspace\PycharmProjects\fs-tool\.venv\Lib\site-packages\PyQt5\Qt5\plugins;./PyQt5/Qt/plugins" --add-data "resources;resources" --add-data "config.json;." --collect-all PyQt5 --icon=resources/app.ico .\app.py
 pip install -r requirements.txt
 ```
 
@@ -17,7 +18,7 @@ pyinstaller --name "应用名" --onefile --window --icon=clock.ico 程序脚本.
 
 ##### 2.打包PyQt脚本
 ``` bash
-pyinstaller --name "流体石头的工具箱" --onefile --window --add-data "F:\Workspace\PycharmProjects\fs-tool\.venv\Lib\site-packages\PyQt5\Qt5\bin;./PyQt5/Qt/bin" --add-data "F:\Workspace\PycharmProjects\fs-tool\.venv\Lib\site-packages\PyQt5\Qt5\plugins;./PyQt5/Qt/plugins" --add-data "resources;resources" --collect-all PyQt5 --icon=resources/app.ico .\app.py
+pyinstaller --name "流体石头的工具箱" --onefile  --window --add-data "F:\Workspace\PycharmProjects\fs-tool\.venv\Lib\site-packages\PyQt5\Qt5\bin;./PyQt5/Qt/bin" --add-data "F:\Workspace\PycharmProjects\fs-tool\.venv\Lib\site-packages\PyQt5\Qt5\plugins;./PyQt5/Qt/plugins" --add-data "resources;resources" --add-data "config.json;." --collect-all PyQt5 --icon=resources/app.ico .\app.py
 ```
 
 ###### 说明

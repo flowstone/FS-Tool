@@ -107,3 +107,5 @@ class FsConstants:
     SAVE_FILE_PATH_MAC = "~"
     DATABASE_FILE = "database.db"
     AUTO_ANSWERS_TABLE_NAME = "auto_answers_log"
+
+    APP_CONFIG_FILE = "config.json"

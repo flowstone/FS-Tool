@@ -2,20 +2,27 @@ import json
 
 
 class ConfigManager:
-    _instance = None
 
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-            cls._instance.load_config()
-        return cls._instance
+    def __init__(self, config_file_path='config.json'):
 
-    def load_config(self):
         try:
-            with open('config.json', 'r') as file:
+            with open(config_file_path, 'r') as file:
                 config = json.load(file)
-                self.db_location = config['database']['location']
-                self.answer_pwd = config['AutoAnswers']['password']
-                self.answer_driver = config['AutoAnswers']['driver']
-        except (FileNotFoundError, KeyError):
-            print("配置文件有误")
+                self.__db_location = config['database']['location']
+                self.__answer_pwd = config['AutoAnswers']['password']
+                self.__answer_driver = config['AutoAnswers']['driver']
+        except FileNotFoundError:
+            print(f"配置文件 {config_file_path} 不存在，请检查文件路径是否正确。")
+        except KeyError as e:
+            print(f"配置文件 {config_file_path} 中缺少必要的键 {e}，请检查配置文件内容。")
+        except json.JSONDecodeError:
+            print(f"配置文件 {config_file_path} 格式有误，无法正确解析 JSON 数据，请检查文件格式。")
+
+    def get_db_location(self):
+        return self.__db_location
+
+    def get_answer_pwd(self):
+        return self.__answer_pwd
+
+    def get_answer_driver(self):
+        return self.__answer_driver

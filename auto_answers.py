@@ -52,9 +52,9 @@ class AutoAnswersApp(QMainWindow):
             }
         """
 
-        config_manager = ConfigManager()
-        self.answer_pwd = config_manager.answer_pwd
-        self.answer_driver = config_manager.answer_driver
+        config_manager = ConfigManager(CommonUtil.get_resource_path(FsConstants.APP_CONFIG_FILE))
+        self.answer_pwd = config_manager.get_answer_pwd()
+        self.answer_driver = config_manager.get_answer_driver()
 
         self.today = CommonUtil.get_today()
         self.error = 0

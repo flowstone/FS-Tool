@@ -41,8 +41,8 @@ class CommonUtil:
     @staticmethod
     def get_db_full_path():
         # 读取配置文件
-        config_manager = ConfigManager()
-        db_location = config_manager.db_location
+        config_manager = ConfigManager(CommonUtil.get_resource_path(FsConstants.APP_CONFIG_FILE))
+        db_location = config_manager.get_db_location()
         if db_location:
             return db_location
 
@@ -115,8 +115,8 @@ class CommonUtil:
     @staticmethod
     def get_chrome_driver_path():
         # 读取配置文件
-        config_manager = ConfigManager()
-        answer_driver = config_manager.answer_driver
+        config_manager = ConfigManager(CommonUtil.get_resource_path(FsConstants.APP_CONFIG_FILE))
+        answer_driver = config_manager.get_answer_driver()
         if answer_driver:
             return answer_driver
 
