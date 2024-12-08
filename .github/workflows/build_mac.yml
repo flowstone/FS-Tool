@@ -59,14 +59,7 @@ jobs:
           name: Release v${{ inputs.app_version }}
           draft: false  # 是否为草稿，设为false表示直接发布
           prerelease: false  # 是否为预发布版本，设为false表示正式发布
-
-      - name: Upload release asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v2
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}  # 获取创建发布时的上传链接
-          #asset_path: dist/FS-Tool.app  # 要上传的打包后的可执行文件路径，根据实际打包情况调整
-          asset_path: /Users/runner/work/FS-Tool/FS-Tool/dist/FS-Tool.app  # 要上传的打包后的可执行文件路径，根据实际打包情况调整
-          asset_name: FS-Tool.app  # 上传文件的名称，可按需调整
-          asset_content_type: application/octet-stream  # 文件类型，.exe文件一般用此类型
+          files: dist/FS-Tool.app
