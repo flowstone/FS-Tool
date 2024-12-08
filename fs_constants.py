@@ -99,6 +99,9 @@ class FsConstants:
     BUTTON_ANSWERS_ICON = "unlock-icon.svg"
     BUTTON_STICK_NOTE_ICON = "business-icon.svg"
 
+    BUTTON_IMAGE_LOCK_OPEN = "resources/btn/lock-open-solid.svg"
+    BUTTON_IMAGE_LOCK_CLOSE = "resources/btn/lock-solid.svg"
+
     # 保存文件路径
     SAVE_FILE_PATH_WIN = "C:\\"
     SAVE_FILE_PATH_MAC = "~"

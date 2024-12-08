@@ -4,18 +4,22 @@ from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import Qt
 from common_util import CommonUtil
 from fs_constants import FsConstants
+from hover_image_button import HoverImageButton
 
 class StickyNoteApp(QWidget):
     def __init__(self):
         super().__init__()
+        # 标记窗口当前是否可操作（初始设为可操作）
+        self.is_operable = True
         self.init_ui()
 
     def init_ui(self):
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
         self.setWindowTitle(FsConstants.STICK_NOTE_WINDOW_TITLE)
+        self.setWindowOpacity(0.9)  # 设置窗口透明度为0.5（取值范围是0.0 - 1.0）
 
         self.text_edit = QTextEdit(self)
-        self.text_edit.setFont(QFont('SimSun', 12))
+        self.text_edit.setFont(QFont('Arial', 12))
         self.text_edit.setStyleSheet("""
             QTextEdit {
                 border: 2px solid lightgray;
@@ -34,8 +38,14 @@ class StickyNoteApp(QWidget):
         self.clear_button.setObjectName("exit_button")
         self.clear_button.clicked.connect(self.clear_text)
 
+        # 创建切换状态的按钮
+        lock_button = HoverImageButton(FsConstants.BUTTON_IMAGE_LOCK_OPEN, FsConstants.BUTTON_IMAGE_LOCK_CLOSE)
+
+        lock_button.clicked.connect(self.toggle_window_state)
+
         # 创建水平布局放置两个按钮
         button_layout = QHBoxLayout()
+        button_layout.addWidget(lock_button)
         button_layout.addWidget(self.save_button)
         button_layout.addWidget(self.clear_button)
 
@@ -45,8 +55,32 @@ class StickyNoteApp(QWidget):
         layout.setContentsMargins(20, 20, 20, 20)
 
         self.setLayout(layout)
-        self.resize(FsConstants.STICK_NOTE_WINDOW_WIDTH, FsConstants.STICK_NOTE_WINDOW_HEIGHT)
+        self.setGeometry(0, 0, FsConstants.STICK_NOTE_WINDOW_WIDTH, FsConstants.STICK_NOTE_WINDOW_HEIGHT)
+        #self.resize(FsConstants.STICK_NOTE_WINDOW_WIDTH, FsConstants.STICK_NOTE_WINDOW_HEIGHT)
         self.setMinimumSize(FsConstants.STICK_NOTE_WINDOW_MIN_WIDTH, FsConstants.STICK_NOTE_WINDOW_MIN_HEIGHT)
+
+
+    def toggle_window_state(self):
+        """
+        点击按钮切换窗口可操作状态
+        """
+        self.is_operable = not self.is_operable
+        if self.is_operable:
+            self.clear_button.setEnabled(True)
+            self.setWindowFlags(self.windowFlags() & ~Qt.WindowStaysOnTopHint)
+        else:
+            self.clear_button.setEnabled(False)
+            self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
+        self.show()
+
+    def closeEvent(self, event):
+        """
+        重写关闭事件，根据状态决定是否响应
+        """
+        if self.is_operable:
+            event.accept()
+        else:
+            event.ignore()
 
     def save_note(self):
         note_text = self.text_edit.toPlainText().strip()
