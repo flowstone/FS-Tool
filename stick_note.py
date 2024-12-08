@@ -17,7 +17,6 @@ class StickyNoteApp(QWidget):
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
         self.setWindowTitle(FsConstants.STICK_NOTE_WINDOW_TITLE)
         self.setWindowOpacity(0.9)  # 设置窗口透明度为0.5（取值范围是0.0 - 1.0）
-
         self.text_edit = QTextEdit(self)
         self.text_edit.setFont(QFont('Arial', 12))
         self.text_edit.setStyleSheet("""
@@ -26,6 +25,23 @@ class StickyNoteApp(QWidget):
                 border-radius: 5px;
                 padding: 10px;
                 background-color: white;
+                font-family: 'Source Han Serif CN', sans-serif;
+                color: #333333;
+            }
+            QTextEdit::verticalScrollBar {
+                width: 10px;
+                background-color: #F0F0F0;
+                border-radius: 5px;
+            }
+            QTextEdit::verticalScrollBar::handle {
+                background-color: #888888;
+                border-radius: 5px;
+                min-height: 20px;
+            }
+            QTextEdit::verticalScrollBar::add-line, QTextEdit::verticalScrollBar::sub-line {
+                height: 0px;
+                subcontrol-position: bottom;
+                subcontrol-origin: margin;
             }
         """)
 
@@ -36,6 +52,7 @@ class StickyNoteApp(QWidget):
 
         self.clear_button = QPushButton('清空', self)
         self.clear_button.setObjectName("exit_button")
+        self.clear_button.setToolTip('点击清空便签中的内容')
         self.clear_button.clicked.connect(self.clear_text)
 
         # 创建切换状态的按钮

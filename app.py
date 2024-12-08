@@ -16,7 +16,7 @@ def main():
     # 获取当前脚本所在目录，构建样式表文件的路径
     stylesheet_path = CommonUtil.get_resource_path(FsConstants.BASE_QSS_PATH)
     if os.path.exists(stylesheet_path):
-        with open(stylesheet_path, "r") as file:
+        with open(stylesheet_path, "r", encoding='utf-8') as file:
             stylesheet = file.read()
             # 为应用程序设置样式表
             app.setStyleSheet(stylesheet)
