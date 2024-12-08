@@ -1,4 +1,4 @@
-name: Win Package
+name: Win Portable Package
 
 on:
   workflow_dispatch:
