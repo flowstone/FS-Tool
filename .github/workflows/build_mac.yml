@@ -58,7 +58,6 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}  # 获取创建发布时的上传链接
           tag_name: v${{ inputs.app_version }}
           name: Release v${{ inputs.app_version }}
-          files: dist/FS-Tool.app
+          files: /Users/runner/work/FS-Tool/FS-Tool/dist/FS-Tool.app
