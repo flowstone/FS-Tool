@@ -1,5 +1,6 @@
 import sqlite3
 from common_util import CommonUtil
+from loguru import logger
 
 # 数据库工具类
 class SQLiteTool:
@@ -20,7 +21,7 @@ class SQLiteTool:
         columns = ', '.join(data_dict.keys())
         placeholders = ', '.join(['?' for _ in data_dict])
         values = tuple(data_dict.values())
-        print(f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})")
+        logger.info(f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})")
         sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
         self.cursor.execute(sql, values)
         self.conn.commit()

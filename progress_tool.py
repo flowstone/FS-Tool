@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QProgressBar
 from PyQt5.QtCore import pyqtSignal, QObject,Qt
+from loguru import logger
 
 
 class ProgressTool(QWidget):
@@ -29,8 +30,8 @@ class ProgressTool(QWidget):
             # 获取主窗口的大小信息（宽度和高度）
             width = parent.width()
             height = parent.height()
-            print(f"主窗口的位置：横坐标为{x}，纵坐标为{y}")
-            print(f"主窗口的大小：宽度为{width}，高度为{height}")
+            logger.info(f"主窗口的位置：横坐标为{x}，纵坐标为{y}")
+            logger.info(f"主窗口的大小：宽度为{width}，高度为{height}")
             self.widget.setGeometry(x, y, width, height)
 
     def show(self):

@@ -18,7 +18,11 @@ pyinstaller --name "应用名" --onefile --window --icon=clock.ico 程序脚本.
 
 ##### 2.打包PyQt脚本
 ``` bash
-pyinstaller --name "流体石头的工具箱" --onefile  --window --add-data "F:\Workspace\PycharmProjects\fs-tool\.venv\Lib\site-packages\PyQt5\Qt5\bin;./PyQt5/Qt/bin" --add-data "F:\Workspace\PycharmProjects\fs-tool\.venv\Lib\site-packages\PyQt5\Qt5\plugins;./PyQt5/Qt/plugins" --add-data "resources;resources" --add-data "config.json;." --collect-all PyQt5 --icon=resources/app.ico .\app.py
+# WIN
+pyinstaller --name "FS-Tool" --onefile  --window --add-data "/Users/simonxue/Code/PycharmProjects/FS-Tool/.venv/Lib/site-packages/PyQt5/Qt5/bin;./PyQt5/Qt/bin" --add-data "/Users/simonxue/Code/PycharmProjects/FS-Tool/.venv/Lib/site-packages/PyQt5/Qt5/plugins;./PyQt5/Qt/plugins" --add-data "resources;resources" --add-data "config.json;." --collect-all PyQt5 --icon=resources/app.ico .\app.py
+# MacOS
+# pyinstaller --name "流体石头的工具箱" --onefile  --window  --add-data "/Users/simonxue/Code/PycharmProjects/FS-Tool/.venv/lib/python3.9/site-packages/PyQt5/Qt5:./PyQt5/Qt" --add-data "/Users/simonxue/Code/PycharmProjects/FS-Tool/.venv/lib/python3.9/site-packages/PyQt5/Qt5/plugins:./PyQt5/Qt/plugins" --add-data "resources:resources" --add-data "config.json:."  --icon=resources/app.ico ./app.py
+pyinstaller --name "FS-Tool" --onefile  --window   --add-data "resources:resources" --add-data "config.json:." --icon=resources/app.ico ./app.py
 ```
 
 ###### 说明

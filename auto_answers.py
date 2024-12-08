@@ -444,7 +444,6 @@ class AutoAnswerThread(QThread):
     def do_auto_answer(self):
 
         logger.info("---- 开始配置chrome ----")
-        print(CommonUtil.get_chrome_driver_path())
         service = webdriver.ChromeService(executable_path=CommonUtil.get_chrome_driver_path())
 
         options = webdriver.ChromeOptions()

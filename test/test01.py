@@ -2,13 +2,14 @@ import sys
 import time
 from PyQt5.QtWidgets import QApplication
 from progress_tool import ProgressTool,ProgressSignalEmitter
+from loguru import logger
 
 def task1_progress_update(value):
-    print(f"任务1进度更新: {value}%")
+    logger.info(f"任务1进度更新: {value}%")
 
 
 def task2_progress_update(value):
-    print(f"任务2进度更新: {value}%")
+    logger.info(f"任务2进度更新: {value}%")
 
 
 if __name__ == "__main__":

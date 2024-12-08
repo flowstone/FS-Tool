@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt
 from common_util import CommonUtil
 from fs_constants import FsConstants
 from hover_image_button import HoverImageButton
+from loguru import logger
 
 class StickyNoteApp(QWidget):
     def __init__(self):
@@ -102,7 +103,7 @@ class StickyNoteApp(QWidget):
     def save_note(self):
         note_text = self.text_edit.toPlainText().strip()
         if note_text:
-            print(f'保存便签内容: {note_text}')
+            logger.info(f'保存便签内容: {note_text}')
             QMessageBox.information(self, '保存成功', '便签内容已成功保存！')
         else:
             QMessageBox.warning(self, '内容为空', '请输入便签内容后再保存哦！')
