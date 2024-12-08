@@ -6,7 +6,7 @@ class FsConstants:
     """
     # 主窗口相关常量
     APP_WINDOW_WIDTH = 300
-    APP_WINDOW_HEIGHT = 300
+    APP_WINDOW_HEIGHT = 400
     APP_WINDOW_TITLE = "流体石头的工具箱"
 
     # 悬浮球相关常量
