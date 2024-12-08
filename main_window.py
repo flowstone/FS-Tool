@@ -24,7 +24,7 @@ class MainWindow(QMainWindow):
         self.floating_ball = FloatingBall(self)
         # 悬浮球可见状态，false可以创建悬浮球，反之。。。
         self.is_floating_ball_visible = False
-
+        self.stick_note = None
         self.init_ui()
 
     def init_ui(self):
@@ -196,6 +196,13 @@ class MainWindow(QMainWindow):
 
     def stick_note_btn_clicked(self):
         logger.info(f"---- 按钮<{FsConstants.STICK_NOTE_WINDOW_TITLE}>被点击了 ----")
-        self.stick_note = StickyNoteApp()
-        self.stick_note.show()
+        if self.stick_note is None or not self.stick_note.isVisible():
+            self.stick_note = StickyNoteApp()
+            self.stick_note.show()
+        else:
+            if self.stick_note.isMinimized():
+                self.stick_note.showNormal()
+            else:
+                self.stick_note.show()
+                self.stick_note.activateWindow()
 
