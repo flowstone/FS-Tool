@@ -74,6 +74,7 @@ QPushButton#exit_button:hover {
  */
 QLabel#current_time {
     font-size: 24px;
+    font-weight: bold;
 }
 
 QLabel#count_time {

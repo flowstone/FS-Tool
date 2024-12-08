@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QSystemTrayIcon, QMenu, QAction, QToolBar, QMainWindow
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QSystemTrayIcon, QMenu, QAction, QToolBar, QMainWindow,QMessageBox, QMenuBar
 from PyQt5.QtGui import QFont, QPalette, QColor
 from PyQt5.Qt import QStyle
 
@@ -15,7 +15,6 @@ from app_mini import FloatingBall
 import  os
 from loguru import logger
 from common_util import CommonUtil
-from app_menu_bar import AppMenuBar
 from fs_constants import FsConstants
 
 class MainWindow(QMainWindow):
@@ -38,14 +37,23 @@ class MainWindow(QMainWindow):
 
         layout = QVBoxLayout()
 
-        # ---- 导入外部的工具栏
-        self.app_menu_bar = AppMenuBar(self)
-        layout.addWidget(self.app_menu_bar)
-        central_widget = QWidget(self)
-        central_widget.setLayout(layout)
-        self.setCentralWidget(central_widget)
-        # ++++ 导入外部的工具栏
+        # ---- 工具栏 START
+        menu_bar = QMenuBar(self)
+        help_menu = QMenu(FsConstants.TOOLBAR_HELP_TITLE, self)
+        menu_bar.addMenu(help_menu)
 
+        # 创建”说明"菜单项
+        readme_action = QAction(FsConstants.TOOLBAR_README_TITLE, self)
+        readme_action.triggered.connect(self.open_readme)
+
+        # 创建"作者"菜单项
+        author_action = QAction(FsConstants.TOOLBAR_AUTHOR_TITLE, self)
+        author_action.triggered.connect(self.open_author)
+        # 将菜单项添加到文件菜单
+        help_menu.addAction(readme_action)
+        help_menu.addAction(author_action)
+        layout.addWidget(menu_bar)
+        # ---- 工具栏 END
 
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
@@ -91,8 +99,11 @@ class MainWindow(QMainWindow):
         stick_note_btn.clicked.connect(self.stick_note_btn_clicked)
         layout.addWidget(stick_note_btn)
 
+        # 按钮居中
+        central_widget = QWidget(self)
+        central_widget.setLayout(layout)
+        self.setCentralWidget(central_widget)
 
-        self.setLayout(layout)
         # 初始化应用托盘图标
         self.init_tray_menu()
 
@@ -100,6 +111,13 @@ class MainWindow(QMainWindow):
         # 处理窗口关闭事件，使其最小化到托盘
         self.closeEvent = self.handle_close_event
 
+    def open_readme(self):
+        readme_text = FsConstants.APP_TOOLBAR_README_TEXT
+        QMessageBox.information(self, FsConstants.TOOLBAR_README_TITLE, readme_text)
+
+    def open_author(self):
+        author_text = FsConstants.APP_TOOLBAR_AUTHOR_TEXT
+        QMessageBox.information(self, FsConstants.TOOLBAR_AUTHOR_TITLE, author_text)
 
     # 初始化应用托盘图标
     def init_tray_menu(self):

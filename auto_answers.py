@@ -1,7 +1,7 @@
 import sys
 from datetime import datetime
 
-from PyQt5.QtWidgets import QApplication,QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QPushButton, QMenu, QProgressBar,QMessageBox,QAction
+from PyQt5.QtWidgets import QApplication,QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QPushButton, QMenu, QProgressBar,QMessageBox,QAction,QMenuBar
 from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from PyQt5.QtGui import QFont,QPixmap, QIcon
 import os
@@ -73,13 +73,22 @@ class AutoAnswersApp(QMainWindow):
 
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
-        self.help_menu = self.addToolBar(FsConstants.TOOLBAR_HELP_TITLE)
-        # 创建"打开"菜单项
+
+        # ---- 工具栏 START
+        menu_bar = QMenuBar(self)
+        help_menu = QMenu(FsConstants.TOOLBAR_HELP_TITLE, self)
+        menu_bar.addMenu(help_menu)
+
+        # 创建”说明"菜单项
         readme_action = QAction(FsConstants.TOOLBAR_README_TITLE, self)
         readme_action.triggered.connect(self.show_instructions)
+
         # 将菜单项添加到文件菜单
-        self.help_menu.addAction(readme_action)
-        main_layout.addWidget(self.help_menu)
+        help_menu.addAction(readme_action)
+        main_layout.addWidget(menu_bar)
+        # ---- 工具栏 END
+
+
         central_widget = QWidget(self)
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
