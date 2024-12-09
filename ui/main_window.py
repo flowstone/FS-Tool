@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSystemTrayIcon, QMenu, QAction, QMainWindow,QMessageBox, QMenuBar
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget,QPushButton, QSystemTrayIcon, QMenu, QAction, QMainWindow,QMessageBox, QMenuBar
 
 from ui.batch_heic_jpg import HeicToJpgApp
 from ui.desktop_clock import ColorSettingDialog
@@ -25,7 +25,7 @@ class MainWindow(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-
+        layout = QVBoxLayout()
 
 
         logger.info(f"调用了主界面的初始化,悬浮球标志位 = {self.is_floating_ball_visible}")
@@ -33,7 +33,7 @@ class MainWindow(QMainWindow):
         self.setFixedSize(FsConstants.APP_WINDOW_WIDTH, FsConstants.APP_WINDOW_HEIGHT)
         #self.setFixedWidth(FsConstants.APP_WINDOW_WIDTH)
 
-        layout = QVBoxLayout()
+
 
         # ---- 工具栏 START
         menu_bar = QMenuBar(self)
@@ -55,56 +55,84 @@ class MainWindow(QMainWindow):
 
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
+        self.tab_widget = QTabWidget()
+        # 创建第一个Tab页面
+        generic_widget = QWidget()
+        generic_layout = QVBoxLayout()
         # 透明时间
-        time_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_TIME_ICON)),FsConstants.DESKTOP_CLOCK_WINDOW_TITLE)
+        time_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_TIME_ICON)),
+                               FsConstants.DESKTOP_CLOCK_WINDOW_TITLE)
         time_btn.setObjectName("feature")
         time_btn.clicked.connect(self.time_btn_clicked)
-        layout.addWidget(time_btn)
-
-        # 图转大师
-        img_conv_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_PIC_ICON)),FsConstants.PIC_CONVERSION_WINDOW_TITLE)
-        img_conv_btn.setObjectName("feature")
-        img_conv_btn.clicked.connect(self.img_conv_btn_clicked)
-        layout.addWidget(img_conv_btn)
-
-        # 文件夹创建师
-        create_folder_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FOLDER_ICON)),FsConstants.CREATE_FOLDER_WINDOW_TITLE)
-        create_folder_btn.setObjectName("feature")
-        create_folder_btn.clicked.connect(self.create_folder_btn_clicked)
-        layout.addWidget(create_folder_btn)
-
-        # 重命名使者
-        rename_file_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FILE_ICON)),FsConstants.FILE_RENAMER_WINDOW_TITLE)
-        rename_file_btn.setObjectName("feature")
-        rename_file_btn.clicked.connect(self.rename_file_btn_clicked)
-        layout.addWidget(rename_file_btn)
-
-        # HEIC转JPG
-        heic_jpg_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_HEIC_ICON)),FsConstants.HEIC_JPG_BUTTON_TITLE)
-        heic_jpg_btn.setObjectName("feature")
-        heic_jpg_btn.clicked.connect(self.heic_jpg_btn_clicked)
-        layout.addWidget(heic_jpg_btn)
-
-        # 自动答题
-        auto_answers_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_ANSWERS_ICON)),FsConstants.AUTO_ANSWERS_WINDOW_TITLE)
-        auto_answers_btn.setObjectName("feature")
-        auto_answers_btn.clicked.connect(self.auto_answers_btn_clicked)
-        layout.addWidget(auto_answers_btn)
 
         # 快捷便签
-        stick_note_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_STICK_NOTE_ICON)),FsConstants.STICK_NOTE_WINDOW_TITLE)
+        stick_note_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_STICK_NOTE_ICON)),
+                                     FsConstants.STICK_NOTE_WINDOW_TITLE)
         stick_note_btn.setObjectName("feature")
         stick_note_btn.clicked.connect(self.stick_note_btn_clicked)
-        layout.addWidget(stick_note_btn)
 
-        # 按钮居中
+        # 图转大师
+        img_conv_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_PIC_ICON)),
+                                   FsConstants.PIC_CONVERSION_WINDOW_TITLE)
+        img_conv_btn.setObjectName("feature")
+        img_conv_btn.clicked.connect(self.img_conv_btn_clicked)
+
+        generic_layout.addWidget(time_btn)
+        generic_layout.addWidget(stick_note_btn)
+        generic_layout.addWidget(img_conv_btn)
+
+        generic_widget.setLayout(generic_layout)
+        generic_icon = QIcon(CommonUtil.get_resource_path(FsConstants.TAB_PANE_GENERIC_ICON))
+        self.tab_widget.addTab(generic_widget, generic_icon, FsConstants.TAB_PANE_GENERIC_TITLE)
+
+        # 创建第二个Tab页面
+        batch_widget = QWidget()
+        batch_layout = QVBoxLayout()
+        # 文件夹创建师
+        create_folder_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FOLDER_ICON)),
+                                        FsConstants.CREATE_FOLDER_WINDOW_TITLE)
+        create_folder_btn.setObjectName("feature")
+        create_folder_btn.clicked.connect(self.create_folder_btn_clicked)
+
+        # 重命名使者
+        rename_file_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FILE_ICON)),
+                                      FsConstants.FILE_RENAMER_WINDOW_TITLE)
+        rename_file_btn.setObjectName("feature")
+        rename_file_btn.clicked.connect(self.rename_file_btn_clicked)
+
+        # HEIC转JPG
+        heic_jpg_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_HEIC_ICON)),
+                                   FsConstants.HEIC_JPG_BUTTON_TITLE)
+        heic_jpg_btn.setObjectName("feature")
+        heic_jpg_btn.clicked.connect(self.heic_jpg_btn_clicked)
+        batch_layout.addWidget(create_folder_btn)
+        batch_layout.addWidget(rename_file_btn)
+        batch_layout.addWidget(heic_jpg_btn)
+        batch_widget.setLayout(batch_layout)
+        batch_icon = QIcon(CommonUtil.get_resource_path(FsConstants.TAB_PANE_BATCH_ICON))
+        self.tab_widget.addTab(batch_widget, batch_icon, FsConstants.TAB_PANE_BATCH_TITLE)
+
+        # 创建第三个Tab页面
+        vip_widget = QWidget()
+        vip_layout = QVBoxLayout()
+        # 自动答题
+        auto_answers_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_ANSWERS_ICON)),
+                                       FsConstants.AUTO_ANSWERS_WINDOW_TITLE)
+        auto_answers_btn.setObjectName("feature")
+        auto_answers_btn.clicked.connect(self.auto_answers_btn_clicked)
+        vip_layout.addWidget(auto_answers_btn)
+        vip_widget.setLayout(vip_layout)
+        vip_icon = QIcon(CommonUtil.get_resource_path(FsConstants.TAB_PANE_VIP_ICON))
+        self.tab_widget.addTab(vip_widget, vip_icon, FsConstants.TAB_PANE_VIP_TITLE)
+
+        layout.addWidget(self.tab_widget)
+
         central_widget = QWidget(self)
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
 
         # 初始化应用托盘图标
         self.init_tray_menu()
-
 
         # 处理窗口关闭事件，使其最小化到托盘
         self.closeEvent = self.handle_close_event

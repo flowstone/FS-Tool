@@ -104,3 +104,19 @@ QPushButton#feature:hover {
 /*
  ------END ------------
  */
+
+ QTabWidget::pane {
+    border: 1px solid #C2C7CB;  /* Tab页内容区域边框 */
+    background-color: white;  /* Tab页内容区域背景色 */
+    border-radius: 8px;
+}
+QTabBar::tab {
+    border-radius: 5px;
+    background-color: #E0E0E0;  /* 未选中Tab标签的背景色 */
+    color: #333333;  /* 未选中Tab标签的字体颜色 */
+    padding: 8px 12px;  /* 内边距 */
+}
+QTabBar::tab:selected {
+    background-color: #008CBA;  /* 选中Tab标签的背景色 */
+    color: white;  /* 选中Tab标签的字体颜色 */
+}

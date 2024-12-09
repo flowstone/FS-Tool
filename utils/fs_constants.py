@@ -6,9 +6,12 @@ class FsConstants:
     """
     # 主窗口相关常量
     APP_WINDOW_WIDTH = 300
-    APP_WINDOW_HEIGHT = 400
+    APP_WINDOW_HEIGHT = 300
     APP_WINDOW_TITLE = "流体石头的工具箱"
 
+    TAB_PANE_GENERIC_TITLE = "通用"
+    TAB_PANE_BATCH_TITLE = "批处理"
+    TAB_PANE_VIP_TITLE = "个人"
     # 悬浮球相关常量
     APP_MINI_WINDOW_WIDTH = 90
     APP_MINI_WINDOW_HEIGHT = 90
@@ -98,6 +101,10 @@ class FsConstants:
     BUTTON_HEIC_ICON = "pictures-icon.svg"
     BUTTON_ANSWERS_ICON = "unlock-icon.svg"
     BUTTON_STICK_NOTE_ICON = "business-icon.svg"
+    TAB_PANE_GENERIC_ICON = "resources/icon/home-icon.svg"
+    TAB_PANE_BATCH_ICON = "resources/icon/more-icon.svg"
+    TAB_PANE_VIP_ICON = "resources/icon/vip-icon.svg"
+
 
     BUTTON_IMAGE_LOCK_OPEN = "resources/btn/lock-open-solid.svg"
     BUTTON_IMAGE_LOCK_CLOSE = "resources/btn/lock-solid.svg"
