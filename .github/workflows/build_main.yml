@@ -56,8 +56,26 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         run: Compress-Archive -Path dist_portable\* -DestinationPath FS-Tool-Windows.zip  # 在Windows环境下将生成文件压缩为ZIP包
 
+      - name: Check if Release Exists
+        id: check_release
+        run: |
+           import requests
+           GITHUB_TOKEN = '${{ secrets.GITHUB_TOKEN }}'
+           repo_name = '${{ github.repository }}'
+           tag_name = '${{ inputs.app_version }}'
+           url = f"https://api.github.com/repos/{repo_name}/releases/tags/{tag_name}"
+           headers = {"Authorization": f"token {GITHUB_TOKEN}"}
+           response = requests.get(url, headers=headers)
+           if response.status_code == 200:
+               print("Release exists")
+               echo "::set-output::release_exists=true"
+           else:
+               print("Release does not exist")
+               echo "::set-output::release_exists=false"
+               
       - name: Create release
         uses: actions/create-release@v1
+        if: ${{ steps.check_release.outputs.release_exists == 'false' }}
         id: create_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用GitHub自动生成的token用于创建发布
