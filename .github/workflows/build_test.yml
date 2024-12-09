@@ -61,7 +61,7 @@ jobs:
       - name: Set upload URL as environment variable
         run: |
           upload_url=${{ steps.create_release.outputs.upload_url }}
-          echo "UPLOAD_URL=$upload_url" >> $GITHUB_ENV    
+          echo "UPLOAD_URL=$upload_url" >> $GITHUB_ENV
       - name: Upload release asset
         uses: actions/upload-release-asset@v1
         env:
