@@ -1,23 +1,22 @@
 import sys
-from datetime import datetime
 
-from PyQt5.QtWidgets import QApplication,QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QPushButton, QMenu, QProgressBar,QMessageBox,QAction,QMenuBar
+from PyQt5.QtWidgets import QApplication,QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QPushButton, QMenu, \
+    QMessageBox,QAction,QMenuBar
 from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from PyQt5.QtGui import QFont,QPixmap, QIcon
-import os
 
 from loguru import logger
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import random
 import time
-from common_util import CommonUtil
+from utils.common_util import CommonUtil
 import hashlib
-from fs_constants import FsConstants
-from sqlite_util import SQLiteTool
-from auto_answers_list import AutoAnswersList
-from progress_tool import ProgressTool
-from config_manager import ConfigManager
+from utils.fs_constants import FsConstants
+from database.sqlite_util import SQLiteTool
+from ui.auto_answers_list import AutoAnswersList
+from utils.progress_tool import ProgressTool
+from utils.config_manager import ConfigManager
 
 # 这里定义一些常见的姓氏和名字的列表，可以根据实际情况扩展
 last_names = ["赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈", "褚", "卫", "蒋", "沈", "韩", "杨"]

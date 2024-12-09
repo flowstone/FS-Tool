@@ -1,9 +1,9 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSlider, QPushButton, QApplication
-from PyQt5.QtGui import QColor, QPixmap, QPainter, QMouseEvent, QImage, QIcon
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSlider, QApplication
+from PyQt5.QtGui import QColor, QPixmap, QPainter, QMouseEvent, QIcon
 from PyQt5.QtCore import Qt
-from common_util import CommonUtil
-from fs_constants import FsConstants
+from utils.common_util import CommonUtil
+from utils.fs_constants import FsConstants
 
 class ImageColorPicker(QWidget):
     def __init__(self):

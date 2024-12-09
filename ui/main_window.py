@@ -1,21 +1,18 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QSystemTrayIcon, QMenu, QAction, QToolBar, QMainWindow,QMessageBox, QMenuBar
-from PyQt5.QtGui import QFont, QPalette, QColor
-from PyQt5.Qt import QStyle
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSystemTrayIcon, QMenu, QAction, QMainWindow,QMessageBox, QMenuBar
 
-from batch_heic_jpg import HeicToJpgApp
-from desktop_clock import ColorSettingDialog
-from pic_conversion import PicConversionApp
-from batch_file_renamer import RenameFileApp
-from batch_create_folder import CreateFolderApp
-from auto_answers import AutoAnswersApp
-from stick_note import StickyNoteApp
+from ui.batch_heic_jpg import HeicToJpgApp
+from ui.desktop_clock import ColorSettingDialog
+from ui.pic_conversion import PicConversionApp
+from ui.batch_file_renamer import RenameFileApp
+from ui.batch_create_folder import CreateFolderApp
+from ui.auto_answers import AutoAnswersApp
+from ui.stick_note import StickyNoteApp
 from PyQt5.QtGui import QIcon
-from app_mini import FloatingBall
-import  os
+from ui.app_mini import FloatingBall
 from loguru import logger
-from common_util import CommonUtil
-from fs_constants import FsConstants
+from utils.common_util import CommonUtil
+from utils.fs_constants import FsConstants
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -23,6 +20,7 @@ class MainWindow(QMainWindow):
         self.floating_ball = FloatingBall(self)
         # 悬浮球可见状态，false可以创建悬浮球，反之。。。
         self.is_floating_ball_visible = False
+        self.desktop_clock = None
         self.stick_note = None
         self.init_ui()
 

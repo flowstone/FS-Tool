@@ -1,22 +1,16 @@
 import sys
-import sqlite3
-from PyQt5.QtWidgets import QApplication, QMessageBox,QWidget, QVBoxLayout, QPushButton, QTableWidget, QTableWidgetItem, QHBoxLayout, QLabel, QLineEdit
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QColor, QBrush,QIcon
+from PyQt5.QtWidgets import QApplication, QMessageBox
+from PyQt5.QtGui import QIcon
 from loguru import logger
-from fs_constants import FsConstants
-from sqlite_util import SQLiteTool
-from common_util import CommonUtil
 import math
 
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QTableWidget, QTableWidgetItem, QHBoxLayout, QLabel
-from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QColor, QBrush
 import sqlite3
 
-from fs_constants import FsConstants
-from common_util import CommonUtil
+from utils.fs_constants import FsConstants
+from utils.common_util import CommonUtil
 
 
 class AutoAnswersList(QWidget):

@@ -1,15 +1,14 @@
 import sys
 import os
 import shutil
-import time
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QProgressBar, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QMessageBox
 from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 from PyQt5.QtCore import Qt, pyqtSignal, QThread
 
 from loguru import logger
-from common_util import CommonUtil
-from fs_constants import FsConstants
-from progress_tool import ProgressTool
+from utils.common_util import CommonUtil
+from utils.fs_constants import FsConstants
+from utils.progress_tool import ProgressTool
 
 class CreateFolderApp(QWidget):
     def __init__(self):
@@ -35,7 +34,7 @@ class CreateFolderApp(QWidget):
 
         # 说明文本
         description_label = QLabel("说明：根据输入的分割字符，取前部分创建文件夹，符合相关的文件都移动到对应文件夹中")
-        description_label.setFont(QFont("楷体", 10))
+        description_label.setFont(QFont("Arial", 10))
         description_label.setStyleSheet("color: black;")
 
         # 选择文件夹相关部件
@@ -59,7 +58,7 @@ class CreateFolderApp(QWidget):
         slice_layout.addWidget(self.slice_entry)
 
         # 作者和Github信息文本
-        author_font = QFont("楷体", 11)
+        author_font = QFont("Arial", 11)
         author_label = QLabel(f"Author：{FsConstants.AUTHOR_BLOG}")
         author_label.setFont(author_font)
         author_label.setStyleSheet("color: #007BFF;")

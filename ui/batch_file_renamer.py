@@ -1,16 +1,15 @@
 import sys
 import os
-import time
-from PyQt5.QtWidgets import QApplication, QGroupBox,QRadioButton,QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMenuBar,QFileDialog
-from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
+from PyQt5.QtWidgets import QApplication, QGroupBox,QRadioButton,QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, \
+    QFileDialog
+from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from PyQt5.QtWidgets import QMessageBox
 from loguru import logger
-from select import select
 
-from common_util import CommonUtil
-from fs_constants import FsConstants
-from progress_tool import ProgressTool
+from utils.common_util import CommonUtil
+from utils.fs_constants import FsConstants
+from utils.progress_tool import ProgressTool
 
 class RenameFileApp(QWidget):
     def __init__(self):
@@ -123,7 +122,7 @@ class RenameFileApp(QWidget):
         layout.addLayout(replace_char_layout)
 
         # 作者和Github信息文本
-        author_font = QFont("楷体", 11)
+        author_font = QFont("Arial", 11)
         self.author_label = QLabel(f"Author：{FsConstants.AUTHOR_BLOG}")
         self.author_label.setFont(author_font)
         self.author_label.setStyleSheet("color: #007BFF;")

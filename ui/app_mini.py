@@ -1,12 +1,9 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QSystemTrayIcon, QMenu, QAction
-from PyQt5.QtCore import Qt, QPoint, QPropertyAnimation, pyqtProperty, QParallelAnimationGroup,QTimer, QEasingCurve, pyqtSignal
-from PyQt5.QtGui import QIcon, QCursor, QMouseEvent, QPixmap, QColor, QBrush, QPainter, QLinearGradient,QTransform,QGuiApplication
-from PyQt5 import QtCore
-import os
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QMouseEvent, QPixmap
 from loguru import logger
-from fs_constants import FsConstants
-from common_util import CommonUtil
+from utils.fs_constants import FsConstants
+from utils.common_util import CommonUtil
 
 class FloatingBall(QWidget):
 

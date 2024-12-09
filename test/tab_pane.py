@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTabWidget, QPushButton,QMenuBar,QMenu,QAction
 from PyQt5.QtGui import QIcon
-from fs_constants import FsConstants
+from utils.fs_constants import FsConstants
 
 class MainWindow(QWidget):
     def __init__(self):

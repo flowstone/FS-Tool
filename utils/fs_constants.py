@@ -87,7 +87,7 @@ class FsConstants:
     AUTHOR_BLOG = "https://blog.xueyao.tech"
     AUTHOR_GITHUB = "https://github.com/flowstone"
     PROJECT_ADDRESS = "https://github.com/flowstone/FS-Tool"
-    BASE_QSS_PATH = "resources/qss/styles.qss"
+    BASE_QSS_PATH = "resources/stylesheets/styles.qss"
     BASE_COLOR_MAP = "resources/img_colormap.gif"
 
     BUTTON_ICON_PATH = "resources/icon/"

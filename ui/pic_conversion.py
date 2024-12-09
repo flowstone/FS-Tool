@@ -1,14 +1,13 @@
 import sys
 import os
-import time
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QCheckBox, QFileDialog, QHBoxLayout, QMessageBox
 from PyQt5.QtGui import QPixmap, QIcon
 from PIL import Image
 from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from loguru import logger
-from common_util import CommonUtil
-from fs_constants import FsConstants
-from progress_tool import ProgressTool
+from utils.common_util import CommonUtil
+from utils.fs_constants import FsConstants
+from utils.progress_tool import ProgressTool
 
 class PicConversionApp(QWidget):
     def __init__(self):

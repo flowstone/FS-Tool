@@ -1,9 +1,9 @@
 import sys
 import time
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QPushButton, QDialog, QComboBox, QHBoxLayout
-from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
+from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QTimer
-from common_util import CommonUtil
+from utils.common_util import CommonUtil
 
 class DesktopClockApp(QWidget):
     def __init__(self):

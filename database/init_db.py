@@ -1,8 +1,5 @@
 import sqlite3
-import os
-from fs_constants import FsConstants
-import sys
-from common_util import CommonUtil
+from utils.common_util import CommonUtil
 
 class InitDB:
     def __init__(self, db_name):

@@ -2,9 +2,9 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit, QPushButton, QMessageBox, QHBoxLayout
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import Qt
-from common_util import CommonUtil
-from fs_constants import FsConstants
-from hover_image_button import HoverImageButton
+from utils.common_util import CommonUtil
+from utils.fs_constants import FsConstants
+from widgets.hover_image_button import HoverImageButton
 from loguru import logger
 
 class StickyNoteApp(QWidget):
@@ -26,7 +26,7 @@ class StickyNoteApp(QWidget):
                 border-radius: 5px;
                 padding: 10px;
                 background-color: white;
-                font-family: 'Source Han Serif CN', sans-serif;
+                font-family: 'Arial', sans-serif;
                 color: #333333;
             }
             QTextEdit::verticalScrollBar {
