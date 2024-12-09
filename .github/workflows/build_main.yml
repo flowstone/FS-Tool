@@ -1,0 +1,90 @@
+name: Multi-Platform Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # 基于语义化版本号格式的tag触发工作流
+
+jobs:
+  build_and_release:
+    runs-on: ${{ matrix.os }}  # 根据矩阵配置选择不同操作系统环境
+    strategy:
+      matrix:
+        os: [macos-13, windows-latest]  # 定义要支持的操作系统矩阵，这里选择了macOS 13和windows-latest，可按需替换
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3  # 检出当前仓库代码
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'  # 根据项目实际依赖的Python版本进行调整
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt  # 安装项目依赖的Python库
+
+      - name: Install PyInstaller
+        run: pip install pyinstaller  # 安装PyInstaller打包工具
+
+      - name: Build application
+        run: |
+          if [ "${{ matrix.os }}" = "macos-13" ]; then
+            pyinstaller --name "FS-Tool" --onefile --windowed --add-data "resources:resources" --add-data "config.json:." --icon=resources/app.ico./app.py
+          elif [ "${{ matrix.os }}" = "windows-latest" ]; then
+            pyinstaller --name "FS-Tool" --onefile --window --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\bin;./PyQt5/Qt/bin" --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\plugins;./PyQt5/Qt/plugins" --add-data "resources;resources" --add-data "config.json;."  --collect-all PyQt5 --icon=resources/app.ico app.py
+            pyinstaller --name "FS-Tool" --onedir --window --distpath dist_portable --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\bin;./PyQt5/Qt/bin" --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\plugins;./PyQt5/Qt/plugins" --add-data "resources;resources" --add-data "config.json;."  --collect-all PyQt5 --icon=resources/app.ico app.py
+          fi
+        # 根据不同操作系统执行不同的PyInstaller打包命令，注意macOS使用":"作为路径分隔符，Windows使用";"作为路径分隔符
+
+      - name: Zip the generated files (macOS)
+        if: ${{ matrix.os }} == 'macos-13'
+        run: zip -r FS-Tool-Macos.zip dist/*  # 在macOS环境下将生成文件压缩为ZIP包
+
+      - name: Zip the generated files (Windows)
+        if: ${{ matrix.os }} == 'windows-latest'
+        run: Compress-Archive -Path dist_portable\* -DestinationPath FS-Tool-Windows.zip  # 在Windows环境下将生成文件压缩为ZIP包
+
+      - name: Create release
+        uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用GitHub自动生成的token用于创建发布
+        with:
+          tag_name: ${{ github.ref }}
+          name: Release ${{ github.ref }}
+          draft: false  # 是否为草稿，设为false表示直接发布
+          prerelease: false  # 是否为预发布版本，设为false表示正式发布
+
+      - name: Upload release asset (MacOS)
+        if: ${{ matrix.os }} == 'macos-13'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}  # 获取创建发布时的上传链接
+          asset_path: FS-Tool-Macos.zip
+          asset_name: FS-Tool-Macos.zip
+          asset_content_type: application/zip
+
+      - name: Upload release asset (Windows Portable)
+        if: ${{ matrix.os }} == 'windows-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: FS-Tool-Windows.zip
+          asset_name: FS-Tool-Windows.zip
+          asset_content_type: application/zip
+
+      - name: Upload release asset (Windows)
+        if: ${{ matrix.os }} == 'windows-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/FS-Tool.exe  # 要上传的打包后的可执行文件路径，根据实际打包情况调整
+          asset_name: FS-Tool.exe  # 上传文件的名称，可按需调整
+          asset_content_type: application/octet-stream  # 文件类型，.exe文件一般用此类型
