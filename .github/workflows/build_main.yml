@@ -36,24 +36,24 @@ jobs:
         run: pip install pyinstaller  # 安装PyInstaller打包工具
         
       - name: Build application for macOS
-        if: ${{ matrix.os }} == 'macos-13'
+        if: ${{ matrix.os == 'macos-13' }}
         run: |
            pyinstaller --name "FS-Tool" --onefile --windowed --add-data "resources:resources" --add-data "config.json:." --icon=resources/app.ico ./app.py
         shell: bash  # 明确指定使用bash shell来执行命令，避免一些潜在的语法解析问题
 
       - name: Build application for Windows
-        if: ${{ matrix.os }} == 'windows-latest'
+        if: ${{ matrix.os == 'windows-latest' }}
         run: |
             pyinstaller --name "FS-Tool" --onefile --window --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\bin:./PyQt5/Qt/bin" --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\plugins:./PyQt5/Qt/plugins" --add-data "resources:resources" --add-data "config.json:."  --collect-all PyQt5 --icon=resources/app.ico app.py
             pyinstaller --name "FS-Tool" --onedir --window --distpath dist_portable --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\bin:./PyQt5/Qt/bin" --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\plugins:./PyQt5/Qt/plugins" --add-data "resources:resources" --add-data "config.json:."  --collect-all PyQt5 --icon=resources/app.ico app.py
         shell: bash  # 明确指定使用bash shell来执行命令，避免一些潜在的语法解析问题
         
       - name: Zip the generated files (macOS)
-        if: ${{ matrix.os }} == 'macos-13'
+        if: ${{ matrix.os == 'macos-13' }}
         run: zip -r FS-Tool-Macos.zip dist/*  # 在macOS环境下将生成文件压缩为ZIP包
 
       - name: Zip the generated files (Windows)
-        if: ${{ matrix.os }} == 'windows-latest'
+        if: ${{ matrix.os == 'windows-latest' }}
         run: Compress-Archive -Path dist_portable\* -DestinationPath FS-Tool-Windows.zip  # 在Windows环境下将生成文件压缩为ZIP包
 
       - name: Create release
@@ -70,7 +70,7 @@ jobs:
           prerelease: false  # 是否为预发布版本，设为false表示正式发布
 
       - name: Upload release asset (MacOS)
-        if: ${{ matrix.os }} == 'macos-13'
+        if: ${{ matrix.os == 'macos-13' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -81,7 +81,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload release asset (Windows Portable)
-        if: ${{ matrix.os }} == 'windows-latest'
+        if: ${{ matrix.os == 'windows-latest' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -92,7 +92,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload release asset (Windows)
-        if: ${{ matrix.os }} == 'windows-latest'
+        if: ${{ matrix.os == 'windows-latest' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
