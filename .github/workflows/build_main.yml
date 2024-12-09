@@ -30,7 +30,7 @@ jobs:
       - name: Build application
         run: |
           if [ "${{ matrix.os }}" = "macos-13" ]; then
-            pyinstaller --name "FS-Tool" --onefile --windowed --add-data "resources:resources" --add-data "config.json:." --icon=resources/app.ico./app.py
+            pyinstaller --name "FS-Tool" --onefile --windowed --add-data "resources:resources" --add-data "config.json:." --icon=resources/app.ico ./app.py
           elif [ "${{ matrix.os }}" = "windows-latest" ]; then
             pyinstaller --name "FS-Tool" --onefile --window --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\bin;./PyQt5/Qt/bin" --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\plugins;./PyQt5/Qt/plugins" --add-data "resources;resources" --add-data "config.json;."  --collect-all PyQt5 --icon=resources/app.ico app.py
             pyinstaller --name "FS-Tool" --onedir --window --distpath dist_portable --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\bin;./PyQt5/Qt/bin" --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\plugins;./PyQt5/Qt/plugins" --add-data "resources;resources" --add-data "config.json;."  --collect-all PyQt5 --icon=resources/app.ico app.py
