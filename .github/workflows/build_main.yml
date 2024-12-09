@@ -44,8 +44,8 @@ jobs:
       - name: Build application for Windows
         if: ${{ matrix.os }} == 'macos-13'
         run: |
-            pyinstaller --name "FS-Tool" --onefile --window --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\bin;./PyQt5/Qt/bin" --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\plugins;./PyQt5/Qt/plugins" --add-data "resources;resources" --add-data "config.json;."  --collect-all PyQt5 --icon=resources/app.ico app.py
-            pyinstaller --name "FS-Tool" --onedir --window --distpath dist_portable --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\bin;./PyQt5/Qt/bin" --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\plugins;./PyQt5/Qt/plugins" --add-data "resources;resources" --add-data "config.json;."  --collect-all PyQt5 --icon=resources/app.ico app.py
+            pyinstaller --name "FS-Tool" --onefile --window --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\bin:./PyQt5/Qt/bin" --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\plugins:./PyQt5/Qt/plugins" --add-data "resources:resources" --add-data "config.json:."  --collect-all PyQt5 --icon=resources/app.ico app.py
+            pyinstaller --name "FS-Tool" --onedir --window --distpath dist_portable --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\bin:./PyQt5/Qt/bin" --add-data "${{ env.Python_ROOT_DIR }}\lib\site-packages\PyQt5\Qt5\plugins:./PyQt5/Qt/plugins" --add-data "resources:resources" --add-data "config.json:."  --collect-all PyQt5 --icon=resources/app.ico app.py
         shell: bash  # 明确指定使用bash shell来执行命令，避免一些潜在的语法解析问题
         
       - name: Zip the generated files (macOS)
