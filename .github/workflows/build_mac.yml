@@ -36,6 +36,9 @@ jobs:
           pyinstaller --name "FS-Tool" --onefile  --window   --add-data "resources:resources" --add-data "config.json:." --icon=resources/app.ico ./app.py
         #working-directory: ${{ github.repository }}  # 设置工作目录为仓库根目录
 
+      - name: Zip the generated files (Windows)
+        run: Compress-Archive -Path dist/* -DestinationPath FS-Tool.zip  # 将生成文件压缩为zip包
+
       - name: Create release
         uses: actions/create-release@v1
         id: create_release
@@ -52,6 +55,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}  # 获取创建发布时的上传链接
-          asset_path: dist/FS-Tool.app  # 要上传的打包后的可执行文件路径，根据实际打包情况调整
-          asset_name: FS-Tool.app  # 上传文件的名称，可按需调整
-          asset_content_type: application/octet-stream  # 文件类型，.exe文件一般用此类型
+          asset_path: FS-Tool.zip
+          asset_name: FS-Tool-Macos.zip
+          asset_content_type: application/zip
