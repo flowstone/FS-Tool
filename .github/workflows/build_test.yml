@@ -15,41 +15,17 @@ on:
 jobs:
   win_release:
     runs-on: windows-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}  # 输出 GitHub Release 的上传 URL
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3  # 检出当前仓库代码
-      - name: Create release
-        uses: actions/create-release@v1
-        id: create_release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用GitHub自动生成的token用于创建发布
-        with:
-          #tag_name: ${{ github.ref }}
-          #name: Release ${{ github.ref }}
-          tag_name: v${{ inputs.app_version }}
-          name: Release v${{ inputs.app_version }}
-          draft: false  # 是否为草稿，设为false表示直接发布
-          prerelease: false  # 是否为预发布版本，设为false表示正式发布
-      # 第一步：获取 release 信息
-      - name: Get release information
-        id: release-info
-        run: |
-          # 获取 release 的上传 URL
-          upload_url=${{ steps.create_release.outputs.upload_url }}
-          echo "UPLOAD_URL=$upload_url" >> $GITHUB_ENV
-      - name: Use upload URL as environment variable
-        run: |
-           echo "The value of UPLOAD_URL is: ${{ env.UPLOAD_URL }}"
+    
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
            python-version: '3.x'  # 根据项目实际依赖的Python版本进行调整
-
-
-      - name: Use site-packages variable
-        run: |
-          echo "The site-packages path is: ${{ env.Python_ROOT_DIR }}"
 
       - name: Install dependencies
         run: pip install -r requirements.txt  # 安装项目依赖的Python库
@@ -67,13 +43,25 @@ jobs:
       - name: Zip the generated files (Windows)
         run: Compress-Archive -Path dist_portable/* -DestinationPath FS-Tool.zip  # 将生成文件压缩为zip包
 
-     
+      - name: Create release
+        uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用GitHub自动生成的token用于创建发布
+        with:
+          #tag_name: ${{ github.ref }}
+          #name: Release ${{ github.ref }}
+          tag_name: v${{ inputs.app_version }}
+          name: Release v${{ inputs.app_version }}
+          draft: false  # 是否为草稿，设为false表示直接发布
+          prerelease: false  # 是否为预发布版本，设为false表示正式发布
+          
       - name: Upload release asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}  # 获取创建发布时的上传链接
+          upload_url: ${{ steps.create_release.outputs.upload_url }}  # 使用之前设置的环境变量
           asset_path: dist/FS-Tool.exe  # 要上传的打包后的可执行文件路径，根据实际打包情况调整
           asset_name: FS-Tool.exe  # 上传文件的名称，可按需调整
           asset_content_type: application/octet-stream  # 文件类型，.exe文件一般用此类型
@@ -83,7 +71,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}  # 获取创建发布时的上传链接
+          upload_url: ${{ steps.create_release.outputs.upload_url }}  # 使用之前设置的环境变量
           asset_path: FS-Tool.zip
           asset_name: FS-Tool-Portable.zip
           asset_content_type: application/zip
@@ -94,20 +82,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3  # 检出当前仓库代码
         
-      - name: Get upload URL from environment variable
-        run: |
-          source $GITHUB_ENV
-          echo "UPLOAD_URL is: $UPLOAD_URL"
-          
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
            python-version: '3.11'  # 根据项目实际依赖的Python版本进行调整
-
-
-      - name: Use site-packages variable
-        run: |
-          echo "The site-packages path is: ${{ env.Python_ROOT_DIR }}"
           
       - name: Install dependencies
         run: pip install -r requirements.txt  # 安装项目依赖的Python库
@@ -130,7 +108,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ env.UPLOAD_URL }}  # 获取创建发布时的上传链接
+          upload_url: ${{ needs.win_release.outputs.upload_url }}  # 引用 create-release 步骤的输出
           asset_path: FS-Tool.zip
           asset_name: FS-Tool-MacOS.zip
           asset_content_type: application/zip
