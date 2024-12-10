@@ -98,19 +98,9 @@ jobs:
         run: |
           create-dmg  "dist/FS-Tool.dmg"  "dist/FS-Tool.app"
         # 使用 create-dmg 工具将 .app 打包成 .dmg 文件
-      #- name: Zip the generated files (macOS)
-      #  run: zip -r FS-Tool.zip dist/*  # 使用zip命令将dist目录下所有文件及子目录递归压缩成FS-Tool.zip包
+      - name: Zip the generated files (macOS)
+        run: zip -r FS-Tool.app.zip dist/FS-Tool.app  # 使用zip命令将dist目录下所有文件及子目录递归压缩成FS-Tool.zip包
 
-      - name: Upload App release asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.win_release.outputs.upload_url }}  # 引用 create-release 步骤的输出
-          asset_path: dist/FS-Tool.app
-          asset_name: FS-Tool.app
-          asset_content_type: application/octet-stream  # 文件类型
-          
       - name: Upload DMG release asset
         uses: actions/upload-release-asset@v1
         env:
@@ -120,4 +110,16 @@ jobs:
           asset_path: dist/FS-Tool.dmg
           asset_name: FS-Tool.dmg
           asset_content_type: application/octet-stream  # 文件类型
+
+      - name: Upload App release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.win_release.outputs.upload_url }}  # 引用 create-release 步骤的输出
+          asset_path: FS-Tool.app.zip
+          asset_name: FS-Tool.MacOS.zip
+          asset_content_type: application/zip
+          
+
           
