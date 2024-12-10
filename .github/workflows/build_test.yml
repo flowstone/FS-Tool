@@ -34,9 +34,9 @@ jobs:
       - name: Set upload URL as environment variable
         run: |
           echo "UPLOAD_URL=${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_ENV
-      - name: Use the value
+      - name: Use upload URL as environment variable
         run: |
-          printf '%s\n' "$UPLOAD_URL" # This will output 'yellow'
+           echo "The value of UPLOAD_URL is: $UPLOAD_URL"
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
