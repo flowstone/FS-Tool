@@ -34,6 +34,9 @@ jobs:
       - name: Set upload URL as environment variable
         run: |
           echo "UPLOAD_URL=${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_ENV
+      - name: Debug read GITHUB_ENV
+        run: |
+          cat $GITHUB_ENV
       - name: Use upload URL as environment variable
         run: |
            echo "The value of UPLOAD_URL is: $UPLOAD_URL"
