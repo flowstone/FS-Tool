@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtGui import QPixmap, QIcon
-from utils.common_util import CommonUtil
+from src.common_util import CommonUtil
 
 # 图片按钮
 class HoverImageButton(QPushButton):

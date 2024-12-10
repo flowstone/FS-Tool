@@ -2,8 +2,8 @@ import sys
 import os
 import datetime
 
-from utils.fs_constants import FsConstants
-from utils.config_manager import ConfigManager
+from src.fs_constants import FsConstants
+from src.config_manager import ConfigManager
 
 class CommonUtil:
 

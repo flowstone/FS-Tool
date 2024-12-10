@@ -1,5 +1,5 @@
 import sqlite3
-from utils.common_util import CommonUtil
+from src.common_util import CommonUtil
 
 class InitDB:
     def __init__(self, db_name):

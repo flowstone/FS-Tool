@@ -2,9 +2,9 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit, QPushButton, QMessageBox, QHBoxLayout
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import Qt
-from utils.common_util import CommonUtil
-from utils.fs_constants import FsConstants
-from widgets.hover_image_button import HoverImageButton
+from src.common_util import CommonUtil
+from src.fs_constants import FsConstants
+from src.hover_image_button import HoverImageButton
 from loguru import logger
 
 class StickyNoteApp(QWidget):

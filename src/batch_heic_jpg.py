@@ -3,12 +3,12 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog
 from PyQt5.QtGui import QColor, QPalette, QIcon
 from PyQt5.QtCore import Qt,pyqtSignal, QThread
-from utils.progress_tool import ProgressTool
+from src.progress_tool import ProgressTool
 
 from PyQt5.QtWidgets import QMessageBox
 from loguru import logger
-from utils.common_util import CommonUtil
-from utils.fs_constants import FsConstants
+from src.common_util import CommonUtil
+from src.fs_constants import FsConstants
 import whatimage
 import pillow_heif
 from PIL import Image,ImageOps

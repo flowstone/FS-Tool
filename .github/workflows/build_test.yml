@@ -96,7 +96,7 @@ jobs:
       
       - name: Create DMG file from .app (macOS)
         run: |
-          create-dmg "dist/FS-Tool.app" "dist/FS-Tool.dmg"
+          create-dmg  "dist/FS-Tool.dmg"  "dist/FS-Tool.app"
         # 使用 create-dmg 工具将 .app 打包成 .dmg 文件
       #- name: Zip the generated files (macOS)
       #  run: zip -r FS-Tool.zip dist/*  # 使用zip命令将dist目录下所有文件及子目录递归压缩成FS-Tool.zip包

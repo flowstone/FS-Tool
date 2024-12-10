@@ -2,8 +2,8 @@ from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QMouseEvent, QPixmap
 from loguru import logger
-from utils.fs_constants import FsConstants
-from utils.common_util import CommonUtil
+from src.fs_constants import FsConstants
+from src.common_util import CommonUtil
 
 class FloatingBall(QWidget):
 

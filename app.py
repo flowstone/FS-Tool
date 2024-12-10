@@ -1,9 +1,9 @@
 import sys
 from PyQt5.QtWidgets import QApplication
-from ui.main_window import MainWindow
-from database.init_db import InitDB
-from utils.common_util import CommonUtil
-from utils.fs_constants import FsConstants
+from src.main_window import MainWindow
+from src.init_db import InitDB
+from src.common_util import CommonUtil
+from src.fs_constants import FsConstants
 import  os
 
 def main():

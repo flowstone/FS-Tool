@@ -5,3 +5,5 @@
 /dist/
 /test/build/
 /test/dist/
+*.pyc
+*.pyo

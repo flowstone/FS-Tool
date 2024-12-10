@@ -1,7 +1,7 @@
 import sys
 import time
 from PyQt5.QtWidgets import QApplication
-from utils.progress_tool import ProgressTool,ProgressSignalEmitter
+from src.progress_tool import ProgressTool,ProgressSignalEmitter
 from loguru import logger
 
 def task1_progress_update(value):

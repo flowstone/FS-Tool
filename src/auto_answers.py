@@ -10,13 +10,13 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import random
 import time
-from utils.common_util import CommonUtil
+from src.common_util import CommonUtil
 import hashlib
-from utils.fs_constants import FsConstants
-from database.sqlite_util import SQLiteTool
-from ui.auto_answers_list import AutoAnswersList
-from utils.progress_tool import ProgressTool
-from utils.config_manager import ConfigManager
+from src.fs_constants import FsConstants
+from src.sqlite_util import SQLiteTool
+from src.auto_answers_list import AutoAnswersList
+from src.progress_tool import ProgressTool
+from src.config_manager import ConfigManager
 
 # 这里定义一些常见的姓氏和名字的列表，可以根据实际情况扩展
 last_names = ["赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈", "褚", "卫", "蒋", "沈", "韩", "杨"]
@@ -24,7 +24,7 @@ first_names = ["强", "伟", "芳", "娜", "秀英", "敏", "静", "丽", "军",
 error = 0
 success = 0
 
-class AutoAnswersApp(QMainWindow):
+class AutoAnswersApp(QWidget):
     def __init__(self):
         super().__init__()
 
@@ -86,11 +86,6 @@ class AutoAnswersApp(QMainWindow):
         help_menu.addAction(readme_action)
         main_layout.addWidget(menu_bar)
         # ---- 工具栏 END
-
-
-        central_widget = QWidget(self)
-        central_widget.setLayout(main_layout)
-        self.setCentralWidget(central_widget)
 
         # 图片标签，单独占一行
         image_label = QLabel(self)

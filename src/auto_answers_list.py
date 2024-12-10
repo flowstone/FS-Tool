@@ -9,8 +9,8 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QTableWidget, QTa
 from PyQt5.QtGui import QFont, QColor, QBrush
 import sqlite3
 
-from utils.fs_constants import FsConstants
-from utils.common_util import CommonUtil
+from src.fs_constants import FsConstants
+from src.common_util import CommonUtil
 
 
 class AutoAnswersList(QWidget):

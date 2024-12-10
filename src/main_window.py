@@ -1,18 +1,18 @@
 import sys
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget,QPushButton, QSystemTrayIcon, QMenu, QAction, QMainWindow,QMessageBox, QMenuBar
 
-from ui.batch_heic_jpg import HeicToJpgApp
-from ui.desktop_clock import ColorSettingDialog
-from ui.pic_conversion import PicConversionApp
-from ui.batch_file_renamer import RenameFileApp
-from ui.batch_create_folder import CreateFolderApp
-from ui.auto_answers import AutoAnswersApp
-from ui.stick_note import StickyNoteApp
+from src.batch_heic_jpg import HeicToJpgApp
+from src.desktop_clock import ColorSettingDialog
+from src.pic_conversion import PicConversionApp
+from src.batch_file_renamer import RenameFileApp
+from src.batch_create_folder import CreateFolderApp
+from src.auto_answers import AutoAnswersApp
+from src.stick_note import StickyNoteApp
 from PyQt5.QtGui import QIcon
-from ui.app_mini import FloatingBall
+from src.app_mini import FloatingBall
 from loguru import logger
-from utils.common_util import CommonUtil
-from utils.fs_constants import FsConstants
+from src.common_util import CommonUtil
+from src.fs_constants import FsConstants
 
 class MainWindow(QMainWindow):
     def __init__(self):
