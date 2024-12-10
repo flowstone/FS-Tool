@@ -31,14 +31,19 @@ jobs:
           name: Release v${{ inputs.app_version }}
           draft: false  # 是否为草稿，设为false表示直接发布
           prerelease: false  # 是否为预发布版本，设为false表示正式发布
-      - name: Set environment variable in GITHUB_ENV
-        run: echo "TEST_VAR=test_value" >> $GITHUB_ENV
-      - name: Check if written to GITHUB_ENV
-        run: cat $GITHUB_ENV
-        
+      # 第一步：获取 release 信息
+      - name: Get release information
+        id: release-info
+        run: |
+          # 获取 release 的上传 URL
+          upload_url=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                            https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref }} | \
+                            jq -r '.upload_url' | sed 's/{?name,label}//')
+          
+          echo "UPLOAD_URL=$upload_url" >> $GITHUB_ENV
       - name: Use upload URL as environment variable
         run: |
-           echo "The value of UPLOAD_URL is: $UPLOAD_URL"
+           echo "The value of UPLOAD_URL is: ${{ env.UPLOAD_URL }}"
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
