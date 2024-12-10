@@ -13,9 +13,11 @@ class HoverImageButton(QPushButton):
         self.setIcon(QIcon(self.normal_pixmap))
         # 设置按钮的固定大小为正常状态图片的尺寸（可根据实际需求考虑是否以点击后图片尺寸为准等）
         self.setFixedSize(30, 30)
+        # 避免外部QSS影响
         self.setStyleSheet("""
             QPushButton {
                 background-color: transparent;
+                min-width: 0px;
             }
         """)
         self.clicked.connect(self.toggle_image)  # 连接点击信号到切换图片的方法

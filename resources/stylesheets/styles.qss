@@ -49,6 +49,7 @@ QPushButton {
     border-radius: 5px;
     padding: 6px;
     font-size: 14px;
+    min-width: 100px;
 }
 QPushButton:hover {
     background-color: #63B8FF;
@@ -91,6 +92,38 @@ QCheckBox {
 }
 QCheckBox:checked {
     color: #4CAF50;
+}
+
+QSpinBox {
+    font-size: 14px;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+QSpinBox::up-button {
+    border: none;
+    background-color: #8BC34A;
+    height: 15px;
+    width: 15px;
+    border-radius: 5px;
+}
+
+QSpinBox::down-button {
+    border: none;
+    background-color: #F44336;
+    height: 15px;
+    width: 15px;
+    border-radius: 5px;
+}
+
+QSpinBox::up-button:hover {
+    background-color: #7CB342;
+}
+
+QSpinBox::down-button:hover {
+    background-color: #E53935;
 }
 /*
  通用样式[END]

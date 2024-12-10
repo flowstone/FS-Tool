@@ -8,6 +8,7 @@ from src.batch_file_renamer import RenameFileApp
 from src.batch_create_folder import CreateFolderApp
 from src.auto_answers import AutoAnswersApp
 from src.stick_note import StickyNoteApp
+from src.password_generator import  PasswordGeneratorApp
 from PyQt5.QtGui import QIcon
 from src.app_mini import FloatingBall
 from loguru import logger
@@ -63,21 +64,18 @@ class MainWindow(QMainWindow):
         time_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_TIME_ICON)),
                                FsConstants.DESKTOP_CLOCK_WINDOW_TITLE)
         time_btn.setObjectName("feature")
-
         time_btn.clicked.connect(self.time_btn_clicked)
 
         # 快捷便签按钮
         stick_note_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_STICK_NOTE_ICON)),
                                      FsConstants.STICK_NOTE_WINDOW_TITLE)
         stick_note_btn.setObjectName("feature")
-
         stick_note_btn.clicked.connect(self.stick_note_btn_clicked)
 
         # 图转大师按钮
         img_conv_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_PIC_ICON)),
                                    FsConstants.PIC_CONVERSION_WINDOW_TITLE)
         img_conv_btn.setObjectName("feature")
-
         img_conv_btn.clicked.connect(self.img_conv_btn_clicked)
 
         generic_layout.addWidget(time_btn)
@@ -97,21 +95,18 @@ class MainWindow(QMainWindow):
         create_folder_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FOLDER_ICON)),
                                         FsConstants.CREATE_FOLDER_WINDOW_TITLE)
         create_folder_btn.setObjectName("feature")
-
         create_folder_btn.clicked.connect(self.create_folder_btn_clicked)
 
         # 重命名按钮
         rename_file_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FILE_ICON)),
                                       FsConstants.FILE_RENAMER_WINDOW_TITLE)
         rename_file_btn.setObjectName("feature")
-
         rename_file_btn.clicked.connect(self.rename_file_btn_clicked)
 
         # HEIC转JPG按钮
         heic_jpg_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_HEIC_ICON)),
                                    FsConstants.HEIC_JPG_BUTTON_TITLE)
         heic_jpg_btn.setObjectName("feature")
-
         heic_jpg_btn.clicked.connect(self.heic_jpg_btn_clicked)
 
         batch_layout.addWidget(create_folder_btn)
@@ -131,9 +126,15 @@ class MainWindow(QMainWindow):
         auto_answers_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_ANSWERS_ICON)),
                                        FsConstants.AUTO_ANSWERS_WINDOW_TITLE)
         auto_answers_btn.setObjectName("feature")
-
         auto_answers_btn.clicked.connect(self.auto_answers_btn_clicked)
 
+        # 密码生成器
+        password_generator_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_PASSWORD_ICON)),
+                                       FsConstants.PASSWORD_GENERATOR_TITLE)
+        password_generator_btn.setObjectName("feature")
+        password_generator_btn.clicked.connect(self.password_generator_btn_clicked)
+
+        vip_layout.addWidget(password_generator_btn)
         vip_layout.addWidget(auto_answers_btn)
         vip_widget.setLayout(vip_layout)
 
@@ -267,3 +268,7 @@ class MainWindow(QMainWindow):
                 self.stick_note.show()
                 self.stick_note.activateWindow()
 
+    def password_generator_btn_clicked(self):
+        logger.info(f"---- 按钮<{FsConstants.PASSWORD_GENERATOR_TITLE}>被点击了 ----")
+        self.password_generator = PasswordGeneratorApp()
+        self.password_generator.show()

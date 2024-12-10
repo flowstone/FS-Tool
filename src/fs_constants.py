@@ -72,6 +72,9 @@ class FsConstants:
     STICK_NOTE_WINDOW_MIN_HEIGHT = 200
     STICK_NOTE_WINDOW_TITLE = "快捷便签"
 
+    #密码生成器
+    PASSWORD_GENERATOR_TITLE = "密码生成器"
+
     # 颜色相关常量
     BACKGROUND_COLOR = "#f0f0f0"
     BUTTON_COLOR_NORMAL = "#3498db"
@@ -99,7 +102,8 @@ class FsConstants:
     BUTTON_FOLDER_ICON = "folder-icon.svg"
     BUTTON_FILE_ICON = "move-icon.svg"
     BUTTON_HEIC_ICON = "pictures-icon.svg"
-    BUTTON_ANSWERS_ICON = "unlock-icon.svg"
+    BUTTON_ANSWERS_ICON = "auto_answers-icon.svg"
+    BUTTON_PASSWORD_ICON = "unlock-icon.svg"
     BUTTON_STICK_NOTE_ICON = "business-icon.svg"
     TAB_PANE_GENERIC_ICON = "resources/icon/home-icon.svg"
     TAB_PANE_BATCH_ICON = "resources/icon/more-icon.svg"

@@ -9,6 +9,8 @@ class FloatingBall(QWidget):
 
     def __init__(self, main_window):
         super().__init__()
+        # 清除外部QSS影响
+        self.setStyleSheet("background-color: transparent;")
         self.main_window = main_window
         self.init_ui()
 

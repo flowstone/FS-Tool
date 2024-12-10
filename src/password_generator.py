@@ -7,15 +7,17 @@ from PyQt5.QtWidgets import (
 from loguru import logger
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
-
+from PyQt5.QtGui import QFont, QIcon
+from src.fs_constants import FsConstants
+from src.common_util import CommonUtil
 
 class PasswordGeneratorApp(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("密码生成器")
+        self.setWindowTitle(FsConstants.PASSWORD_GENERATOR_TITLE)
         self.setGeometry(100, 100, 500, 350)
+        self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         # 初始化界面元素
         self.init_ui()
@@ -126,72 +128,6 @@ class PasswordGeneratorApp(QWidget):
         self.generated_password.setText(password)
 
     def apply_styles(self):
-        """应用美化样式"""
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #f0f0f0;
-                font-family: Arial;
-            }
-            QLabel {
-                font-size: 14px;
-                color: #333;
-            }
-            QLineEdit {
-                font-size: 14px;
-                padding: 6px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                background-color: #fff;
-            }
-            QCheckBox {
-                font-size: 14px;
-                color: #555;
-            }
-            QSpinBox {
-                font-size: 14px;
-                padding: 4px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                background-color: #fff;
-            }
-            QSpinBox::up-button {
-                border: none;
-                background-color: #8BC34A;
-                height: 15px;
-                width: 15px;
-                border-radius: 5px;
-            }
-            
-            QSpinBox::down-button {
-                border: none;
-                background-color: #F44336;
-                height: 15px;
-                width: 15px;
-                border-radius: 5px;
-            }
-        
-            QSpinBox::up-button:hover {
-                background-color: #7CB342;
-            }
-        
-            QSpinBox::down-button:hover {
-                background-color: #E53935;
-            }
-            QPushButton {
-                font-size: 14px;
-                color: #fff;
-                background-color: #0078d7;
-                border: none;
-                border-radius: 5px;
-                padding: 8px 15px;
-            }
-            QPushButton:hover {
-                background-color: #005bb5;
-            }
-            QPushButton:pressed {
-                background-color: #004a9b;
-            }
-        """)
 
         self.label.setFont(QFont("Arial", 16, QFont.Bold))
         self.label.setStyleSheet("color: #0078d7;")

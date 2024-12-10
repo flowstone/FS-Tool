@@ -179,6 +179,30 @@ class AutoAnswersApp(QWidget):
 
         main_layout.addLayout(row3_layout)
 
+        # 第四行（次数下拉框）
+        row4_layout = QHBoxLayout()
+        row4_layout.setSpacing(10)
+
+        times_label = QLabel("次数")  # 添加次数标签，使界面更清晰
+        times_label.setFont(font)
+        self.times_combo = QComboBox()
+        self.times_combo.addItems(["1", "3", "5", "7", "50", "100", "200", "600"])
+        self.times_combo.setFont(font)
+        self.times_combo.setFixedWidth(120)
+        row4_layout.addWidget(times_label)
+        row4_layout.addWidget(self.times_combo, 1)
+
+        # 姓名输入框和标签
+        passwd_label = QLabel("*访问密码")
+        passwd_label.setFont(font)
+        passwd_label.setStyleSheet("color:red;")
+        self.passwd_edit = QLineEdit()
+        self.passwd_edit.setPlaceholderText("指定手机号")
+        self.passwd_edit.setFont(font)
+        self.passwd_edit.setFixedWidth(120)
+        row4_layout.addWidget(passwd_label)
+        row4_layout.addWidget(self.passwd_edit, 1)
+        main_layout.addLayout(row4_layout)
         # ---- 提交按钮 ----
         row5_layout = QHBoxLayout()
         submit_button = QPushButton("提交")
