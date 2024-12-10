@@ -1,4 +1,4 @@
-name: Win Package
+name: Win/MacOS Package
 
 on:
   push:
@@ -36,14 +36,24 @@ jobs:
       - name: Zip the generated files (Windows)
         run: Compress-Archive -Path dist_portable/* -DestinationPath FS-Tool.zip  # 将生成文件压缩为zip包
 
+      - name: Generate release notes
+        id: generate_notes
+        run: |
+          RELEASE_NOTES=$(git log --oneline --no-merges --pretty=format:"- %s" ${{ github.event.before }}..${{ github.sha }})
+          echo "Generated release notes:"
+          echo "$RELEASE_NOTES"
+          echo "RELEASE_NOTES=$RELEASE_NOTES" >> $GITHUB_ENV
+
       - name: Create release
         uses: actions/create-release@v1
         id: create_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用GitHub自动生成的token用于创建发布
         with:
+          # 使用条件判断来确保根据触发事件动态选择 tag_name 和 name
           tag_name: ${{ github.ref }}
           name: Release ${{ github.ref }}
+          body: ${{ env.RELEASE_NOTES }}  # 动态生成的发布说明
           draft: false  # 是否为草稿，设为false表示直接发布
           prerelease: false  # 是否为预发布版本，设为false表示正式发布
           
@@ -66,6 +76,8 @@ jobs:
           asset_path: FS-Tool.zip
           asset_name: FS-Tool-Portable.zip
           asset_content_type: application/zip
+
+
   mac_release:
     needs: win_release
     runs-on: macos-13 # macos13支持Intel平台，14之后默认是ARM平台，Intel平台要收费
@@ -121,5 +133,29 @@ jobs:
           asset_name: FS-Tool.MacOS.zip
           asset_content_type: application/zip
           
+      - name: Add version badge to README
+        run: |
+          VERSION="${{ github.ref }}"
+          BADGE_URL="https://img.shields.io/badge/version-${VERSION}-blue.svg"
+          README_FILE="README.md"
+
+          # 使用 sed 或类似工具在 README.md 中插入版本徽章
+          # 查找现有的徽章或其他位置插入版本徽章
+          if grep -q "version" "$README_FILE"; then
+            sed -i "s|<badge_placeholder>|![Version Badge](${BADGE_URL})|g" "$README_FILE"
+          else
+            # 如果没有找到 placeholder，直接在文件顶部插入
+            echo "![Version Badge](${BADGE_URL})" | cat - "$README_FILE" > temp && mv temp "$README_FILE"
+          fi
+
+      - name: Commit changes to README
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add README.md
+          git commit -m "Add version badge for ${{ github.ref }}"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
           
