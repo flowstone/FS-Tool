@@ -36,10 +36,7 @@ jobs:
         id: release-info
         run: |
           # 获取 release 的上传 URL
-          upload_url=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                            https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref }} | \
-                            jq -r '.upload_url' | sed 's/{?name,label}//')
-          
+          upload_url=${{ steps.create_release.outputs.upload_url }}
           echo "UPLOAD_URL=$upload_url" >> $GITHUB_ENV
       - name: Use upload URL as environment variable
         run: |
