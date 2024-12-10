@@ -36,13 +36,10 @@ jobs:
       - name: Zip the generated files (Windows)
         run: Compress-Archive -Path dist_portable/* -DestinationPath FS-Tool.zip  # 将生成文件压缩为zip包
 
-      - name: Generate release notes
-        id: generate_notes
+      - name: Generate Release Notes
         run: |
-          RELEASE_NOTES=$(git log --oneline --no-merges --pretty=format:"- %s" ${{ github.event.before }}..${{ github.sha }})
-          echo "Generated release notes:"
-          echo "$RELEASE_NOTES"
-          echo "RELEASE_NOTES=$RELEASE_NOTES" >> $GITHUB_ENV
+           git log --oneline --no-merges --pretty=format:"- %s" ${{ github.event.before }}..${{ github.sha }}> release_notes.txt
+           cat release_notes.txt
 
       - name: Create release
         uses: actions/create-release@v1
@@ -53,7 +50,8 @@ jobs:
           # 使用条件判断来确保根据触发事件动态选择 tag_name 和 name
           tag_name: ${{ github.ref }}
           name: Release ${{ github.ref }}
-          body: ${{ env.RELEASE_NOTES }}  # 动态生成的发布说明
+          body: |
+            $(cat release_notes.txt)
           draft: false  # 是否为草稿，设为false表示直接发布
           prerelease: false  # 是否为预发布版本，设为false表示正式发布
           
