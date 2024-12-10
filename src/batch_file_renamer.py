@@ -1,10 +1,8 @@
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QGroupBox,QRadioButton,QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, \
-    QFileDialog
-from PyQt5.QtGui import QFont, QIcon
+from PyQt5.QtWidgets import QApplication, QGroupBox, QRadioButton, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QMessageBox
+from PyQt5.QtGui import QFont, QIcon, QColor, QPalette
 from PyQt5.QtCore import Qt, pyqtSignal, QThread
-from PyQt5.QtWidgets import QMessageBox
 from loguru import logger
 
 from src.common_util import CommonUtil
@@ -14,7 +12,6 @@ from src.progress_tool import ProgressTool
 class RenameFileApp(QWidget):
     def __init__(self):
         super().__init__()
-        # 选择文件类型
         self.check_type_text = None
         self.check_serial_flag = False
         self.check_clear_flag = False
@@ -26,8 +23,10 @@ class RenameFileApp(QWidget):
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
         self.setWindowFlags(self.windowFlags() | Qt.MSWindowsFixedSizeDialogHint)
 
+
         layout = QVBoxLayout()
-        # 创建第一个单选按钮组
+
+        # 创建第一个单选按钮组（文件类型）
         group_box = QGroupBox('文件类型')
         radio_btn_layout = QHBoxLayout()
         self.radio_label = QLabel("*选择文件类型：")
@@ -35,39 +34,38 @@ class RenameFileApp(QWidget):
         # 创建两个单选按钮
         self.file_rbtn = QRadioButton('文件')
         self.folder_rbtn = QRadioButton('文件夹')
-        # 将两个单选按钮设置为互斥
         self.check_type_text = self.file_rbtn.text()
         self.file_rbtn.setChecked(True)  # 默认选中选项1
         self.file_rbtn.toggled.connect(self.radio_btn_toggled)
         self.folder_rbtn.toggled.connect(self.radio_btn_toggled)
+
         radio_btn_layout.addWidget(self.radio_label)
         radio_btn_layout.addWidget(self.file_rbtn)
         radio_btn_layout.addWidget(self.folder_rbtn)
         group_box.setLayout(radio_btn_layout)
         layout.addWidget(group_box)
 
+        # 创建序号选择单选按钮组
         number_box = QGroupBox('序号')
         radio_asc_layout = QHBoxLayout()
         self.number_label = QLabel("选择序号：")
-
-        # 创建两个单选按钮
         self.number_rbtn = QRadioButton('数字，如1、2、3')
         self.number_rbtn.toggled.connect(self.radio_serial_toggled)
+
         radio_asc_layout.addWidget(self.number_label)
         radio_asc_layout.addWidget(self.number_rbtn)
         number_box.setLayout(radio_asc_layout)
         layout.addWidget(number_box)
 
+        # 创建清空文件名单选按钮组
         radio_clear_layout = QHBoxLayout()
         self.name_label = QLabel("清空文件名：")
-
-        # 创建两个单选按钮
         self.name_clear_rbtn = QRadioButton('是')
         self.name_clear_rbtn.toggled.connect(self.radio_name_clear_toggled)
+
         radio_clear_layout.addWidget(self.name_label)
         radio_clear_layout.addWidget(self.name_clear_rbtn)
         layout.addLayout(radio_clear_layout)
-
 
         # 选择文件夹相关部件
         folder_path_layout = QHBoxLayout()
@@ -75,6 +73,7 @@ class RenameFileApp(QWidget):
         self.folder_path_entry = QLineEdit()
         self.folder_path_entry.setFixedWidth(300)
         self.folder_path_entry.setObjectName("folder_path_input")
+        self.folder_path_entry.setStyleSheet("padding: 5px; border-radius: 4px; border: 1px solid #ccc;")
 
         self.browse_button = QPushButton("浏览")
         self.browse_button.setObjectName("browse_button")
@@ -89,6 +88,7 @@ class RenameFileApp(QWidget):
         prefix_layout = QHBoxLayout()
         self.prefix_label = QLabel("文件名前缀：")
         self.prefix_entry = QLineEdit()
+        self.prefix_entry.setStyleSheet("padding: 5px; border-radius: 4px; border: 1px solid #ccc;")
 
         prefix_layout.addWidget(self.prefix_label)
         prefix_layout.addWidget(self.prefix_entry)
@@ -98,6 +98,7 @@ class RenameFileApp(QWidget):
         suffix_layout = QHBoxLayout()
         self.suffix_label = QLabel("文件名后缀：")
         self.suffix_entry = QLineEdit()
+        self.suffix_entry.setStyleSheet("padding: 5px; border-radius: 4px; border: 1px solid #ccc;")
 
         suffix_layout.addWidget(self.suffix_label)
         suffix_layout.addWidget(self.suffix_entry)
@@ -107,6 +108,7 @@ class RenameFileApp(QWidget):
         char_to_find_layout = QHBoxLayout()
         self.char_to_find_label = QLabel("查找字符：")
         self.char_to_find_entry = QLineEdit()
+        self.char_to_find_entry.setStyleSheet("padding: 5px; border-radius: 4px; border: 1px solid #ccc;")
 
         char_to_find_layout.addWidget(self.char_to_find_label)
         char_to_find_layout.addWidget(self.char_to_find_entry)
@@ -116,24 +118,13 @@ class RenameFileApp(QWidget):
         replace_char_layout = QHBoxLayout()
         self.replace_char_label = QLabel("替换字符：")
         self.replace_char_entry = QLineEdit()
+        self.replace_char_entry.setStyleSheet("padding: 5px; border-radius: 4px; border: 1px solid #ccc;")
 
         replace_char_layout.addWidget(self.replace_char_label)
         replace_char_layout.addWidget(self.replace_char_entry)
         layout.addLayout(replace_char_layout)
 
-        # 作者和Github信息文本
-        author_font = QFont("Arial", 11)
-        self.author_label = QLabel(f"Author：{FsConstants.AUTHOR_BLOG}")
-        self.author_label.setFont(author_font)
-        self.author_label.setStyleSheet("color: #007BFF;")
-        self.github_label = QLabel(f"Github：{FsConstants.PROJECT_ADDRESS}")
-        self.github_label.setFont(author_font)
-        self.github_label.setStyleSheet("color: #007BFF;")
 
-        info_layout = QVBoxLayout()
-        info_layout.addWidget(self.author_label)
-        info_layout.addWidget(self.github_label)
-        layout.addLayout(info_layout)
 
         # 操作按钮
         button_layout = QHBoxLayout()
@@ -141,13 +132,16 @@ class RenameFileApp(QWidget):
         self.start_button.setObjectName("start_button")
         self.start_button.clicked.connect(self.start_operation)
 
+
         self.exit_button = QPushButton("退出")
         self.exit_button.setObjectName("exit_button")
         self.exit_button.clicked.connect(self.close)
 
+
         button_layout.addWidget(self.start_button)
         button_layout.addWidget(self.exit_button)
         layout.addLayout(button_layout)
+
         self.setLayout(layout)
 
 

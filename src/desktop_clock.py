@@ -1,6 +1,6 @@
 import sys
 import time
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QPushButton, QDialog, QComboBox, QHBoxLayout
+from PyQt5.QtWidgets import QApplication, QFormLayout, QWidget, QLabel, QVBoxLayout, QPushButton, QDialog, QComboBox, QHBoxLayout
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QTimer
 from src.common_util import CommonUtil
@@ -74,6 +74,8 @@ class DesktopClockApp(QWidget):
         self.count_time.setText(time_str)
 
 
+
+
 class ColorSettingDialog(QDialog):
     def __init__(self):
         super().__init__()
@@ -86,63 +88,38 @@ class ColorSettingDialog(QDialog):
 
         layout = QVBoxLayout()
 
-        # 设置对话框整体的样式表，添加背景颜色等样式
-        self.setStyleSheet("""
-            QDialog {
-                background-color: #f0f0f0;
-            }
-            QLabel {
-                font-size: 14px;
-                color: #333333;
-            }
-            QComboBox {
-                font-size: 14px;
-                padding: 5px;
-                border: 1px solid #cccccc;
-                border-radius: 3px;
-            }
-            QPushButton {
-                font-size: 14px;
-                background-color: #4CAF50;
-                color: white;
-                padding: 8px 16px;
-                border: none;
-                border-radius: 3px;
-            }
-            QPushButton:hover {
-                background-color: #45a049;
-            }
-        """)
 
-        # 当前时间颜色选择行
+
+        # 创建时间选择行，使用QHBoxLayout使其占满宽度
         time_row_layout = QHBoxLayout()
         time_label = QLabel("时间")
-        time_row_layout.addWidget(time_label)
         self.time_color_combobox = QComboBox(self)
         self.time_color_combobox.addItems(["白色", "粉色", "红色", "绿色", "蓝色"])
+
+        # 让时间选择的QComboBox占满剩余空间
+        time_row_layout.addWidget(time_label)
         time_row_layout.addWidget(self.time_color_combobox)
         layout.addLayout(time_row_layout)
 
-        # 增加一些垂直间距，让布局更清晰
-        layout.addSpacing(10)
 
-        # 计时器颜色选择行
+
+        # 创建计时器选择行，使用QHBoxLayout使其占满宽度
         timer_row_layout = QHBoxLayout()
         timer_label = QLabel("计时器")
-        timer_row_layout.addWidget(timer_label)
         self.timer_color_combobox = QComboBox(self)
         self.timer_color_combobox.addItems(["白色", "粉色", "红色", "绿色", "蓝色"])
+
+        # 让计时器选择的QComboBox占满剩余空间
+        timer_row_layout.addWidget(timer_label)
         timer_row_layout.addWidget(self.timer_color_combobox)
         layout.addLayout(timer_row_layout)
 
-        layout.addSpacing(10)
-
+        # 确定按钮
         ok_button = QPushButton("确定")
         ok_button.clicked.connect(self.start_operation)
         layout.addWidget(ok_button)
 
         self.setLayout(layout)
-
     def get_selected_time_color(self):
         return self.time_color_combobox.currentText()
 

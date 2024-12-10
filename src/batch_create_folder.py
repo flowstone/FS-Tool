@@ -22,20 +22,14 @@ class CreateFolderApp(QWidget):
 
         # 设置窗口背景色为淡灰色
         self.setAutoFillBackground(True)
-        palette = self.palette()
-        palette.setColor(QPalette.Window, QColor("#F5F5F5"))
-        self.setPalette(palette)
+
 
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         layout = QVBoxLayout()
 
-
-
         # 说明文本
         description_label = QLabel("说明：根据输入的分割字符，取前部分创建文件夹，符合相关的文件都移动到对应文件夹中")
-        description_label.setFont(QFont("Arial", 10))
-        description_label.setStyleSheet("color: black;")
 
         # 选择文件夹相关部件
         folder_path_layout = QHBoxLayout()
@@ -57,18 +51,7 @@ class CreateFolderApp(QWidget):
         slice_layout.addWidget(slice_label)
         slice_layout.addWidget(self.slice_entry)
 
-        # 作者和Github信息文本
-        author_font = QFont("Arial", 11)
-        author_label = QLabel(f"Author：{FsConstants.AUTHOR_BLOG}")
-        author_label.setFont(author_font)
-        author_label.setStyleSheet("color: #007BFF;")
-        github_label = QLabel(f"Github：{FsConstants.PROJECT_ADDRESS}")
-        github_label.setFont(author_font)
-        github_label.setStyleSheet("color: #007BFF;")
 
-        info_layout = QVBoxLayout()
-        info_layout.addWidget(author_label)
-        info_layout.addWidget(github_label)
 
         # 操作按钮
         button_layout = QHBoxLayout()
@@ -83,15 +66,13 @@ class CreateFolderApp(QWidget):
         button_layout.addWidget(start_button)
         button_layout.addWidget(exit_button)
 
+        # 布局调整
         layout.addWidget(description_label)
         layout.addLayout(folder_path_layout)
         layout.addLayout(slice_layout)
-        layout.addLayout(info_layout)
         layout.addLayout(button_layout)
 
-
         self.setLayout(layout)
-
 
 
 

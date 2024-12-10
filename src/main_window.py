@@ -18,7 +18,6 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.floating_ball = FloatingBall(self)
-        # 悬浮球可见状态，false可以创建悬浮球，反之。。。
         self.is_floating_ball_visible = False
         self.desktop_clock = None
         self.stick_note = None
@@ -27,27 +26,21 @@ class MainWindow(QMainWindow):
     def init_ui(self):
         layout = QVBoxLayout()
 
-
         logger.info(f"调用了主界面的初始化,悬浮球标志位 = {self.is_floating_ball_visible}")
         self.setWindowTitle(FsConstants.APP_WINDOW_TITLE)
         self.setFixedSize(FsConstants.APP_WINDOW_WIDTH, FsConstants.APP_WINDOW_HEIGHT)
-        #self.setFixedWidth(FsConstants.APP_WINDOW_WIDTH)
-
-
 
         # ---- 工具栏 START
         menu_bar = QMenuBar(self)
         help_menu = QMenu(FsConstants.TOOLBAR_HELP_TITLE, self)
         menu_bar.addMenu(help_menu)
 
-        # 创建”说明"菜单项
+        # 创建菜单项
         readme_action = QAction(FsConstants.TOOLBAR_README_TITLE, self)
         readme_action.triggered.connect(self.open_readme)
 
-        # 创建"作者"菜单项
         author_action = QAction(FsConstants.TOOLBAR_AUTHOR_TITLE, self)
         author_action.triggered.connect(self.open_author)
-        # 将菜单项添加到文件菜单
         help_menu.addAction(readme_action)
         help_menu.addAction(author_action)
         layout.addWidget(menu_bar)
@@ -55,26 +48,36 @@ class MainWindow(QMainWindow):
 
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
+        # 设置 Tab 样式
         self.tab_widget = QTabWidget()
-        # 创建第一个Tab页面
+        self.tab_widget.setTabPosition(QTabWidget.North)
+        self.tab_widget.setTabShape(QTabWidget.Rounded)
+
+
+
+        # ---- 第一Tab页（功能）START
         generic_widget = QWidget()
         generic_layout = QVBoxLayout()
-        # 透明时间
+
+        # 时间按钮
         time_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_TIME_ICON)),
                                FsConstants.DESKTOP_CLOCK_WINDOW_TITLE)
         time_btn.setObjectName("feature")
+
         time_btn.clicked.connect(self.time_btn_clicked)
 
-        # 快捷便签
+        # 快捷便签按钮
         stick_note_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_STICK_NOTE_ICON)),
                                      FsConstants.STICK_NOTE_WINDOW_TITLE)
         stick_note_btn.setObjectName("feature")
+
         stick_note_btn.clicked.connect(self.stick_note_btn_clicked)
 
-        # 图转大师
+        # 图转大师按钮
         img_conv_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_PIC_ICON)),
                                    FsConstants.PIC_CONVERSION_WINDOW_TITLE)
         img_conv_btn.setObjectName("feature")
+
         img_conv_btn.clicked.connect(self.img_conv_btn_clicked)
 
         generic_layout.addWidget(time_btn)
@@ -84,52 +87,66 @@ class MainWindow(QMainWindow):
         generic_widget.setLayout(generic_layout)
         generic_icon = QIcon(CommonUtil.get_resource_path(FsConstants.TAB_PANE_GENERIC_ICON))
         self.tab_widget.addTab(generic_widget, generic_icon, FsConstants.TAB_PANE_GENERIC_TITLE)
+        # ---- 第一Tab页（功能）END
 
-        # 创建第二个Tab页面
+        # ---- 第二Tab页（批量操作）START
         batch_widget = QWidget()
         batch_layout = QVBoxLayout()
-        # 文件夹创建师
+
+        # 文件夹创建按钮
         create_folder_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FOLDER_ICON)),
                                         FsConstants.CREATE_FOLDER_WINDOW_TITLE)
         create_folder_btn.setObjectName("feature")
+
         create_folder_btn.clicked.connect(self.create_folder_btn_clicked)
 
-        # 重命名使者
+        # 重命名按钮
         rename_file_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FILE_ICON)),
                                       FsConstants.FILE_RENAMER_WINDOW_TITLE)
         rename_file_btn.setObjectName("feature")
+
         rename_file_btn.clicked.connect(self.rename_file_btn_clicked)
 
-        # HEIC转JPG
+        # HEIC转JPG按钮
         heic_jpg_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_HEIC_ICON)),
                                    FsConstants.HEIC_JPG_BUTTON_TITLE)
         heic_jpg_btn.setObjectName("feature")
+
         heic_jpg_btn.clicked.connect(self.heic_jpg_btn_clicked)
+
         batch_layout.addWidget(create_folder_btn)
         batch_layout.addWidget(rename_file_btn)
         batch_layout.addWidget(heic_jpg_btn)
         batch_widget.setLayout(batch_layout)
+
         batch_icon = QIcon(CommonUtil.get_resource_path(FsConstants.TAB_PANE_BATCH_ICON))
         self.tab_widget.addTab(batch_widget, batch_icon, FsConstants.TAB_PANE_BATCH_TITLE)
+        # ---- 第二Tab页（批量操作）END
 
-        # 创建第三个Tab页面
+        # ---- 第三Tab页（VIP功能）START
         vip_widget = QWidget()
         vip_layout = QVBoxLayout()
-        # 自动答题
+
+        # 自动答题按钮
         auto_answers_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_ANSWERS_ICON)),
                                        FsConstants.AUTO_ANSWERS_WINDOW_TITLE)
         auto_answers_btn.setObjectName("feature")
+
         auto_answers_btn.clicked.connect(self.auto_answers_btn_clicked)
+
         vip_layout.addWidget(auto_answers_btn)
         vip_widget.setLayout(vip_layout)
+
         vip_icon = QIcon(CommonUtil.get_resource_path(FsConstants.TAB_PANE_VIP_ICON))
         self.tab_widget.addTab(vip_widget, vip_icon, FsConstants.TAB_PANE_VIP_TITLE)
+        # ---- 第三Tab页（VIP功能）END
 
         layout.addWidget(self.tab_widget)
 
         central_widget = QWidget(self)
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
+
 
         # 初始化应用托盘图标
         self.init_tray_menu()

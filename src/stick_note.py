@@ -17,9 +17,9 @@ class StickyNoteApp(QWidget):
     def init_ui(self):
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
         self.setWindowTitle(FsConstants.STICK_NOTE_WINDOW_TITLE)
-        self.setWindowOpacity(0.9)  # 设置窗口透明度为0.5（取值范围是0.0 - 1.0）
+        self.setWindowOpacity(0.95)  # 设置为更加透明的效果
         self.text_edit = QTextEdit(self)
-        self.text_edit.setFont(QFont('Arial', 12))
+        self.text_edit.setPlaceholderText("请输入便签内容...")
         self.text_edit.setStyleSheet("""
             QTextEdit {
                 border: 2px solid lightgray;
@@ -55,6 +55,9 @@ class StickyNoteApp(QWidget):
         self.clear_button.setObjectName("exit_button")
         self.clear_button.setToolTip('点击清空便签中的内容')
         self.clear_button.clicked.connect(self.clear_text)
+
+        self.save_button.setShortcut('Ctrl+S')  # 保存快捷键
+        self.clear_button.setShortcut('Ctrl+L')  # 清空快捷键
 
         # 创建切换状态的按钮
         lock_button = HoverImageButton(FsConstants.BUTTON_IMAGE_LOCK_OPEN, FsConstants.BUTTON_IMAGE_LOCK_CLOSE)

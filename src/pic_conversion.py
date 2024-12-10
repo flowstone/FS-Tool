@@ -1,6 +1,6 @@
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QCheckBox, QFileDialog, QHBoxLayout, QMessageBox
+from PyQt5.QtWidgets import QApplication, QScrollArea, QWidget, QVBoxLayout, QPushButton, QLabel, QCheckBox, QFileDialog, QHBoxLayout, QMessageBox
 from PyQt5.QtGui import QPixmap, QIcon
 from PIL import Image
 from PyQt5.QtCore import Qt, pyqtSignal, QThread
@@ -8,6 +8,7 @@ from loguru import logger
 from src.common_util import CommonUtil
 from src.fs_constants import FsConstants
 from src.progress_tool import ProgressTool
+
 
 class PicConversionApp(QWidget):
     def __init__(self):
@@ -19,53 +20,62 @@ class PicConversionApp(QWidget):
         self.setWindowTitle(FsConstants.PIC_CONVERSION_WINDOW_TITLE)
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
-        self.setFixedSize(FsConstants.PIC_CONVERSION_WINDOW_WIDTH, FsConstants.PIC_CONVERSION_WINDOW_HEIGHT)
-
-
+        #self.setFixedSize(FsConstants.PIC_CONVERSION_WINDOW_WIDTH, FsConstants.PIC_CONVERSION_WINDOW_HEIGHT)
+        self.setFixedWidth(FsConstants.PIC_CONVERSION_WINDOW_WIDTH)
         # 用于存储上传的图片路径
         self.image_path = None
-        self.preview_image = None
 
+        # 主布局
         layout = QVBoxLayout()
 
-        # 创建上传图片按钮
+
+
+        # 上传图片按钮
         self.upload_button = QPushButton("上传图片")
         self.upload_button.setObjectName("browse_button")
         self.upload_button.clicked.connect(self.upload_image)
         layout.addWidget(self.upload_button, alignment=Qt.AlignCenter)
-        # 创建用于显示上传图片的标签
+
+        # 图片预览区域
         self.image_label = QLabel(self)
         self.image_label.setAlignment(Qt.AlignCenter)
+        self.image_label.setPixmap(QPixmap())  # 空图像预览
+        self.image_label.setStyleSheet("border: 2px dashed #999999; padding: 10px; margin-top: 20px;")
         layout.addWidget(self.image_label)
 
-        # 创建复选框框架（这里使用水平布局让复选框在一行显示）
+        # 复选框框架
         self.checkbox_frame = QWidget(self)
-        checkbox_layout = QHBoxLayout()
+        checkbox_layout = QVBoxLayout()  # 使用垂直布局
         self.checkbox_frame.setLayout(checkbox_layout)
 
         # 定义支持的目标格式
         self.target_formats = ["JPEG", "PNG", "GIF", "BMP", "WEBP", "ICO"]
         self.selected_formats = []
 
-        # 创建复选框并添加到水平布局中
+        # 创建复选框并添加到布局中
         for format in self.target_formats:
             checkbox = QCheckBox(format)
+            checkbox.setStyleSheet("font-weight: normal;")
             checkbox.stateChanged.connect(lambda state, f=format: self.toggle_format(f, state))
             checkbox_layout.addWidget(checkbox)
 
-        layout.addWidget(self.checkbox_frame)
+        # 滚动区域（如果复选框过多）
+        scroll_area = QScrollArea(self)
+        scroll_area.setWidget(self.checkbox_frame)
+        scroll_area.setWidgetResizable(True)
+        layout.addWidget(scroll_area)
 
-        # 创建按钮所在的水平布局（用于放置转换按钮和关闭按钮）
+        # 按钮布局
         button_layout = QHBoxLayout()
 
-        # 创建转换按钮
+        # 转换按钮
         self.convert_button = QPushButton("转换")
         self.convert_button.setEnabled(False)
         self.convert_button.setObjectName("start_button")
         self.convert_button.clicked.connect(self.convert_image)
         button_layout.addWidget(self.convert_button)
 
-        # 创建关闭按钮
+        # 关闭按钮
         self.close_button = QPushButton("关闭")
         self.close_button.setObjectName("exit_button")
         self.close_button.clicked.connect(self.close)
@@ -77,7 +87,6 @@ class PicConversionApp(QWidget):
 
 
 
-
     def upload_image(self):
         logger.info("---- 开始上传图片 ----")
         self.image_path = QFileDialog.getOpenFileName(self, "选择图片", "", "图片文件 (*.jpg *.png *.gif *.bmp *.webp *.ico)")[0]
@@ -86,7 +95,7 @@ class PicConversionApp(QWidget):
             try:
                 self.preview_image = Image.open(self.image_path)
                 pixmap = QPixmap(self.image_path)
-                self.image_label.setPixmap(pixmap.scaled(self.image_label.width(), self.image_label.height(), aspectRatioMode=1))
+                self.image_label.setPixmap(pixmap.scaled(FsConstants.PIC_CONVERSION_WINDOW_WIDTH, FsConstants.PIC_CONVERSION_WINDOW_WIDTH, Qt.KeepAspectRatio))
             except Exception as e:
                 logger.error(f"显示图片时出错: {e}")
 
@@ -107,6 +116,7 @@ class PicConversionApp(QWidget):
 
         if not self.image_path:
             logger.warning("---- 请先上传图片! ----")
+            QMessageBox.information(self, "警告", "请先上传图片!")
             return
 
         self.setEnabled(False)

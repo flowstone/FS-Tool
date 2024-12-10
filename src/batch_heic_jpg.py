@@ -1,7 +1,7 @@
 import os
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog
-from PyQt5.QtGui import QColor, QPalette, QIcon
+from PyQt5.QtGui import QColor, QPalette, QIcon,QFont
 from PyQt5.QtCore import Qt,pyqtSignal, QThread
 from src.progress_tool import ProgressTool
 
@@ -26,19 +26,17 @@ class HeicToJpgApp(QWidget):
         self.setWindowTitle(FsConstants.HEIC_JPG_WINDOW_TITLE)
         self.setWindowFlags(self.windowFlags() | Qt.MSWindowsFixedSizeDialogHint)
 
-        # 设置窗口背景色为淡灰色
-        self.setAutoFillBackground(True)
-        palette = self.palette()
-        palette.setColor(QPalette.Window, QColor("#F5F5F5"))
-        self.setPalette(palette)
+
 
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         layout = QVBoxLayout()
 
-
-
-
+        # 说明文本
+        description_label = QLabel("说明：请选择HEIC文件所在的文件夹，系统将自动将其中的HEIC文件转换为JPG格式。")
+        description_label.setFont(QFont("Arial", 10))
+        description_label.setStyleSheet("color: black;")
+        description_label.setWordWrap(True)
 
         # 选择文件夹相关部件
         folder_path_layout = QHBoxLayout()
@@ -46,7 +44,7 @@ class HeicToJpgApp(QWidget):
         self.folder_path_input = QLineEdit()
         self.folder_path_input.setFixedWidth(300)
         self.folder_path_input.setObjectName("folder_path_input")
-
+        self.folder_path_input.setStyleSheet("padding: 5px; border-radius: 4px; border: 1px solid #ccc;")
 
         browse_button = QPushButton("浏览")
         browse_button.setObjectName("browse_button")
@@ -56,29 +54,27 @@ class HeicToJpgApp(QWidget):
         folder_path_layout.addWidget(self.folder_path_input)
         folder_path_layout.addWidget(browse_button)
 
-
-
-
-
         # 操作按钮
         button_layout = QHBoxLayout()
         start_button = QPushButton("开始")
         start_button.setObjectName("start_button")
         start_button.clicked.connect(self.start_operation)
 
+
         exit_button = QPushButton("退出")
         exit_button.setObjectName("exit_button")
         exit_button.clicked.connect(self.close)
 
+
         button_layout.addWidget(start_button)
         button_layout.addWidget(exit_button)
 
+        # 布局组合
+        layout.addWidget(description_label)
         layout.addLayout(folder_path_layout)
-
         layout.addLayout(button_layout)
 
         self.setLayout(layout)
-
 
 
 

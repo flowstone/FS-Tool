@@ -24,37 +24,15 @@ first_names = ["强", "伟", "芳", "娜", "秀英", "敏", "静", "丽", "军",
 error = 0
 success = 0
 
+
 class AutoAnswersApp(QWidget):
     def __init__(self):
         super().__init__()
 
-        COMBO_BOX_STYLE = """
-            QComboBox {
-                #background-color: white;
-                border: 1px solid #ccc;
-                border-radius: 3px;
-                padding: 1px 18px 1px 3px;
-                min-width: 60px;
-            }
-            QComboBox::drop-down {
-                subcontrol-origin: padding;
-                subcontrol-position: top right;
-                width: 15px;
-                border-left-width: 0px;
-                border-left-color: transparent;
-                border-left-style: solid;
-                border-top-right-radius: 3px;
-                border-bottom-right-radius: 3px;
-            }
-            QComboBox::down-arrow {
-                image: url(down_arrow.png);
-            }
-        """
-
+        # 配置管理和数据库操作
         config_manager = ConfigManager(CommonUtil.get_resource_path(FsConstants.APP_CONFIG_FILE))
         self.answer_pwd = config_manager.get_answer_pwd()
         self.answer_driver = config_manager.get_answer_driver()
-
         self.today = CommonUtil.get_today()
         self.error = 0
         self.success = 0
@@ -62,15 +40,14 @@ class AutoAnswersApp(QWidget):
 
         self.setWindowTitle(FsConstants.AUTO_ANSWERS_WINDOW_TITLE)
         self.setWindowFlags(self.windowFlags() | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         main_layout = QVBoxLayout()
-        main_layout.setSpacing(15)  # 设置主垂直布局的间距为10像素，可根据实际调整
+        main_layout.setSpacing(15)
 
-        # 设置通用字体
+        # 设置通用字体和样式
         font = QFont()
         font.setPointSize(12)
-
-        self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
 
         # ---- 工具栏 START
@@ -78,70 +55,58 @@ class AutoAnswersApp(QWidget):
         help_menu = QMenu(FsConstants.TOOLBAR_HELP_TITLE, self)
         menu_bar.addMenu(help_menu)
 
-        # 创建”说明"菜单项
+        # 创建"说明"菜单项
         readme_action = QAction(FsConstants.TOOLBAR_README_TITLE, self)
         readme_action.triggered.connect(self.show_instructions)
-
-        # 将菜单项添加到文件菜单
         help_menu.addAction(readme_action)
         main_layout.addWidget(menu_bar)
         # ---- 工具栏 END
 
         # 图片标签，单独占一行
         image_label = QLabel(self)
-        pixmap = QPixmap(CommonUtil.get_resource_path(FsConstants.AUTO_ANSWERS_TITLE_IMAGE))  # 替换为实际的图片路径
-        # 对图片进行缩放，这里示例将宽度缩放为300像素，高度按比例缩放，保持图片比例不变
+        pixmap = QPixmap(CommonUtil.get_resource_path(FsConstants.AUTO_ANSWERS_TITLE_IMAGE))
         scaled_pixmap = pixmap.scaled(217, 217, Qt.KeepAspectRatio)
         image_label.setPixmap(scaled_pixmap)
         image_label.setAlignment(Qt.AlignCenter)
         main_layout.addWidget(image_label, alignment=Qt.AlignCenter)
 
-        # 第一行（城市、乡镇、证）
+        # ---- 第一行：城市、乡镇、证 ----
         row1_layout = QHBoxLayout()
-        row1_layout.setSpacing(10)  # 设置第一行水平布局间距为10像素
+        row1_layout.setSpacing(10)
 
         # 城市下拉框和标签
         zone3_label = QLabel("城市")
         zone3_label.setFont(font)
         self.zone3_combo = QComboBox()
         self.zone3_combo.addItems(["淮安市"])
-        #self.zone3_codes = {"淮安市": "3208000000"}
-
         self.zone3_combo.setFont(font)
         self.zone3_combo.setFixedWidth(120)
-        self.zone3_combo.setStyleSheet(COMBO_BOX_STYLE)
         row1_layout.addWidget(zone3_label)
-        row1_layout.addWidget(self.zone3_combo, 1)  # 设置拉伸因子为1，合理分配空间
+        row1_layout.addWidget(self.zone3_combo, 1)
 
-        # 乡镇下拉框和标签
+        # 区/县下拉框和标签
         zone4_label = QLabel("区/县")
         zone4_label.setFont(font)
         self.zone4_combo = QComboBox()
         self.zone4_combo.addItems(["涟水县"])
-        #self.zone4_codes = {"涟水县": "3208260000"}
-
         self.zone4_combo.setFont(font)
         self.zone4_combo.setFixedWidth(120)
-        self.zone4_combo.setStyleSheet(COMBO_BOX_STYLE)
         row1_layout.addWidget(zone4_label)
         row1_layout.addWidget(self.zone4_combo, 1)
 
-        # 乡镇
+        # 乡镇下拉框和标签
         zone5_label = QLabel("乡镇")
         zone5_label.setFont(font)
         self.zone5_combo = QComboBox()
         self.zone5_combo.addItems(["石湖镇", "五港镇"])
-        #self.zone5_codes = {"石湖镇": "3208262600","五港镇": "3208262300"}
-
         self.zone5_combo.setFont(font)
         self.zone5_combo.setFixedWidth(120)
-        self.zone5_combo.setStyleSheet(COMBO_BOX_STYLE)
         row1_layout.addWidget(zone5_label)
         row1_layout.addWidget(self.zone5_combo, 1)
 
         main_layout.addLayout(row1_layout)
 
-        # 第二行（姓名、年龄、性别）
+        # ---- 第二行：姓名、年龄、性别 ----
         row2_layout = QHBoxLayout()
         row2_layout.setSpacing(10)
 
@@ -160,12 +125,10 @@ class AutoAnswersApp(QWidget):
         age_label = QLabel("年龄")
         age_label.setFont(font)
         self.age_combo = QComboBox()
-        self.age_combo.addItems([ "30～35岁以下", "35～40岁以下", "40～45岁以下", "45～50岁以下", "50～55岁以下"])
-       # self.age_codes = {"30～35岁以下": "05","35～40岁以下": "06","40～45岁以下": "07","45～50岁以下": "08","50～55岁以下": "09"}
-
+        self.age_combo.addItems(["30～35岁以下", "35～40岁以下", "40～45岁以下", "45～50岁以下", "50～55岁以下"])
         self.age_combo.setFont(font)
-        self.age_combo.setFixedWidth(120)
-        self.age_combo.setStyleSheet(COMBO_BOX_STYLE)
+        self.age_combo.setMinimumWidth(150)
+
         row2_layout.addWidget(age_label)
         row2_layout.addWidget(self.age_combo, 1)
 
@@ -174,17 +137,14 @@ class AutoAnswersApp(QWidget):
         gender_label.setFont(font)
         self.gender_combo = QComboBox()
         self.gender_combo.addItems(["男", "女"])
-        #self.gender_codes = {"男": "1","女": "2"}
-
         self.gender_combo.setFont(font)
         self.gender_combo.setFixedWidth(120)
-        self.gender_combo.setStyleSheet(COMBO_BOX_STYLE)
         row2_layout.addWidget(gender_label)
         row2_layout.addWidget(self.gender_combo, 1)
 
         main_layout.addLayout(row2_layout)
 
-        # 第三行（文化、职业、公司）
+        # ---- 第三行：文化、职业、公司 ----
         row3_layout = QHBoxLayout()
         row3_layout.setSpacing(10)
 
@@ -192,12 +152,9 @@ class AutoAnswersApp(QWidget):
         culture_label = QLabel("文化程度")
         culture_label.setFont(font)
         self.culture_combo = QComboBox()
-        self.culture_combo.addItems(["小学", "中学", "高中/职高/中专", "大专/本科","硕士及以上"])
-        #self.culture_codes = {"小学": "1","中学": "2","高中/职高/中专": "3","大专/本科": "4","硕士及以上": "5"}
-
+        self.culture_combo.addItems(["小学", "中学", "高中/职高/中专", "大专/本科", "硕士及以上"])
         self.culture_combo.setFont(font)
-        self.culture_combo.setFixedWidth(120)
-        self.culture_combo.setStyleSheet(COMBO_BOX_STYLE)
+        self.culture_combo.setFixedWidth(150)
         row3_layout.addWidget(culture_label)
         row3_layout.addWidget(self.culture_combo, 1)
 
@@ -205,12 +162,9 @@ class AutoAnswersApp(QWidget):
         job_label = QLabel("职业")
         job_label.setFont(font)
         self.job_combo = QComboBox()
-        self.job_combo.addItems(["饮食服务", "商业服务", "医务人员", "工人","民工","农民","家务待业"])
-        #self.job_codes = {"饮食服务": "04","商业服务": "05","医务人员": "06","工人": "07","民工": "08","农民": "09","家务待业": "13"}
-
+        self.job_combo.addItems(["饮食服务", "商业服务", "医务人员", "工人", "民工", "农民", "家务待业"])
         self.job_combo.setFont(font)
         self.job_combo.setFixedWidth(120)
-        self.job_combo.setStyleSheet(COMBO_BOX_STYLE)
         row3_layout.addWidget(job_label)
         row3_layout.addWidget(self.job_combo, 1)
 
@@ -225,61 +179,23 @@ class AutoAnswersApp(QWidget):
 
         main_layout.addLayout(row3_layout)
 
-        # 第四行（次数下拉框）
-        row4_layout = QHBoxLayout()
-        row4_layout.setSpacing(10)
-
-        times_label = QLabel("次数")  # 添加次数标签，使界面更清晰
-        times_label.setFont(font)
-        self.times_combo = QComboBox()
-        self.times_combo.addItems(["1", "3", "5", "7", "50", "100", "200", "600"])
-        self.times_combo.setFont(font)
-        self.times_combo.setFixedWidth(120)
-        self.times_combo.setStyleSheet(COMBO_BOX_STYLE)
-        row4_layout.addWidget(times_label)
-        row4_layout.addWidget(self.times_combo, 1)
-
-
-        # 姓名输入框和标签
-        passwd_label = QLabel("*访问密码")
-        passwd_label.setFont(font)
-        passwd_label.setStyleSheet("color:red;")
-        self.passwd_edit = QLineEdit()
-        self.passwd_edit.setPlaceholderText("指定手机号")
-        self.passwd_edit.setFont(font)
-        self.passwd_edit.setFixedWidth(120)
-        row4_layout.addWidget(passwd_label)
-        row4_layout.addWidget(self.passwd_edit, 1)
-        main_layout.addLayout(row4_layout)
-
-        # 第五行（提交按钮）
+        # ---- 提交按钮 ----
         row5_layout = QHBoxLayout()
-
         submit_button = QPushButton("提交")
         submit_button.setFont(font)
-        submit_button.setFixedSize(100, 30)
-        # 为按钮添加样式，鼠标悬停时背景变色，按下时文字变色等效果示例（可根据喜好调整）
         submit_button.setObjectName("start_button")
         submit_button.clicked.connect(self.start_answers)
         row5_layout.addWidget(submit_button)
 
-        # 第五行（日志按钮）
+        # 日志按钮
         log_btn = QPushButton("日志")
         log_btn.setFont(font)
-        log_btn.setFixedSize(100, 30)
-        # 为按钮添加样式，鼠标悬停时背景变色，按下时文字变色等效果示例（可根据喜好调整）
-        log_btn.setStyleSheet(COMBO_BOX_STYLE)
         row5_layout.addWidget(log_btn)
-        main_layout.addLayout(row5_layout)
         log_btn.clicked.connect(self.look_logs)
 
-        # 进度条（初始隐藏）
-        row6_layout = QHBoxLayout()
+        main_layout.addLayout(row5_layout)
 
-        main_layout.addLayout(row6_layout)
-
-        # 设置窗口整体样式，例如背景颜色（可按需修改）
-        #self.setStyleSheet("QWidget { background-color: #f9f9f9; }")
+        # 设置窗口整体布局
         self.setLayout(main_layout)
 
     def look_logs(self):
