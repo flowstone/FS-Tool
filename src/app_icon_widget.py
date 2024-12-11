@@ -1,7 +1,8 @@
 # app_icon_widget.py
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QGraphicsOpacityEffect
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QGraphicsOpacityEffect, QGraphicsColorizeEffect
 from PyQt5.QtCore import pyqtSignal, Qt, QPropertyAnimation, QEasingCurve
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QColor
+
 
 class AppIconWidget(QWidget):
     # 定义一个信号，当图标被点击时发出
@@ -49,34 +50,23 @@ class AppIconWidget(QWidget):
 
         # 设置固定大小
         self.setFixedSize(100, 120)  # 设置整个小部件的固定大小（宽度与图标相同，高度适合图标和名称）
+        # 图标颜色特效
+        self.color_effect = QGraphicsColorizeEffect(self.icon_label)
+        self.color_effect.setColor(QColor("#1E90FF"))  # 设置染色颜色为蓝色
 
-        # 初始化动画
-        self.animation = QPropertyAnimation(self.icon_label, b"geometry")
-        self.animation.setDuration(200)  # 动画时长
-        self.animation.setEasingCurve(QEasingCurve.InOutQuad)
+        self.icon_label.setGraphicsEffect(self.color_effect)
 
-        # 设置透明度效果
-        self.opacity_effect = QGraphicsOpacityEffect(self.icon_label)
-        self.icon_label.setGraphicsEffect(self.opacity_effect)
-        self.opacity_animation = QPropertyAnimation(self.opacity_effect, b"opacity")
-        self.opacity_animation.setDuration(200)
-        self.opacity_animation.setStartValue(1.0)
-        self.opacity_animation.setEndValue(0.7)
-
-        # 设置标志
-        self.is_animating = False  # 标志动画状态，避免重复点击
+        # 创建颜色动画
+        self.color_animation = QPropertyAnimation(self.color_effect, b"color")
+        self.color_animation.setDuration(200)  # 动画时长 200 毫秒
+        self.color_animation.setEasingCurve(QEasingCurve.InOutQuad)
 
     def mousePressEvent(self, event):
-        """鼠标点击事件"""
-        if self.is_animating:
-            return  # 如果动画正在进行中，忽略点击
-
-        # 动画：缩放效果
-        self.is_animating = True
-
-        # 动画：透明度变化（变暗）
-        self.opacity_animation.setDirection(QPropertyAnimation.Forward)
-        self.opacity_animation.start()
+        """鼠标按下时改变颜色"""
+        # 设置颜色动画：从白色变为深灰色
+        self.color_animation.setStartValue(QColor("4169E1"))
+        self.color_animation.setEndValue(QColor("#1E90FF"))
+        self.color_animation.start()
 
         # 发出点击信号
         self.iconClicked.emit()
@@ -84,18 +74,26 @@ class AppIconWidget(QWidget):
         super().mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
-        """鼠标释放事件"""
-
-        # 动画：恢复透明度（恢复亮度）
-        self.opacity_animation.setDirection(QPropertyAnimation.Backward)
-        self.opacity_animation.start()
-        self.opacity_animation.finished.connect(self.on_animation_finished)
+        """鼠标释放时恢复颜色"""
+        # 设置颜色动画：从灰色恢复为白色
+        self.color_animation.setStartValue(QColor("#1E90FF"))
+        self.color_animation.setEndValue(QColor("4169E1"))
+        self.color_animation.start()
 
         super().mouseReleaseEvent(event)
 
-    def on_animation_finished(self):
-        """动画完成后的处理"""
-        self.is_animating = False  # 动画结束，允许新的点击
+    def enterEvent(self, event):
+        """鼠标悬停时颜色加深"""
+        self.color_animation.setStartValue(QColor("#1E90FF"))
+        self.color_animation.setEndValue(QColor("#6495ED"))
+        self.color_animation.start()
 
-        # 恢复颜色变化
-        self.icon_label.setStyleSheet("border: none;")  # 恢复颜色（可选）
+        super().enterEvent(event)
+
+    def leaveEvent(self, event):
+        """鼠标离开时恢复原始颜色"""
+        self.color_animation.setStartValue(QColor("#6495ED"))
+        self.color_animation.setEndValue(QColor("#1E90FF"))
+        self.color_animation.start()
+
+        super().leaveEvent(event)
