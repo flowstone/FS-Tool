@@ -15,7 +15,7 @@ import hashlib
 from src.fs_constants import FsConstants
 from src.sqlite_util import SQLiteTool
 from src.auto_answers_list import AutoAnswersList
-from src.progress_tool import ProgressTool
+from src.progress_widget import ProgressWidget
 from src.config_manager import ConfigManager
 
 # 这里定义一些常见的姓氏和名字的列表，可以根据实际情况扩展
@@ -238,7 +238,7 @@ class AutoAnswersApp(QWidget):
         return full_name
 
     def start_answers(self):
-        self.progress_tool = ProgressTool(self)
+        self.progress_tool = ProgressWidget(self)
 
         # 判断是否输入密码
         if self.passwd_edit.text() == "":

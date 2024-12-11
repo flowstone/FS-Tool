@@ -3,7 +3,7 @@ from PyQt5.QtCore import pyqtSignal, QObject,Qt
 from loguru import logger
 
 
-class ProgressTool(QWidget):
+class ProgressWidget(QWidget):
     def __init__(self, parent=None):
         """
         构造函数，初始化进度条工具类，创建并设置相关的部件和布局

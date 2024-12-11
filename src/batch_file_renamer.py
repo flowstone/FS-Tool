@@ -7,7 +7,7 @@ from loguru import logger
 
 from src.common_util import CommonUtil
 from src.fs_constants import FsConstants
-from src.progress_tool import ProgressTool
+from src.progress_widget import ProgressWidget
 
 class RenameFileApp(QWidget):
     def __init__(self):
@@ -178,7 +178,7 @@ class RenameFileApp(QWidget):
 
 
     def start_operation(self):
-        self.progress_tool = ProgressTool(self)
+        self.progress_tool = ProgressWidget(self)
 
         folder_path = self.folder_path_entry.text()
         prefix = self.prefix_entry.text()

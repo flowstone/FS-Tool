@@ -8,7 +8,7 @@ from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from loguru import logger
 from src.common_util import CommonUtil
 from src.fs_constants import FsConstants
-from src.progress_tool import ProgressTool
+from src.progress_widget import ProgressWidget
 
 class CreateFolderApp(QWidget):
     def __init__(self):
@@ -85,7 +85,7 @@ class CreateFolderApp(QWidget):
 
     def start_operation(self):
         logger.info("---- 开始执行操作 ----")
-        self.progress_tool = ProgressTool(self)
+        self.progress_tool = ProgressWidget(self)
         folder_path = self.folder_path_entry.text()
         slice_char = self.slice_entry.text()
 

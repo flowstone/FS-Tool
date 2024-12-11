@@ -35,7 +35,7 @@ class FsConstants:
     # 批量创建文件夹相关常量
     CREATE_FOLDER_WINDOW_WIDTH = 0
     CREATE_FOLDER_WINDOW_HEIGHT = 0
-    CREATE_FOLDER_WINDOW_TITLE = "文件夹创建师"
+    CREATE_FOLDER_WINDOW_TITLE = "文件夹老师"
 
     # 批量修改文件名相关常量
     FILE_RENAMER_WINDOW_WIDTH = 0

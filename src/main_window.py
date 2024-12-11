@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget,QPushButton, QSystemTrayIcon, QMenu, QAction, QMainWindow,QMessageBox, QMenuBar
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget,QGridLayout, QSystemTrayIcon, QMenu, QAction, QMainWindow,QMessageBox, QMenuBar
 
 from src.batch_heic_jpg import HeicToJpgApp
 from src.desktop_clock import ColorSettingDialog
@@ -14,6 +14,7 @@ from src.app_mini import FloatingBall
 from loguru import logger
 from src.common_util import CommonUtil
 from src.fs_constants import FsConstants
+from src.app_icon_widget import AppIconWidget
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -29,7 +30,7 @@ class MainWindow(QMainWindow):
 
         logger.info(f"调用了主界面的初始化,悬浮球标志位 = {self.is_floating_ball_visible}")
         self.setWindowTitle(FsConstants.APP_WINDOW_TITLE)
-        self.setFixedSize(FsConstants.APP_WINDOW_WIDTH, FsConstants.APP_WINDOW_HEIGHT)
+        #self.setFixedSize(FsConstants.APP_WINDOW_WIDTH, FsConstants.APP_WINDOW_HEIGHT)
 
         # ---- 工具栏 START
         menu_bar = QMenuBar(self)
@@ -54,96 +55,54 @@ class MainWindow(QMainWindow):
         self.tab_widget.setTabPosition(QTabWidget.North)
         self.tab_widget.setTabShape(QTabWidget.Rounded)
 
-
-
-        # ---- 第一Tab页（功能）START
-        generic_widget = QWidget()
-        generic_layout = QVBoxLayout()
-
-        # 时间按钮
-        time_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_TIME_ICON)),
-                               FsConstants.DESKTOP_CLOCK_WINDOW_TITLE)
-        time_btn.setObjectName("feature")
-        time_btn.clicked.connect(self.time_btn_clicked)
-
+        # 透明时间
+        time_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_TIME_ICON)
+                                 ,FsConstants.DESKTOP_CLOCK_WINDOW_TITLE)
         # 快捷便签按钮
-        stick_note_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_STICK_NOTE_ICON)),
-                                     FsConstants.STICK_NOTE_WINDOW_TITLE)
-        stick_note_btn.setObjectName("feature")
-        stick_note_btn.clicked.connect(self.stick_note_btn_clicked)
-
+        stick_note_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_STICK_NOTE_ICON)
+                                       ,FsConstants.STICK_NOTE_WINDOW_TITLE)
         # 图转大师按钮
-        img_conv_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_PIC_ICON)),
-                                   FsConstants.PIC_CONVERSION_WINDOW_TITLE)
-        img_conv_btn.setObjectName("feature")
-        img_conv_btn.clicked.connect(self.img_conv_btn_clicked)
-
-        generic_layout.addWidget(time_btn)
-        generic_layout.addWidget(stick_note_btn)
-        generic_layout.addWidget(img_conv_btn)
-
-        generic_widget.setLayout(generic_layout)
-        generic_icon = QIcon(CommonUtil.get_resource_path(FsConstants.TAB_PANE_GENERIC_ICON))
-        self.tab_widget.addTab(generic_widget, generic_icon, FsConstants.TAB_PANE_GENERIC_TITLE)
-        # ---- 第一Tab页（功能）END
-
-        # ---- 第二Tab页（批量操作）START
-        batch_widget = QWidget()
-        batch_layout = QVBoxLayout()
-
+        img_conv_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_PIC_ICON)
+                                     ,FsConstants.PIC_CONVERSION_WINDOW_TITLE)
         # 文件夹创建按钮
-        create_folder_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FOLDER_ICON)),
+        folder_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FOLDER_ICON),
                                         FsConstants.CREATE_FOLDER_WINDOW_TITLE)
-        create_folder_btn.setObjectName("feature")
-        create_folder_btn.clicked.connect(self.create_folder_btn_clicked)
-
         # 重命名按钮
-        rename_file_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FILE_ICON)),
+        rename_file_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FILE_ICON),
                                       FsConstants.FILE_RENAMER_WINDOW_TITLE)
-        rename_file_btn.setObjectName("feature")
-        rename_file_btn.clicked.connect(self.rename_file_btn_clicked)
-
         # HEIC转JPG按钮
-        heic_jpg_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_HEIC_ICON)),
+        heic_jpg_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_HEIC_ICON),
                                    FsConstants.HEIC_JPG_BUTTON_TITLE)
-        heic_jpg_btn.setObjectName("feature")
-        heic_jpg_btn.clicked.connect(self.heic_jpg_btn_clicked)
-
-        batch_layout.addWidget(create_folder_btn)
-        batch_layout.addWidget(rename_file_btn)
-        batch_layout.addWidget(heic_jpg_btn)
-        batch_widget.setLayout(batch_layout)
-
-        batch_icon = QIcon(CommonUtil.get_resource_path(FsConstants.TAB_PANE_BATCH_ICON))
-        self.tab_widget.addTab(batch_widget, batch_icon, FsConstants.TAB_PANE_BATCH_TITLE)
-        # ---- 第二Tab页（批量操作）END
-
-        # ---- 第三Tab页（VIP功能）START
-        vip_widget = QWidget()
-        vip_layout = QVBoxLayout()
-
         # 自动答题按钮
-        auto_answers_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_ANSWERS_ICON)),
+        auto_answers_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_ANSWERS_ICON),
                                        FsConstants.AUTO_ANSWERS_WINDOW_TITLE)
-        auto_answers_btn.setObjectName("feature")
-        auto_answers_btn.clicked.connect(self.auto_answers_btn_clicked)
-
         # 密码生成器
-        password_generator_btn = QPushButton(QIcon(CommonUtil.get_button_ico_path(FsConstants.BUTTON_PASSWORD_ICON)),
+        password_generator_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_PASSWORD_ICON),
                                        FsConstants.PASSWORD_GENERATOR_TITLE)
-        password_generator_btn.setObjectName("feature")
-        password_generator_btn.clicked.connect(self.password_generator_btn_clicked)
 
-        vip_layout.addWidget(password_generator_btn)
-        vip_layout.addWidget(auto_answers_btn)
-        vip_widget.setLayout(vip_layout)
+        time_app.iconClicked.connect(self.time_app_clicked)
+        stick_note_app.iconClicked.connect(self.stick_note_app_clicked)
+        img_conv_app.iconClicked.connect(self.img_conv_app_clicked)
+        folder_app.iconClicked.connect(self.create_folder_app_clicked)
+        rename_file_app.iconClicked.connect(self.rename_file_app_clicked)
+        heic_jpg_app.iconClicked.connect(self.heic_jpg_app_clicked)
+        auto_answers_app.iconClicked.connect(self.auto_answers_app_clicked)
+        password_generator_app.iconClicked.connect(self.password_generator_app_clicked)
 
-        vip_icon = QIcon(CommonUtil.get_resource_path(FsConstants.TAB_PANE_VIP_ICON))
-        self.tab_widget.addTab(vip_widget, vip_icon, FsConstants.TAB_PANE_VIP_TITLE)
-        # ---- 第三Tab页（VIP功能）END
+        # 创建主布局
+        main_layout = QGridLayout()
+        main_layout.setSpacing(0)  # 去除格子之间的间隙
 
-        layout.addWidget(self.tab_widget)
-
+        # 将每个图标放入网格布局
+        main_layout.addWidget(time_app, 0, 0)  # 第一行第一列
+        main_layout.addWidget(stick_note_app, 0, 1)  # 第一行第二列
+        main_layout.addWidget(password_generator_app, 0, 2)  # 第一行第三列
+        main_layout.addWidget(folder_app, 0, 3)  # 第一行第四列
+        main_layout.addWidget(rename_file_app, 1, 0)  # 第二行第一列
+        main_layout.addWidget(heic_jpg_app, 1, 1)  # 第二行第二列
+        main_layout.addWidget(img_conv_app, 1, 2)  # 第二行第三列
+        main_layout.addWidget(auto_answers_app, 1, 3)  # 第二行第四列
+        layout.addLayout(main_layout)
         central_widget = QWidget(self)
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
@@ -226,37 +185,37 @@ class MainWindow(QMainWindow):
            self.show()
 
 
-    def time_btn_clicked(self):
+    def time_app_clicked(self):
         logger.info(f"---- 按钮<{FsConstants.DESKTOP_CLOCK_WINDOW_TITLE}>被点击了 ----")
         self.desktop_clock = ColorSettingDialog()
         self.desktop_clock.show()
 
-    def img_conv_btn_clicked(self):
+    def img_conv_app_clicked(self):
         logger.info(f"---- 按钮<{FsConstants.PIC_CONVERSION_WINDOW_TITLE}>被点击了 ----")
         self.pic_conversion=PicConversionApp()
         self.pic_conversion.show()
 
-    def create_folder_btn_clicked(self):
+    def create_folder_app_clicked(self):
         logger.info(f"---- 按钮<{FsConstants.CREATE_FOLDER_WINDOW_TITLE}>被点击了 ----")
         self.create_folder = CreateFolderApp()
         self.create_folder.show()
 
-    def rename_file_btn_clicked(self):
+    def rename_file_app_clicked(self):
         logger.info(f"---- 按钮<{FsConstants.FILE_RENAMER_WINDOW_TITLE}>被点击了 ----")
         self.rename_file = RenameFileApp()
         self.rename_file.show()
 
-    def heic_jpg_btn_clicked(self):
+    def heic_jpg_app_clicked(self):
         logger.info(f"---- 按钮<{FsConstants.HEIC_JPG_WINDOW_TITLE}>被点击了 ----")
         self.heic_to_jpg = HeicToJpgApp()
         self.heic_to_jpg.show()
 
-    def auto_answers_btn_clicked(self):
+    def auto_answers_app_clicked(self):
         logger.info(f"---- 按钮<{FsConstants.AUTO_ANSWERS_WINDOW_TITLE}>被点击了 ----")
         self.auto_answers = AutoAnswersApp()
         self.auto_answers.show()
 
-    def stick_note_btn_clicked(self):
+    def stick_note_app_clicked(self):
         logger.info(f"---- 按钮<{FsConstants.STICK_NOTE_WINDOW_TITLE}>被点击了 ----")
         if self.stick_note is None or not self.stick_note.isVisible():
             self.stick_note = StickyNoteApp()
@@ -268,7 +227,7 @@ class MainWindow(QMainWindow):
                 self.stick_note.show()
                 self.stick_note.activateWindow()
 
-    def password_generator_btn_clicked(self):
+    def password_generator_app_clicked(self):
         logger.info(f"---- 按钮<{FsConstants.PASSWORD_GENERATOR_TITLE}>被点击了 ----")
         self.password_generator = PasswordGeneratorApp()
         self.password_generator.show()

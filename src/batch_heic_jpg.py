@@ -3,7 +3,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog
 from PyQt5.QtGui import QColor, QPalette, QIcon,QFont
 from PyQt5.QtCore import Qt,pyqtSignal, QThread
-from src.progress_tool import ProgressTool
+from src.progress_widget import ProgressWidget
 
 from PyQt5.QtWidgets import QMessageBox
 from loguru import logger
@@ -87,7 +87,7 @@ class HeicToJpgApp(QWidget):
 
     def start_operation(self):
         logger.info("---- 开始执行操作 ----")
-        self.progress_tool = ProgressTool(self)
+        self.progress_tool = ProgressWidget(self)
 
         folder_path = self.folder_path_input.text()
 

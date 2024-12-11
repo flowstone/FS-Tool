@@ -7,7 +7,7 @@ from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from loguru import logger
 from src.common_util import CommonUtil
 from src.fs_constants import FsConstants
-from src.progress_tool import ProgressTool
+from src.progress_widget import ProgressWidget
 
 
 class PicConversionApp(QWidget):
@@ -112,7 +112,7 @@ class PicConversionApp(QWidget):
             self.convert_button.setEnabled(False)
 
     def convert_image(self):
-        self.progress_tool = ProgressTool(self)
+        self.progress_tool = ProgressWidget(self)
 
         if not self.image_path:
             logger.warning("---- 请先上传图片! ----")
