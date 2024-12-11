@@ -5,7 +5,7 @@ from PyQt5.QtGui import QPixmap
 
 class AppIconWidget(QWidget):
     # 定义一个信号，当图标被点击时发出
-    iconClicked = pyqtSignal(str)  # 传递图标名称
+    iconClicked = pyqtSignal()  # 传递图标名称
 
     def __init__(self, icon_path, name, parent=None):
         super().__init__(parent)
@@ -50,38 +50,45 @@ class AppIconWidget(QWidget):
         # 设置固定大小
         self.setFixedSize(100, 120)  # 设置整个小部件的固定大小（宽度与图标相同，高度适合图标和名称）
 
+        # 初始化动画
+        self.animation = QPropertyAnimation(self.icon_label, b"geometry")
+        self.animation.setDuration(200)  # 动画时长
+        self.animation.setEasingCurve(QEasingCurve.InOutQuad)
+
         # 设置透明度效果
         self.opacity_effect = QGraphicsOpacityEffect(self.icon_label)
         self.icon_label.setGraphicsEffect(self.opacity_effect)
-
-        # 创建透明度动画
         self.opacity_animation = QPropertyAnimation(self.opacity_effect, b"opacity")
         self.opacity_animation.setDuration(200)
-        self.opacity_animation.setStartValue(1.0)  # 初始不透明
-        self.opacity_animation.setEndValue(0.5)  # 点击时变暗，透明度设置为0.5
-        self.opacity_animation.setEasingCurve(QEasingCurve.InOutQuad)
+        self.opacity_animation.setStartValue(1.0)
+        self.opacity_animation.setEndValue(0.7)
 
-        self.is_animating = False  # 动画状态标志
+        # 设置标志
+        self.is_animating = False  # 标志动画状态，避免重复点击
 
     def mousePressEvent(self, event):
         """鼠标点击事件"""
-        # 当图标被点击时，发出信号
-        self.iconClicked.emit(self.name)
-        # 执行动画效果
-        self.is_animating = True  # 设置动画状态为进行中
-        # 执行透明度动画（变暗）
-        self.opacity_animation.setDirection(QPropertyAnimation.Forward)  # 正向动画，变暗
+        if self.is_animating:
+            return  # 如果动画正在进行中，忽略点击
+
+        # 动画：缩放效果
+        self.is_animating = True
+
+        # 动画：透明度变化（变暗）
+        self.opacity_animation.setDirection(QPropertyAnimation.Forward)
         self.opacity_animation.start()
+
+        # 发出点击信号
+        self.iconClicked.emit()
 
         super().mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
         """鼠标释放事件"""
 
-        # 执行恢复的透明度动画（恢复亮度）
-        self.opacity_animation.setDirection(QPropertyAnimation.Backward)  # 反向动画，恢复亮度
+        # 动画：恢复透明度（恢复亮度）
+        self.opacity_animation.setDirection(QPropertyAnimation.Backward)
         self.opacity_animation.start()
-
         self.opacity_animation.finished.connect(self.on_animation_finished)
 
         super().mouseReleaseEvent(event)
@@ -89,3 +96,6 @@ class AppIconWidget(QWidget):
     def on_animation_finished(self):
         """动画完成后的处理"""
         self.is_animating = False  # 动画结束，允许新的点击
+
+        # 恢复颜色变化
+        self.icon_label.setStyleSheet("border: none;")  # 恢复颜色（可选）
