@@ -146,8 +146,12 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git add README.md
           git commit -m "Add version badge for ${{ github.ref }}"
-          git push origin release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
           
