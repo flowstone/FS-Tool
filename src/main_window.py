@@ -26,8 +26,21 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.floating_ball = FloatingBall(self)
         self.is_floating_ball_visible = False
-        self.desktop_clock = None
-        self.stick_note = None
+        self.icon_config = None
+        # 使用字典动态管理所有应用实例
+        self.app_instances = {
+            "desktop_clock": None,
+            "pic_conversion": None,
+            "create_folder": None,
+            "rename_file": None,
+            "heic_to_jpg": None,
+            "auto_answers": None,
+            "stick_note": None,
+            "password_generator": None,
+            "file_generator": None,
+            "file_comparator": None,
+            "file_encryptor": None,
+        }
         self.init_ui()
 
     def init_ui(self):
@@ -43,71 +56,34 @@ class MainWindow(QMainWindow):
 
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
+        # 图标配置：每个图标包含路径、标题、点击事件
+        self.icon_config = [
+            {"key": "desktop_clock", "icon": FsConstants.BUTTON_TIME_ICON, "title": FsConstants.DESKTOP_CLOCK_WINDOW_TITLE,
+            "class": ColorSettingDialog},
+            {"key": "stick_note", "icon": FsConstants.BUTTON_STICK_NOTE_ICON, "title": FsConstants.STICK_NOTE_WINDOW_TITLE,
+             "class": StickyNoteApp},
+            {"key": "password_generator", "icon": FsConstants.BUTTON_PASSWORD_ICON, "title": FsConstants.PASSWORD_GENERATOR_TITLE,
+             "class": PasswordGeneratorApp},
+            {"key": "create_folder", "icon": FsConstants.BUTTON_FOLDER_ICON, "title": FsConstants.CREATE_FOLDER_WINDOW_TITLE,
+            "class": CreateFolderApp},
+            {"key": "rename_file","icon": FsConstants.BUTTON_FILE_ICON, "title": FsConstants.FILE_RENAMER_WINDOW_TITLE,
+            "class": RenameFileApp},
+            {"key": "heic_to_jpg", "icon": FsConstants.BUTTON_HEIC_ICON, "title": FsConstants.HEIC_JPG_BUTTON_TITLE,
+            "class": HeicToJpgApp},
+            {"key": "pic_conversion","icon": FsConstants.BUTTON_PIC_ICON, "title": FsConstants.PIC_CONVERSION_WINDOW_TITLE,
+            "class": PicConversionApp},
+            {"key": "auto_answers", "icon": FsConstants.BUTTON_ANSWERS_ICON, "title": FsConstants.AUTO_ANSWERS_WINDOW_TITLE,
+            "class": AutoAnswersApp},
+            {"key": "file_generator", "icon": FsConstants.BUTTON_FILE_GENERATOR_ICON, "title": FsConstants.FILE_GENERATOR_WINDOW_TITLE,
+            "class": FileGeneratorApp},
+            {"key": "file_comparator", "icon": FsConstants.BUTTON_FILE_COMPARATOR_ICON, "title": FsConstants.FILE_COMPARATOR_WINDOW_TITLE,
+            "class": FileComparatorApp},
+            {"key": "file_encryptor", "icon": FsConstants.BUTTON_FILE_ENCRYPTOR_ICON, "title": FsConstants.FILE_ENCRYPTOR_WINDOW_TITLE,
+             "class": FileEncryptorApp},
+        ]
 
-        # 透明时间
-        time_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_TIME_ICON)
-                                 ,FsConstants.DESKTOP_CLOCK_WINDOW_TITLE)
-        # 快捷便签按钮
-        stick_note_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_STICK_NOTE_ICON)
-                                       ,FsConstants.STICK_NOTE_WINDOW_TITLE)
-        # 图转大师按钮
-        img_conv_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_PIC_ICON)
-                                     ,FsConstants.PIC_CONVERSION_WINDOW_TITLE)
-        # 文件夹创建按钮
-        folder_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FOLDER_ICON),
-                                        FsConstants.CREATE_FOLDER_WINDOW_TITLE)
-        # 重命名按钮
-        rename_file_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FILE_ICON),
-                                      FsConstants.FILE_RENAMER_WINDOW_TITLE)
-        # HEIC转JPG按钮
-        heic_jpg_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_HEIC_ICON),
-                                   FsConstants.HEIC_JPG_BUTTON_TITLE)
-        # 自动答题按钮
-        auto_answers_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_ANSWERS_ICON),
-                                       FsConstants.AUTO_ANSWERS_WINDOW_TITLE)
-        # 密码生成器
-        password_generator_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_PASSWORD_ICON),
-                                       FsConstants.PASSWORD_GENERATOR_TITLE)
 
-
-        # 批量生成文件
-        file_generator_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FILE_GENERATOR_ICON),
-                                         FsConstants.FILE_GENERATOR_WINDOW_TITLE)
-        # 文件比较
-        file_comparator_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FILE_COMPARATOR_ICON),
-                                               FsConstants.FILE_COMPARATOR_WINDOW_TITLE)
-        # 文件加密
-        file_encryptor_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FILE_ENCRYPTOR_ICON),
-                                     FsConstants.FILE_ENCRYPTOR_WINDOW_TITLE)
-
-        time_app.iconClicked.connect(self.time_app_clicked)
-        stick_note_app.iconClicked.connect(self.stick_note_app_clicked)
-        img_conv_app.iconClicked.connect(self.img_conv_app_clicked)
-        folder_app.iconClicked.connect(self.create_folder_app_clicked)
-        rename_file_app.iconClicked.connect(self.rename_file_app_clicked)
-        heic_jpg_app.iconClicked.connect(self.heic_jpg_app_clicked)
-        auto_answers_app.iconClicked.connect(self.auto_answers_app_clicked)
-        password_generator_app.iconClicked.connect(self.password_generator_app_clicked)
-        file_generator_app.iconClicked.connect(self.file_generator_app_clicked)
-        file_comparator_app.iconClicked.connect(self.file_comparator_app_clicked)
-        file_encryptor_app.iconClicked.connect(self.file_encryptor_app_clicked)
-        # 创建主布局
-        main_layout = QGridLayout()
-        main_layout.setSpacing(0)  # 去除格子之间的间隙
-
-        # 将每个图标放入网格布局
-        main_layout.addWidget(time_app, 0, 0)  # 第一行第一列
-        main_layout.addWidget(stick_note_app, 0, 1)  # 第一行第二列
-        main_layout.addWidget(password_generator_app, 0, 2)  # 第一行第三列
-        main_layout.addWidget(folder_app, 0, 3)  # 第一行第四列
-        main_layout.addWidget(rename_file_app, 1, 0)  # 第二行第一列
-        main_layout.addWidget(heic_jpg_app, 1, 1)  # 第二行第二列
-        main_layout.addWidget(img_conv_app, 1, 2)  # 第二行第三列
-        main_layout.addWidget(auto_answers_app, 1, 3)  # 第二行第四列
-        main_layout.addWidget(file_generator_app, 2, 0)  # 第二行第四列
-        main_layout.addWidget(file_comparator_app, 2, 1)  # 第二行第二列
-        main_layout.addWidget(file_encryptor_app, 2, 2)  # 第二行第三列
-        layout.addLayout(main_layout)
+        layout.addLayout(self.create_icon_grid())
         central_widget = QWidget(self)
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
@@ -119,7 +95,22 @@ class MainWindow(QMainWindow):
         # 处理窗口关闭事件，使其最小化到托盘
         self.closeEvent = self.handle_close_event
 
+    def create_icon_grid(self):
+        """动态创建图标的网格布局"""
+        main_layout = QGridLayout()
+        main_layout.setSpacing(0)  # 去除格子之间的间隙
+        # 遍历图标配置，动态添加到布局
+        for index, config in enumerate(self.icon_config):
+            row, col = divmod(index, 4)  # 每行4个图标
+            app_icon = self.create_app_icon(config["icon"], config["title"], config["key"])
+            main_layout.addWidget(app_icon, row, col)
+        return main_layout
 
+    def create_app_icon(self, icon_path, title, key):
+        """创建单个应用图标组件"""
+        app_icon = AppIconWidget(CommonUtil.get_button_ico_path(icon_path), title)
+        app_icon.iconClicked.connect(lambda _, name=key: self.open_feature_window(name))
+        return app_icon
 
     # 初始化应用托盘图标
     def init_tray_menu(self):
@@ -156,22 +147,18 @@ class MainWindow(QMainWindow):
     # 处理窗口关闭事件
     def handle_close_event(self, event):
         logger.info(f"开始关闭主窗口，悬浮球标志位 = ,{self.is_floating_ball_visible}")
-
         event.ignore()
         self.hide()
         self.tray_icon.show()
 
-
         if not self.is_floating_ball_visible:
             self.create_floating_ball()
-
         logger.info(f"成功关闭主窗口，悬浮球标志位 = ,{self.is_floating_ball_visible}")
 
     def create_floating_ball(self):
         logger.info("---- 创建悬浮球 ----")
         self.floating_ball.show()
         self.is_floating_ball_visible = True
-
 
 
     # 双击托盘，打开窗口
@@ -184,66 +171,25 @@ class MainWindow(QMainWindow):
            self.show()
 
 
-    def time_app_clicked(self):
-        logger.info(f"---- 按钮<{FsConstants.DESKTOP_CLOCK_WINDOW_TITLE}>被点击了 ----")
-        if self.desktop_clock is None:
-            self.desktop_clock = ColorSettingDialog()
-            self.desktop_clock.show()
-        else:
-            self.desktop_clock.show()
+    def open_feature_window(self, key):
+        """打开对应的功能窗口"""
+        logger.info(f"---- 按钮<{key}>被点击了 ----")
 
-    def img_conv_app_clicked(self):
-        logger.info(f"---- 按钮<{FsConstants.PIC_CONVERSION_WINDOW_TITLE}>被点击了 ----")
-        self.pic_conversion=PicConversionApp()
-        self.pic_conversion.show()
+        if key not in self.app_instances:
+            logger.warning(f"未找到对应的应用: {key}")
+            return
 
-    def create_folder_app_clicked(self):
-        logger.info(f"---- 按钮<{FsConstants.CREATE_FOLDER_WINDOW_TITLE}>被点击了 ----")
-        self.create_folder = CreateFolderApp()
-        self.create_folder.show()
+        # 如果实例不存在，则动态创建
+        if self.app_instances[key] is None:
+            app_class = next((item["class"] for item in self.icon_config if item["key"] == key), None)
+            if app_class:
+                self.app_instances[key] = app_class()
 
-    def rename_file_app_clicked(self):
-        logger.info(f"---- 按钮<{FsConstants.FILE_RENAMER_WINDOW_TITLE}>被点击了 ----")
-        self.rename_file = RenameFileApp()
-        self.rename_file.show()
-
-    def heic_jpg_app_clicked(self):
-        logger.info(f"---- 按钮<{FsConstants.HEIC_JPG_WINDOW_TITLE}>被点击了 ----")
-        self.heic_to_jpg = HeicToJpgApp()
-        self.heic_to_jpg.show()
-
-    def auto_answers_app_clicked(self):
-        logger.info(f"---- 按钮<{FsConstants.AUTO_ANSWERS_WINDOW_TITLE}>被点击了 ----")
-        self.auto_answers = AutoAnswersApp()
-        self.auto_answers.show()
-
-    def stick_note_app_clicked(self):
-        logger.info(f"---- 按钮<{FsConstants.STICK_NOTE_WINDOW_TITLE}>被点击了 ----")
-        if self.stick_note is None or not self.stick_note.isVisible():
-            self.stick_note = StickyNoteApp()
-            self.stick_note.show()
-        else:
-            if self.stick_note.isMinimized():
-                self.stick_note.showNormal()
+        # 显示窗口
+        if self.app_instances[key]:
+            if self.app_instances[key].isMinimized():
+                self.app_instances[key].showNormal()
             else:
-                self.stick_note.show()
-                self.stick_note.activateWindow()
-
-    def password_generator_app_clicked(self):
-        logger.info(f"---- 按钮<{FsConstants.PASSWORD_GENERATOR_TITLE}>被点击了 ----")
-        self.password_generator = PasswordGeneratorApp()
-        self.password_generator.show()
-
-    def file_generator_app_clicked(self):
-        logger.info(f"---- 按钮<{FsConstants.PASSWORD_GENERATOR_TITLE}>被点击了 ----")
-        self.file_generator = FileGeneratorApp()
-        self.file_generator.show()
-    def file_comparator_app_clicked(self):
-        logger.info(f"---- 按钮<{FsConstants.PASSWORD_GENERATOR_TITLE}>被点击了 ----")
-        self.file_comparator = FileComparatorApp()
-        self.file_comparator.show()
-    def file_encryptor_app_clicked(self):
-        logger.info(f"---- 按钮<{FsConstants.PASSWORD_GENERATOR_TITLE}>被点击了 ----")
-        self.file_encryptor = FileEncryptorApp()
-        self.file_encryptor.show()
+                self.app_instances[key].show()
+                self.app_instances[key].activateWindow()
 
