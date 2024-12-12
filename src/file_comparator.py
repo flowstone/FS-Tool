@@ -11,12 +11,8 @@ from PyQt5.QtCore import Qt
 class FileComparatorApp(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("目录文件比较")
+        self.setWindowTitle("文件比较")
         self.setFixedSize(800, 600)
-
-        # 设置应用样式
-        self.apply_styles()
-
 
         layout = QVBoxLayout()
 
@@ -38,10 +34,15 @@ class FileComparatorApp(QWidget):
         # 按钮布局，放置“选择源目录”和“选择目标目录”按钮
         button_layout = QHBoxLayout()
         self.source_button = QPushButton("选择源目录")
+        self.source_button.setObjectName("browse_button")
+
         self.source_button.clicked.connect(self.select_source_directory)
+
         button_layout.addWidget(self.source_button)
 
         self.target_button = QPushButton("选择目标目录")
+        self.target_button.setObjectName("browse_button")
+
         self.target_button.clicked.connect(self.select_target_directory)
         button_layout.addWidget(self.target_button)
 
@@ -58,52 +59,13 @@ class FileComparatorApp(QWidget):
 
         # 开始比较按钮
         self.compare_button = QPushButton("开始比较")
+        self.compare_button.setObjectName("start_button")
         self.compare_button.clicked.connect(self.compare_files)
         layout.addWidget(self.compare_button)
 
         # 显示文件列表区域
         self.result_text = QTextEdit()
-        self.result_text.setReadOnly(True)  # 只读
-        layout.addWidget(self.result_text)
-        self.setLayout(layout)
-        # 当前选择的源目录和目标目录路径
-        self.source_directory = None
-        self.target_directory = None
-
-    def apply_styles(self):
-        """应用自定义样式"""
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #f4f4f9;
-                color: #333;
-                font-family: 'Arial', sans-serif;
-            }
-            QLabel {
-                font-size: 16px;
-                color: #4a4a4a;
-                font-weight: bold;
-            }
-            QPushButton {
-                background-color: #4CAF50;
-                color: white;
-                border: 1px solid #388E3C;
-                border-radius: 5px;
-                padding: 10px;
-                font-size: 14px;
-            }
-            QPushButton:hover {
-                background-color: #45a049;
-            }
-            QPushButton:pressed {
-                background-color: #388E3C;
-            }
-            QComboBox {
-                padding: 10px;
-                border: 1px solid #388E3C;
-                border-radius: 5px;
-                background-color: white;
-                font-size: 14px;
-            }
+        self.result_text.setStyleSheet("""
             QTextEdit {
                 background-color: white;
                 border: 1px solid #388E3C;
@@ -115,6 +77,13 @@ class FileComparatorApp(QWidget):
                 background-color: #f9f9f9;
             }
         """)
+        self.result_text.setReadOnly(True)  # 只读
+        layout.addWidget(self.result_text)
+        self.setLayout(layout)
+        # 当前选择的源目录和目标目录路径
+        self.source_directory = None
+        self.target_directory = None
+
 
     def select_source_directory(self):
         """选择源目录"""

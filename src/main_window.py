@@ -9,12 +9,17 @@ from src.batch_create_folder import CreateFolderApp
 from src.auto_answers import AutoAnswersApp
 from src.stick_note import StickyNoteApp
 from src.password_generator import  PasswordGeneratorApp
+from src.file_comparator import FileComparatorApp
+from src.file_generator import FileGeneratorApp
+from src.file_encryptor import FileEncryptorApp
+
 from PyQt5.QtGui import QIcon
 from src.app_mini import FloatingBall
 from loguru import logger
 from src.common_util import CommonUtil
 from src.fs_constants import FsConstants
 from src.app_icon_widget import AppIconWidget
+from src.menu_bar import MenuBar
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -33,27 +38,11 @@ class MainWindow(QMainWindow):
         #self.setFixedSize(FsConstants.APP_WINDOW_WIDTH, FsConstants.APP_WINDOW_HEIGHT)
 
         # ---- 工具栏 START
-        menu_bar = QMenuBar(self)
-        help_menu = QMenu(FsConstants.TOOLBAR_HELP_TITLE, self)
-        menu_bar.addMenu(help_menu)
-
-        # 创建菜单项
-        readme_action = QAction(FsConstants.TOOLBAR_README_TITLE, self)
-        readme_action.triggered.connect(self.open_readme)
-
-        author_action = QAction(FsConstants.TOOLBAR_AUTHOR_TITLE, self)
-        author_action.triggered.connect(self.open_author)
-        help_menu.addAction(readme_action)
-        help_menu.addAction(author_action)
-        layout.addWidget(menu_bar)
+        self.menubar = MenuBar(self)
         # ---- 工具栏 END
 
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
-        # 设置 Tab 样式
-        self.tab_widget = QTabWidget()
-        self.tab_widget.setTabPosition(QTabWidget.North)
-        self.tab_widget.setTabShape(QTabWidget.Rounded)
 
         # 透明时间
         time_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_TIME_ICON)
@@ -80,6 +69,17 @@ class MainWindow(QMainWindow):
         password_generator_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_PASSWORD_ICON),
                                        FsConstants.PASSWORD_GENERATOR_TITLE)
 
+
+        # 批量生成文件
+        file_generator_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FILE_GENERATOR_ICON),
+                                         FsConstants.FILE_GENERATOR_WINDOW_TITLE)
+        # 文件比较
+        file_comparator_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FILE_COMPARATOR_ICON),
+                                               FsConstants.FILE_COMPARATOR_WINDOW_TITLE)
+        # 文件加密
+        file_encryptor_app = AppIconWidget(CommonUtil.get_button_ico_path(FsConstants.BUTTON_FILE_ENCRYPTOR_ICON),
+                                     FsConstants.FILE_ENCRYPTOR_WINDOW_TITLE)
+
         time_app.iconClicked.connect(self.time_app_clicked)
         stick_note_app.iconClicked.connect(self.stick_note_app_clicked)
         img_conv_app.iconClicked.connect(self.img_conv_app_clicked)
@@ -88,7 +88,9 @@ class MainWindow(QMainWindow):
         heic_jpg_app.iconClicked.connect(self.heic_jpg_app_clicked)
         auto_answers_app.iconClicked.connect(self.auto_answers_app_clicked)
         password_generator_app.iconClicked.connect(self.password_generator_app_clicked)
-
+        file_generator_app.iconClicked.connect(self.file_generator_app_clicked)
+        file_comparator_app.iconClicked.connect(self.file_comparator_app_clicked)
+        file_encryptor_app.iconClicked.connect(self.file_encryptor_app_clicked)
         # 创建主布局
         main_layout = QGridLayout()
         main_layout.setSpacing(0)  # 去除格子之间的间隙
@@ -102,6 +104,9 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(heic_jpg_app, 1, 1)  # 第二行第二列
         main_layout.addWidget(img_conv_app, 1, 2)  # 第二行第三列
         main_layout.addWidget(auto_answers_app, 1, 3)  # 第二行第四列
+        main_layout.addWidget(file_generator_app, 2, 0)  # 第二行第四列
+        main_layout.addWidget(file_comparator_app, 2, 1)  # 第二行第二列
+        main_layout.addWidget(file_encryptor_app, 2, 2)  # 第二行第三列
         layout.addLayout(main_layout)
         central_widget = QWidget(self)
         central_widget.setLayout(layout)
@@ -114,13 +119,7 @@ class MainWindow(QMainWindow):
         # 处理窗口关闭事件，使其最小化到托盘
         self.closeEvent = self.handle_close_event
 
-    def open_readme(self):
-        readme_text = FsConstants.APP_TOOLBAR_README_TEXT
-        QMessageBox.information(self, FsConstants.TOOLBAR_README_TITLE, readme_text)
 
-    def open_author(self):
-        author_text = FsConstants.APP_TOOLBAR_AUTHOR_TEXT
-        QMessageBox.information(self, FsConstants.TOOLBAR_AUTHOR_TITLE, author_text)
 
     # 初始化应用托盘图标
     def init_tray_menu(self):
@@ -234,3 +233,17 @@ class MainWindow(QMainWindow):
         logger.info(f"---- 按钮<{FsConstants.PASSWORD_GENERATOR_TITLE}>被点击了 ----")
         self.password_generator = PasswordGeneratorApp()
         self.password_generator.show()
+
+    def file_generator_app_clicked(self):
+        logger.info(f"---- 按钮<{FsConstants.PASSWORD_GENERATOR_TITLE}>被点击了 ----")
+        self.file_generator = FileGeneratorApp()
+        self.file_generator.show()
+    def file_comparator_app_clicked(self):
+        logger.info(f"---- 按钮<{FsConstants.PASSWORD_GENERATOR_TITLE}>被点击了 ----")
+        self.file_comparator = FileComparatorApp()
+        self.file_comparator.show()
+    def file_encryptor_app_clicked(self):
+        logger.info(f"---- 按钮<{FsConstants.PASSWORD_GENERATOR_TITLE}>被点击了 ----")
+        self.file_encryptor = FileEncryptorApp()
+        self.file_encryptor.show()
+

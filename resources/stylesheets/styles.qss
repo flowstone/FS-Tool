@@ -26,7 +26,7 @@ QLabel {
     font-size: 14px;
 }
 
-QComboBox, QLineEdit {
+QComboBox {
     background-color: #ffffff;
     border: 1px solid #cccccc;
     border-radius: 5px;
@@ -36,6 +36,15 @@ QComboBox, QLineEdit {
 }
 QComboBox::drop-down {
     border: none;
+}
+
+QLineEdit {
+    background-color: #ffffff;
+    border: 1px solid #4CAF50;
+    border-radius: 5px;
+    padding: 6px;
+    font-size: 14px;
+    color: #333333;
 }
 QLineEdit:focus {
     border: 1px solid #66afe9;
@@ -130,8 +139,8 @@ QSpinBox::down-button:hover {
 
 
 QLineEdit#folder_path_input {
-    border: 1px solid #ccc;
-    border-radius: 3px;
+    border: 1px solid #4CAF50;
+    border-radius: 5px;
     padding: 6px;
     font-size: 14px;
 }
