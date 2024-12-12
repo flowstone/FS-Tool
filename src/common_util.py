@@ -17,7 +17,8 @@ class CommonUtil:
             return os.path.join(sys._MEIPASS, relative_path)
 
         if CommonUtil.check_win_os():
-            return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
+            #return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
+            return os.path.join(os.path.dirname(sys.argv[0]), relative_path)
         else:
             return os.path.join(os.path.dirname(sys.argv[0]), relative_path)
 

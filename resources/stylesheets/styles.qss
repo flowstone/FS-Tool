@@ -57,7 +57,7 @@ QPushButton:pressed {
     background-color: #4F94CD;
 }
 QMenuBar {
-    background-color: #ffffff;
+    background: #f0f0f0;
     color: #333333;
 }
 QMenuBar::item {
@@ -235,7 +235,7 @@ QPushButton#feature:hover {
  ------END ------------
  */
 
- QTabWidget::pane {
+QTabWidget::pane {
     border: 1px solid #C2C7CB;  /* Tab页内容区域边框 */
     background-color: white;  /* Tab页内容区域背景色 */
     border-radius: 8px;
