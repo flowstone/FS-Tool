@@ -187,8 +187,11 @@ class MainWindow(QMainWindow):
 
     def time_app_clicked(self):
         logger.info(f"---- 按钮<{FsConstants.DESKTOP_CLOCK_WINDOW_TITLE}>被点击了 ----")
-        self.desktop_clock = ColorSettingDialog()
-        self.desktop_clock.show()
+        if self.desktop_clock is None:
+            self.desktop_clock = ColorSettingDialog()
+            self.desktop_clock.show()
+        else:
+            self.desktop_clock.show()
 
     def img_conv_app_clicked(self):
         logger.info(f"---- 按钮<{FsConstants.PIC_CONVERSION_WINDOW_TITLE}>被点击了 ----")
