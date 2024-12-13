@@ -24,6 +24,9 @@ from src.menu_bar import MenuBar
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.closeEvent = None
+        self.tray_icon = None
+        self.menubar = None
         self.floating_ball = FloatingBall(self)
         self.is_floating_ball_visible = False
         self.icon_config = None
@@ -184,7 +187,7 @@ class MainWindow(QMainWindow):
             app_class = next((item["class"] for item in self.icon_config if item["key"] == key), None)
             if app_class:
                 self.app_instances[key] = app_class()
-
+                self.app_instances[key].closed_signal.connect(lambda: self.on_sub_window_closed(key))
         # 显示窗口
         if self.app_instances[key]:
             if self.app_instances[key].isMinimized():
@@ -193,3 +196,7 @@ class MainWindow(QMainWindow):
                 self.app_instances[key].show()
                 self.app_instances[key].activateWindow()
 
+    def on_sub_window_closed(self,key):
+        # 子窗口关闭后的处理
+        logger.info(f"子窗口{key}已关闭")
+        self.app_instances[key] = None  # 释放子窗口的引用

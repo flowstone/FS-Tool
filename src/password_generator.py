@@ -1,17 +1,21 @@
 import sys
 import random
 import string
+
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QLineEdit, QCheckBox, QPushButton, QVBoxLayout, QHBoxLayout, QSpinBox
 )
 from loguru import logger
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFont, QIcon
 from src.fs_constants import FsConstants
 from src.common_util import CommonUtil
 
 class PasswordGeneratorApp(QWidget):
+    # 定义一个信号，在窗口关闭时触发
+    closed_signal =  pyqtSignal()
+
     def __init__(self):
         super().__init__()
 
@@ -134,6 +138,10 @@ class PasswordGeneratorApp(QWidget):
         self.generated_password.setFont(QFont("Courier", 14))
         self.exclude_input.setFont(QFont("Courier", 12))
 
+    def closeEvent(self, event):
+        # 在关闭事件中发出信号
+        self.closed_signal.emit()
+        super().closeEvent(event)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

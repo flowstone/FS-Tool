@@ -26,6 +26,9 @@ success = 0
 
 
 class AutoAnswersApp(QWidget):
+    # 定义一个信号，在窗口关闭时触发
+    closed_signal = pyqtSignal()
+
     def __init__(self):
         super().__init__()
 
@@ -330,6 +333,11 @@ class AutoAnswersApp(QWidget):
                                f"today = '{self.today}'")
         except Exception as e:
             logger.warning(f"更新自动答题记录表失败，{e}")
+
+    def closeEvent(self, event):
+        # 在关闭事件中发出信号
+        self.closed_signal.emit()
+        super().closeEvent(event)
 
 class AutoAnswerThread(QThread):
     finished_signal = pyqtSignal()

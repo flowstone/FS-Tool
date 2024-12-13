@@ -1,10 +1,11 @@
 import sys
 import os
+
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QLabel, QVBoxLayout, QLineEdit, QPushButton, QFileDialog, QWidget, QMessageBox,
     QComboBox, QHBoxLayout
 )
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFont, QPalette, QColor
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
@@ -12,6 +13,8 @@ from Crypto.Random import get_random_bytes
 from src.fs_constants import FsConstants
 
 class FileEncryptorApp(QWidget):
+    # 定义一个信号，在窗口关闭时触发
+    closed_signal =  pyqtSignal()
     def __init__(self):
         super().__init__()
         self.setWindowTitle(FsConstants.FILE_ENCRYPTOR_WINDOW_TITLE)
@@ -173,6 +176,10 @@ class FileEncryptorApp(QWidget):
         except Exception as e:
             QMessageBox.critical(self, "错误", f"解密失败：{str(e)}")
 
+    def closeEvent(self, event):
+        # 在关闭事件中发出信号
+        self.closed_signal.emit()
+        super().closeEvent(event)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

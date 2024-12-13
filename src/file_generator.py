@@ -7,13 +7,15 @@ import csv
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QLineEdit, QPushButton, QFileDialog, QLabel, \
     QWidget, QComboBox, QHBoxLayout
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtGui import QFont, QColor
 from PIL import Image, ImageDraw, ImageFont  # 用于生成图片文件
 from loguru import logger
 
 class FileGeneratorApp(QWidget):
+    # 定义一个信号，在窗口关闭时触发
+    closed_signal =  pyqtSignal()
     def __init__(self):
         super().__init__()
         self.folder_path = None
@@ -203,6 +205,11 @@ class FileGeneratorApp(QWidget):
         """显示信息框"""
         QMessageBox.information(self, title, message)
 
+    def closeEvent(self, event):
+        logger.info("点击了关闭事件")
+        # 在关闭事件中发出信号
+        self.closed_signal.emit()
+        super().closeEvent(event)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

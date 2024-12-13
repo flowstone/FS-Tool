@@ -1,14 +1,17 @@
 import sys
 import os
 import hashlib
+
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QPushButton, QFileDialog, QLabel, QWidget, QComboBox,
     QMessageBox, QTextEdit
 )
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 
 
 class FileComparatorApp(QWidget):
+    # 定义一个信号，在窗口关闭时触发
+    closed_signal =  pyqtSignal()
     def __init__(self):
         super().__init__()
         self.setWindowTitle("文件比较")
@@ -207,6 +210,10 @@ class FileComparatorApp(QWidget):
 
         return file_checksum(file1) == file_checksum(file2)
 
+    def closeEvent(self, event):
+        # 在关闭事件中发出信号
+        self.closed_signal.emit()
+        super().closeEvent(event)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

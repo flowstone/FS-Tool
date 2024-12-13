@@ -1,6 +1,7 @@
 import sys
 import os
 import shutil
+
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QMessageBox
 from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
 from PyQt5.QtCore import Qt, pyqtSignal, QThread
@@ -11,6 +12,8 @@ from src.fs_constants import FsConstants
 from src.progress_widget import ProgressWidget
 
 class CreateFolderApp(QWidget):
+    # 定义一个信号，在窗口关闭时触发
+    closed_signal =  pyqtSignal()
     def __init__(self):
         super().__init__()
         self.init_ui()
@@ -110,6 +113,11 @@ class CreateFolderApp(QWidget):
         self.progress_tool.hide()
         self.setEnabled(True)
         QMessageBox.information(self, "警告", "遇到异常停止工作")
+
+    def closeEvent(self, event):
+        # 在关闭事件中发出信号
+        self.closed_signal.emit()
+        super().closeEvent(event)
 
 class FileOperationThread(QThread):
     finished_signal = pyqtSignal()
