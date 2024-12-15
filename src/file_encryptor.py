@@ -177,6 +177,7 @@ class FileEncryptorApp(QWidget):
         self.progress_bar = QProgressBar()
         self.progress_bar.setRange(0, 100)
         self.progress_bar.setValue(0)
+        self.progress_bar.hide()
         layout.addWidget(self.progress_bar)
 
         self.setLayout(layout)
@@ -202,7 +203,8 @@ class FileEncryptorApp(QWidget):
 
         key_length = int(self.key_length_combo.currentText())
         key = self.derive_key(password, key_length)
-
+        self.progress_bar.show()
+        self.setEnabled(False)
         self.encrypt_thread = EncryptThread(self.selected_folder, key)
         self.encrypt_thread.progress.connect(self.update_progress)  # 连接进度更新
         self.encrypt_thread.finished.connect(self.encryption_finished)  # 加密完成处理
@@ -222,7 +224,8 @@ class FileEncryptorApp(QWidget):
 
         key_length = int(self.key_length_combo.currentText())
         key = self.derive_key(password, key_length)
-
+        self.progress_bar.show()
+        self.setEnabled(False)
         self.decrypt_thread = DecryptThread(self.selected_folder, key)
         self.decrypt_thread.progress.connect(self.update_progress)  # 连接进度更新
         self.decrypt_thread.finished.connect(self.decryption_finished)  # 解密完成处理
@@ -234,18 +237,30 @@ class FileEncryptorApp(QWidget):
         self.progress_bar.setValue(value)
 
     def encryption_finished(self):
+        self.setEnabled(True)
+        self.progress_bar.hide()
+
         """加密完成后的提示"""
         QMessageBox.information(self, "成功", "文件夹内的文件已成功加密！")
 
     def decryption_finished(self):
+        self.setEnabled(True)
+        self.progress_bar.hide()
+
         """解密完成后的提示"""
         QMessageBox.information(self, "成功", "文件夹内的文件已成功解密！")
 
     def encryption_error(self, error_msg):
+        self.setEnabled(True)
+        self.progress_bar.hide()
+
         """加密错误提示"""
         QMessageBox.critical(self, "错误", f"加密过程中发生错误: {error_msg}")
 
     def decryption_error(self, error_msg):
+        self.setEnabled(True)
+        self.progress_bar.hide()
+
         """解密错误提示"""
         QMessageBox.critical(self, "错误", f"解密过程中发生错误: {error_msg}")
 
