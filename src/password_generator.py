@@ -20,7 +20,7 @@ class PasswordGeneratorApp(QWidget):
         super().__init__()
 
         self.setWindowTitle(FsConstants.PASSWORD_GENERATOR_TITLE)
-        self.setGeometry(100, 100, 500, 350)
+        self.setFixedSize(500, 350)
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         # 初始化界面元素

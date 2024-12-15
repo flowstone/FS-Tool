@@ -12,6 +12,7 @@ from src.password_generator import  PasswordGeneratorApp
 from src.file_comparator import FileComparatorApp
 from src.file_generator import FileGeneratorApp
 from src.file_encryptor import FileEncryptorApp
+from src.rsa_key_generator import RSAKeyGeneratorApp
 
 from PyQt5.QtGui import QIcon
 from src.app_mini import FloatingBall
@@ -43,6 +44,7 @@ class MainWindow(QMainWindow):
             "file_generator": None,
             "file_comparator": None,
             "file_encryptor": None,
+            "rsa_key_generator": None
         }
         self.init_ui()
 
@@ -83,6 +85,8 @@ class MainWindow(QMainWindow):
             "class": FileComparatorApp},
             {"key": "file_encryptor", "icon": FsConstants.BUTTON_FILE_ENCRYPTOR_ICON, "title": FsConstants.FILE_ENCRYPTOR_WINDOW_TITLE,
              "class": FileEncryptorApp},
+            {"key": "rsa_key_generator", "icon": FsConstants.BUTTON_RSA_KEY_GENERATOR_ICON,"title": FsConstants.RSA_KEY_GENERATOR_WINDOW_TITLE,
+             "class": RSAKeyGeneratorApp},
         ]
 
 
