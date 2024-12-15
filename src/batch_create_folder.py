@@ -1,6 +1,7 @@
 import sys
 import os
 import shutil
+import time
 
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QMessageBox
 from PyQt5.QtGui import QFont, QColor, QPalette, QIcon
@@ -9,13 +10,14 @@ from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from loguru import logger
 from src.common_util import CommonUtil
 from src.fs_constants import FsConstants
-from src.progress_widget import ProgressWidget
+from src.progress_widget import ProgressWidget,ProgressSignalEmitter
 
 class CreateFolderApp(QWidget):
     # 定义一个信号，在窗口关闭时触发
     closed_signal =  pyqtSignal()
     def __init__(self):
         super().__init__()
+
         self.init_ui()
 
     def init_ui(self):
@@ -79,6 +81,7 @@ class CreateFolderApp(QWidget):
 
 
 
+
     def browse_folder(self):
         logger.info("---- 开始选择文件夹 ----")
         folder_path = QFileDialog.getExistingDirectory(self, "选择文件夹")
@@ -89,12 +92,15 @@ class CreateFolderApp(QWidget):
     def start_operation(self):
         logger.info("---- 开始执行操作 ----")
         self.progress_tool = ProgressWidget(self)
+        self.progress_tool.set_range(0, 100)
+        self.progress_emitter = ProgressSignalEmitter()  # 创建进度发射器
+        self.progress_emitter.progress_signal.connect(self.progress_tool.set_value)
+
         folder_path = self.folder_path_entry.text()
         slice_char = self.slice_entry.text()
-
         if folder_path:
             self.setEnabled(False)
-            self.worker_thread = FileOperationThread(folder_path, slice_char,self.progress_tool)
+            self.worker_thread = FileOperationThread(folder_path, slice_char,self.progress_emitter)
             self.worker_thread.finished_signal.connect(self.operation_finished)
             self.worker_thread.error_signal.connect(self.operation_error)
             self.worker_thread.start()
@@ -123,20 +129,22 @@ class FileOperationThread(QThread):
     finished_signal = pyqtSignal()
     error_signal = pyqtSignal(str)
 
-    def __init__(self, folder_path, slice_char, progress_tool):
+    def __init__(self, folder_path, slice_char, progress_emitter):
         super().__init__()
         self.folder_path = folder_path
         self.slice_char = slice_char
-        self.progress_tool = progress_tool
+        self.progress_emitter = progress_emitter
+
 
     def run(self):
         try:
 
             if self.slice_char != "":
                 logger.info("---- 有分割字符，开始执行操作 ----")
-                self.progress_tool.set_range(0,0)
+                files = os.listdir(self.folder_path)
+                total_files = len([f for f in files if os.path.isfile(os.path.join(self.folder_path, f))])
 
-                self.create_folder_move_files(self.folder_path, self.slice_char)
+                self.create_folder_move_files(self.folder_path, self.slice_char, total_files)
             else:
                 logger.info("---- 分割字符为空，不执行操作 ----")
             self.finished_signal.emit()
@@ -144,9 +152,10 @@ class FileOperationThread(QThread):
         except OSError as e:
             self.error_signal.emit(str(e))
 
-    @staticmethod
-    def create_folder_move_files(folder_path, slice_char):
+    def create_folder_move_files(self, folder_path, slice_char, total_files):
         # 遍历文件夹下的文件名
+        processed_files = 0
+
         for filename in os.listdir(folder_path):
             source_path = os.path.join(folder_path, filename)
             # 判断是否是文件
@@ -163,6 +172,13 @@ class FileOperationThread(QThread):
                     # 将文件移动到对应的文件夹
                     destination_path = os.path.join(target_folder, filename)
                     shutil.move(source_path, destination_path)
+                    # 更新进度条
+                    processed_files += 1
+                    self.progress_emitter.update_progress(processed_files)  # 发出进度信号
+
+                # 处理完成后退出循环
+                if processed_files == total_files:
+                    break
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
