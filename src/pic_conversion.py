@@ -1,5 +1,6 @@
 import sys
 import os
+
 from PyQt5.QtWidgets import QApplication, QScrollArea, QWidget, QVBoxLayout, QPushButton, QLabel, QCheckBox, QFileDialog, QHBoxLayout, QMessageBox
 from PyQt5.QtGui import QPixmap, QIcon
 from PIL import Image
@@ -11,6 +12,8 @@ from src.progress_widget import ProgressWidget
 
 
 class PicConversionApp(QWidget):
+    # 定义一个信号，在窗口关闭时触发
+    closed_signal =  pyqtSignal()
     def __init__(self):
         super().__init__()
         self.init_ui()
@@ -140,6 +143,11 @@ class PicConversionApp(QWidget):
         self.progress_tool.hide()
         self.setEnabled(True)
         QMessageBox.information(self, "警告", "遇到异常停止工作")
+
+    def closeEvent(self, event):
+        # 在关闭事件中发出信号
+        self.closed_signal.emit()
+        super().closeEvent(event)
 
 class ImageConversionThread(QThread):
     finished_signal = pyqtSignal()

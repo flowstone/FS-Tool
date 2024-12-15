@@ -1,5 +1,6 @@
 import os
 import sys
+
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog
 from PyQt5.QtGui import QColor, QPalette, QIcon,QFont
 from PyQt5.QtCore import Qt,pyqtSignal, QThread
@@ -17,6 +18,8 @@ from pillow_heif import register_heif_opener
 register_heif_opener()
 
 class HeicToJpgApp(QWidget):
+    # 定义一个信号，在窗口关闭时触发
+    closed_signal =  pyqtSignal()
     def __init__(self):
         super().__init__()
         self.init_ui()
@@ -115,7 +118,10 @@ class HeicToJpgApp(QWidget):
         self.setEnabled(True)
         QMessageBox.information(self, "警告", "遇到异常停止工作")
 
-
+    def closeEvent(self, event):
+        # 在关闭事件中发出信号
+        self.closed_signal.emit()
+        super().closeEvent(event)
 
 
 
@@ -178,6 +184,8 @@ class HeicToJpgAppThread(QThread):
                         new_file_path = os.path.join(root, new_file_name)
                         image.save(new_file_path, 'JPEG')
                         logger.info(f'已将 {file_path} 转换为 {new_file_path}')
+
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

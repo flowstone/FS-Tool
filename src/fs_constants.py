@@ -9,9 +9,6 @@ class FsConstants:
     APP_WINDOW_HEIGHT = 300
     APP_WINDOW_TITLE = "流体石头的工具箱"
 
-    TAB_PANE_GENERIC_TITLE = "通用"
-    TAB_PANE_BATCH_TITLE = "批处理"
-    TAB_PANE_VIP_TITLE = "个人"
     # 悬浮球相关常量
     APP_MINI_WINDOW_WIDTH = 90
     APP_MINI_WINDOW_HEIGHT = 90
@@ -27,20 +24,30 @@ class FsConstants:
 
     ## 自动答题
     AUTO_ANSWER_TOOLBAR_README_TEXT = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>HTML Editor-LDDGO.NET</title><link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/styles/default.min.css"type="text/css"></head><body><p>&nbsp;</p><h2 style="text-align: center;">说明</h2><h3><em><span style="color: #e03e2d;"><strong>私人使用</strong></span></em></h3><p>自动答题的工具，必须的条件，加上次数即可模仿用户点击答题</p><p>防止恶意操作，添加密码访问，密码是手机号</p><p>如果网站改版，功能将失效，可使用JS脚本代替</p><p><span style="background-color: #f1c40f;"><strong>【Chrome指定版本：131.0.6778.69】</strong></span></p><p><strong>Chrome</strong>下载：<a href="https://pan.quark.cn/s/e3e92f0b8882">https://pan.quark.cn/s/e3e92f0b8882</a><h3><strong>特殊说明</strong></h3><ol><li>当页面下拉框加载失败后，将重复刷新页面(最多10次，间隔2秒)</li><li>有异常出现，只有本次答题失败，继续执行下一次</li><li>存在程序闪崩情况</li></ol><h3><strong>试题地址</strong></h3><p>https://www.jscdc.cn<h3><strong>其它版本</strong></h3><p>【<a href="https://github.com/flowstone/Auto-Answers">Github</a>】：Java、JS脚本</p><p>&nbsp;</p><p><strong><span style="color: #e03e2d; font-size: 8pt; font-family: "courier new", courier, monospace;"><em>注：此版本，没有调用接口获得正确答案，所以分数大概不及格，</em></span></strong><br/><strong><span style="color: #e03e2d; font-size: 8pt; font-family: "courier new", courier, monospace;"><em>如果希望高分，可以使用JS脚本(青龙面板)</em></span></strong></p><p>&nbsp;</p><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"type="text/javascript"></script><script type="text/javascript">hljs.highlightAll();</script></body></html>'
+    DESKTOP_CLOCK_WINDOW_TITLE = "透明时间"
+    CREATE_FOLDER_WINDOW_TITLE = "文件夹老师"
+    FILE_RENAMER_WINDOW_TITLE = "重命名使者"
+    HEIC_JPG_BUTTON_TITLE = "HEIC作家"
+    PIC_CONVERSION_WINDOW_TITLE = "图转大师"
+    AUTO_ANSWERS_WINDOW_TITLE = "自动答题"
+    STICK_NOTE_WINDOW_TITLE = "快捷便签"
+    PASSWORD_GENERATOR_TITLE = "密码生成器"
+    FILE_GENERATOR_WINDOW_TITLE = "文件生成"
+    FILE_COMPARATOR_WINDOW_TITLE = "文件比较"
+    FILE_ENCRYPTOR_WINDOW_TITLE = "文件加密"
+    RSA_KEY_GENERATOR_WINDOW_TITLE = "RSA生成器"
+
     # 桌面时钟相关常量
     DESKTOP_CLOCK_WINDOW_WIDTH = 0
     DESKTOP_CLOCK_WINDOW_HEIGHT = 0
-    DESKTOP_CLOCK_WINDOW_TITLE = "透明时间"
 
     # 批量创建文件夹相关常量
     CREATE_FOLDER_WINDOW_WIDTH = 0
     CREATE_FOLDER_WINDOW_HEIGHT = 0
-    CREATE_FOLDER_WINDOW_TITLE = "文件夹老师"
 
     # 批量修改文件名相关常量
     FILE_RENAMER_WINDOW_WIDTH = 0
     FILE_RENAMER_WINDOW_HEIGHT = 0
-    FILE_RENAMER_WINDOW_TITLE = "重命名使者"
     FILE_RENAMER_TYPE_FILE = "文件"
     FILE_RENAMER_TYPE_FOLDER = "文件夹"
 
@@ -48,17 +55,14 @@ class FsConstants:
     HEIC_JPG_WINDOW_WIDTH = 0
     HEIC_JPG_WINDOW_HEIGHT = 0
     HEIC_JPG_WINDOW_TITLE = "批量HEIC转JPG(递归)"
-    HEIC_JPG_BUTTON_TITLE = "HEIC作家"
 
     # 图片转换相关常量
     PIC_CONVERSION_WINDOW_WIDTH = 500
     PIC_CONVERSION_WINDOW_HEIGHT = 400
-    PIC_CONVERSION_WINDOW_TITLE = "图转大师"
 
     # 自动答题相关常量
     AUTO_ANSWERS_WINDOW_WIDTH = 0
     AUTO_ANSWERS_WINDOW_HEIGHT = 0
-    AUTO_ANSWERS_WINDOW_TITLE = "自动答题"
     AUTO_ANSWERS_TITLE_IMAGE = "resources/auto_answers_title.png"
     AUTO_ANSWERS_PASSWORD_MD5 = "adf0558822da93b55f6fc48790ff3137"
     AUTO_ANSWERS_DRIVER_PATH = "resources/driver"
@@ -70,10 +74,8 @@ class FsConstants:
     STICK_NOTE_WINDOW_HEIGHT = 300
     STICK_NOTE_WINDOW_MIN_WIDTH = 300
     STICK_NOTE_WINDOW_MIN_HEIGHT = 200
-    STICK_NOTE_WINDOW_TITLE = "快捷便签"
 
     #密码生成器
-    PASSWORD_GENERATOR_TITLE = "密码生成器"
 
     # 颜色相关常量
     BACKGROUND_COLOR = "#f0f0f0"
@@ -98,16 +100,17 @@ class FsConstants:
 
     BUTTON_ICON_PATH = "resources/icon/"
     BUTTON_TIME_ICON = "time-icon.svg"
-    BUTTON_PIC_ICON = "association-icon.svg"
+    BUTTON_PIC_ICON = "img_conv-icon.svg"
     BUTTON_FOLDER_ICON = "folder-icon.svg"
     BUTTON_FILE_ICON = "move-icon.svg"
-    BUTTON_HEIC_ICON = "pictures-icon.svg"
+    BUTTON_HEIC_ICON = "heic_jpg-icon.svg"
     BUTTON_ANSWERS_ICON = "auto_answers-icon.svg"
     BUTTON_PASSWORD_ICON = "unlock-icon.svg"
     BUTTON_STICK_NOTE_ICON = "business-icon.svg"
-    TAB_PANE_GENERIC_ICON = "resources/icon/home-icon.svg"
-    TAB_PANE_BATCH_ICON = "resources/icon/more-icon.svg"
-    TAB_PANE_VIP_ICON = "resources/icon/vip-icon.svg"
+    BUTTON_FILE_GENERATOR_ICON = "file_generator-icon.svg"
+    BUTTON_FILE_COMPARATOR_ICON = "file_comparator-icon.svg"
+    BUTTON_FILE_ENCRYPTOR_ICON = "file_encryptor-icon.svg"
+    BUTTON_RSA_KEY_GENERATOR_ICON = "rsa-icon.svg"
 
 
     BUTTON_IMAGE_LOCK_OPEN = "resources/btn/lock-open-solid.svg"
