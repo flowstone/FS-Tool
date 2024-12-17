@@ -36,6 +36,7 @@ class FsConstants:
     FILE_COMPARATOR_WINDOW_TITLE = "文件比较"
     FILE_ENCRYPTOR_WINDOW_TITLE = "文件加密"
     RSA_KEY_GENERATOR_WINDOW_TITLE = "RSA生成器"
+    RSA_MD5_CALCULATOR_WINDOW_TITLE = "MD5校验"
 
     # 桌面时钟相关常量
     DESKTOP_CLOCK_WINDOW_WIDTH = 0
@@ -111,6 +112,7 @@ class FsConstants:
     BUTTON_FILE_COMPARATOR_ICON = "file_comparator-icon.svg"
     BUTTON_FILE_ENCRYPTOR_ICON = "file_encryptor-icon.svg"
     BUTTON_RSA_KEY_GENERATOR_ICON = "rsa-icon.svg"
+    BUTTON_MD5_CALCULATOR_ICON = "MD5-icon.svg"
 
 
     BUTTON_IMAGE_LOCK_OPEN = "resources/btn/lock-open-solid.svg"

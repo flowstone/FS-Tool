@@ -1,121 +1,53 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSlider, QApplication
-from PyQt5.QtGui import QColor, QPixmap, QPainter, QMouseEvent, QIcon
-from PyQt5.QtCore import Qt
-from src.common_util import CommonUtil
-from src.fs_constants import FsConstants
 
-class ImageColorPicker(QWidget):
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QColorDialog
+from PyQt5.QtGui import QColor, QPalette
+
+class ColorPaletteApp(QWidget):
     def __init__(self):
         super().__init__()
         self.init_ui()
-        self.selected_color = QColor(0, 0, 0)  # 初始颜色为黑色
-        self.pixmap = None  # 用于存储加载的图片
-        self.load_image()  # 直接加载指定图片
 
     def init_ui(self):
-        main_layout = QVBoxLayout()
-        self.setWindowTitle("颜色选择器")
-        self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
+        self.setWindowTitle("颜色板")
+        self.setGeometry(400, 200, 300, 200)
 
-        # 图片显示区域
-        self.image_display = QLabel(self)
-        self.image_display.setFixedSize(240, 250)
-        self.image_display.mousePressEvent = self.pick_color  # 绑定鼠标点击事件
-        main_layout.addWidget(self.image_display, alignment=Qt.AlignCenter)
+        # 创建主布局
+        layout = QVBoxLayout()
 
-        # 滑块布局
-        slider_layout = QHBoxLayout()
+        # 颜色显示区域
+        self.color_display = QLabel("当前颜色")
+        self.color_display.setAlignment(Qt.AlignCenter)
+        self.color_display.setFixedSize(200, 100)
+        self.color_display.setStyleSheet("border: 1px solid black; background-color: white;")
 
-        # 红色滑块
-        self.red_slider = QSlider(Qt.Horizontal, self)
-        self.red_slider.setMinimum(0)
-        self.red_slider.setMaximum(255)
-        self.red_slider.setValue(0)
-        self.red_slider.valueChanged.connect(self.update_color)
-        slider_layout.addWidget(self.red_slider)
+        # 按钮：打开颜色选择器
+        self.select_color_button = QPushButton("选择颜色")
+        self.select_color_button.clicked.connect(self.open_color_picker)
 
-        # 绿色滑块
-        self.green_slider = QSlider(Qt.Horizontal, self)
-        self.green_slider.setMinimum(0)
-        self.green_slider.setMaximum(255)
-        self.green_slider.setValue(0)
-        self.green_slider.valueChanged.connect(self.update_color)
-        slider_layout.addWidget(self.green_slider)
+        # 将控件添加到布局中
+        layout.addWidget(self.color_display)
+        layout.addWidget(self.select_color_button)
 
-        # 蓝色滑块
-        self.blue_slider = QSlider(Qt.Horizontal, self)
-        self.blue_slider.setMinimum(0)
-        self.blue_slider.setMaximum(255)
-        self.blue_slider.setValue(0)
-        self.blue_slider.valueChanged.connect(self.update_color)
-        slider_layout.addWidget(self.blue_slider)
+        self.setLayout(layout)
 
-        main_layout.addLayout(slider_layout)
+    def open_color_picker(self):
+        # 打开颜色选择器
+        color = QColorDialog.getColor()
 
-        # RGB值显示标签
-        self.rgb_label = QLabel(self)
-        self.rgb_label.setText("RGB: (0, 0, 0)")
-        main_layout.addWidget(self.rgb_label, alignment=Qt.AlignCenter)
+        # 如果用户选择了有效颜色
+        if color.isValid():
+            # 更新颜色显示区域的背景色
+            self.update_color_display(color)
 
-        # 十六进制颜色值显示标签
-        self.hex_label = QLabel(self)
-        self.hex_label.setText("Hex: #000000")
-        main_layout.addWidget(self.hex_label, alignment=Qt.AlignCenter)
-
-        self.setLayout(main_layout)
-
-    def load_image(self):
-        """
-        加载指定的图片
-        """
-        self.pixmap = QPixmap(CommonUtil.get_resource_path(FsConstants.BASE_COLOR_MAP))
-        if not self.pixmap.isNull():
-            self.image_display.setPixmap(self.pixmap)
-
-    def pick_color(self, event: QMouseEvent):
-        """
-        通过鼠标点击图片获取颜色
-        """
-        if event.button() == Qt.LeftButton and self.pixmap:
-            x = event.pos().x()
-            y = event.pos().y()
-            image = self.pixmap.toImage()
-            if 0 <= x < image.width() and 0 <= y < image.height():
-                color = QColor(image.pixel(x, y))
-                self.set_selected_color(color)
-
-    def set_selected_color(self, color: QColor):
-        """
-        设置选中的颜色，并更新界面显示
-        """
-        self.selected_color = color
-        self.update_color()
-
-    def update_color(self):
-        """
-        根据滑块值或选中的颜色更新界面显示的颜色、RGB值和十六进制值
-        """
-        if self.sender() in (self.red_slider, self.green_slider, self.blue_slider):
-            red = self.red_slider.value()
-            green = self.green_slider.value()
-            blue = self.blue_slider.value()
-            self.selected_color.setRgb(red, green, blue)
-        color = self.selected_color
-        self.rgb_label.setText(f"RGB: ({color.red()}, {color.green()}, {color.blue()})")
-        hex_code = color.name().upper()
-        self.hex_label.setText(f"Hex: #{hex_code}")
-        if self.pixmap:
-            painter = QPainter(self.pixmap)
-            painter.setPen(color)
-            painter.setBrush(color)
-            painter.drawRect(0, 0, 25, 25)
-            painter.end()
-            self.image_display.setPixmap(self.pixmap)
-
+    def update_color_display(self, color: QColor):
+        """更新颜色显示区域的背景颜色"""
+        self.color_display.setStyleSheet(f"border: 1px solid black; background-color: {color.name()};")
+        self.color_display.setText(f"选中的颜色: {color.name()}")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = ImageColorPicker()
+    window = ColorPaletteApp()
     window.show()
     sys.exit(app.exec_())
