@@ -4,9 +4,11 @@ import zipfile
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QComboBox, QPushButton, QVBoxLayout, QHBoxLayout, QTextEdit, QFileDialog
 )
-from PyQt5.QtGui import QClipboard
+from PyQt5.QtGui import QClipboard, QIcon
 from PyQt5.QtCore import Qt, pyqtSignal
 from Crypto.PublicKey import RSA
+
+from src.common_util import CommonUtil
 from src.fs_constants import FsConstants
 from loguru import logger
 
@@ -17,6 +19,7 @@ class RSAKeyGeneratorApp(QWidget):
         super().__init__()
         self.setWindowTitle("RSA密钥生成器")
         self.setFixedSize(700, 600)
+        self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         # 初始化界面组件
         self.init_ui()

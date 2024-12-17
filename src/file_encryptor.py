@@ -5,12 +5,15 @@ from PyQt5.QtWidgets import (
     QComboBox, QHBoxLayout, QProgressBar
 )
 from PyQt5.QtCore import Qt, pyqtSignal, QThread
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QIcon
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Hash import SHA256
 from loguru import logger
+
+from src.common_util import CommonUtil
+
 
 class EncryptThread(QThread):
     progress = pyqtSignal(int)  # 信号用于传递进度
@@ -107,6 +110,7 @@ class FileEncryptorApp(QWidget):
         super().__init__()
         self.setWindowTitle("批量文件加密")
         self.setFixedSize(500, 550)  # 调整窗口大小
+        self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         layout = QVBoxLayout()
 

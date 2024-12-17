@@ -8,9 +8,12 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QLineEdit, Q
     QWidget, QComboBox, QHBoxLayout
 from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtGui import QFont, QColor
+from PyQt5.QtGui import QFont, QColor, QIcon
 from PIL import Image
 from loguru import logger
+
+from src.common_util import CommonUtil
+
 
 class FileGenerationThread(QThread):
     # Signals to communicate with the main thread
@@ -94,6 +97,7 @@ class FileGeneratorApp(QWidget):
         self.folder_path = None
         self.setWindowTitle("批量生成文件")
         self.setFixedSize(450, 400)
+        self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         layout = QVBoxLayout()
         title_label = QLabel("批量生成文件")
@@ -109,6 +113,7 @@ class FileGeneratorApp(QWidget):
         self.folder_path_entry = QLineEdit()
         self.folder_path_entry.setPlaceholderText("请选择要生成文件的目录")
         self.select_folder_button = QPushButton("浏览")
+        self.select_folder_button.setObjectName("browse_button")
         self.select_folder_button.clicked.connect(self.select_folder)
         browse_layout.addWidget(self.output_folder_label)
         browse_layout.addWidget(self.folder_path_entry)
@@ -135,10 +140,12 @@ class FileGeneratorApp(QWidget):
 
         button_layout = QHBoxLayout()
         self.generate_button = QPushButton("生成文件")
+        self.generate_button.setObjectName("start_button")
         self.generate_button.clicked.connect(self.start_file_generation)
         button_layout.addWidget(self.generate_button)
 
         self.exit_button = QPushButton("退出")
+        self.exit_button.setObjectName("exit_button")
         self.exit_button.clicked.connect(self.close)
         button_layout.addWidget(self.exit_button)
         layout.addLayout(button_layout)

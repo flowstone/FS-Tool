@@ -1,11 +1,16 @@
 import sys
 import os
 import hashlib
+
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QPushButton, QFileDialog, QLabel, QWidget, QComboBox,
     QMessageBox, QTextEdit
 )
 from PyQt5.QtCore import Qt, pyqtSignal, QThread
+
+from src.common_util import CommonUtil
+
 
 class CompareThread(QThread):
     update_signal = pyqtSignal(str)
@@ -118,6 +123,7 @@ class FileComparatorApp(QWidget):
         super().__init__()
         self.setWindowTitle("文件比较")
         self.setFixedSize(800, 600)
+        self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         layout = QVBoxLayout()
 

@@ -1,5 +1,7 @@
 import sys
 import hashlib
+
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QLabel, QFileDialog, QMessageBox, QLineEdit
@@ -23,6 +25,8 @@ class MD5CalculatorApp(QWidget):
         self.setWindowTitle(FsConstants.RSA_MD5_CALCULATOR_WINDOW_TITLE)
         #self.setGeometry(400, 200, 500, 200)
         self.setFixedSize(500, 200)
+        self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
+
         # 主布局
         layout = QVBoxLayout()
 
@@ -40,7 +44,7 @@ class MD5CalculatorApp(QWidget):
         file_layout.addWidget(browse_button)
 
         # 结果显示布局
-        result_layout = QVBoxLayout()
+        result_layout = QHBoxLayout()
         self.result_label = QLabel("MD5 值:")
         self.md5_value_label = QLineEdit()
         self.md5_value_label.setReadOnly(True)
