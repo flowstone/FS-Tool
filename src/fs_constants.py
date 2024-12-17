@@ -123,3 +123,4 @@ class FsConstants:
     AUTO_ANSWERS_TABLE_NAME = "auto_answers_log"
 
     APP_CONFIG_FILE = "config.json"
+    HELP_PDF_FILE_PATH = "resources/pdf/help.pdf"

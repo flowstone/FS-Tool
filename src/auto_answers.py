@@ -53,16 +53,16 @@ class AutoAnswersApp(QWidget):
         font.setPointSize(12)
 
 
-        # ---- 工具栏 START
-        menu_bar = QMenuBar(self)
-        help_menu = QMenu(FsConstants.TOOLBAR_HELP_TITLE, self)
-        menu_bar.addMenu(help_menu)
-
-        # 创建"说明"菜单项
-        readme_action = QAction(FsConstants.TOOLBAR_README_TITLE, self)
-        readme_action.triggered.connect(self.show_instructions)
-        help_menu.addAction(readme_action)
-        main_layout.addWidget(menu_bar)
+        # # ---- 工具栏 START
+        # menu_bar = QMenuBar(self)
+        # help_menu = QMenu(FsConstants.TOOLBAR_HELP_TITLE, self)
+        # menu_bar.addMenu(help_menu)
+        #
+        # # 创建"说明"菜单项
+        # readme_action = QAction(FsConstants.TOOLBAR_README_TITLE, self)
+        # readme_action.triggered.connect(self.show_instructions)
+        # help_menu.addAction(readme_action)
+        # main_layout.addWidget(menu_bar)
         # ---- 工具栏 END
 
         # 图片标签，单独占一行
