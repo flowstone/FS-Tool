@@ -5,15 +5,77 @@ import os
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout,
-    QPushButton, QLabel, QFileDialog, QMessageBox, QLineEdit, QTextEdit, QCheckBox
+    QPushButton, QLabel, QFileDialog, QMessageBox, QLineEdit, QTextEdit, QCheckBox, QProgressBar
 )
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from src.fs_constants import FsConstants
 from src.common_util import CommonUtil
 
 
+class HashCalculatorThread(QThread):
+    progress_signal = pyqtSignal(int)  # 用于更新进度条
+    result_signal = pyqtSignal(dict, dict)  # 传递文件信息和哈希结果
+
+    def __init__(self, file_path, hash_types):
+        super().__init__()
+        self.file_path = file_path
+        self.hash_types = hash_types
+
+    def run(self):
+        try:
+            # 获取文件信息
+            file_info = HashCalculatorApp.get_file_info(self.file_path)
+
+            # 计算哈希值
+            hashes = {}
+            file_size = os.path.getsize(self.file_path)
+            processed_size = 0
+
+            with open(self.file_path, "rb") as f:
+                while chunk := f.read(4096):  # 按 4KB 分块读取文件
+                    processed_size += len(chunk)
+
+                    # 根据选择计算哈希
+                    if "MD5" in self.hash_types:
+                        if "md5" not in hashes:
+                            hashes["md5"] = hashlib.md5()
+                        hashes["md5"].update(chunk)
+
+                    if "SHA1" in self.hash_types:
+                        if "sha1" not in hashes:
+                            hashes["sha1"] = hashlib.sha1()
+                        hashes["sha1"].update(chunk)
+
+                    if "SHA256" in self.hash_types:
+                        if "sha256" not in hashes:
+                            hashes["sha256"] = hashlib.sha256()
+                        hashes["sha256"].update(chunk)
+
+                    if "CRC32" in self.hash_types:
+                        if "crc32" not in hashes:
+                            hashes["crc32"] = 0
+                        hashes["crc32"] = zlib.crc32(chunk, hashes["crc32"])
+
+                    # 发出进度信号
+                    progress = int((processed_size / file_size) * 100)
+                    self.progress_signal.emit(progress)
+
+            # 格式化哈希值
+            results = {
+                "MD5": hashes["md5"].hexdigest() if "md5" in hashes else None,
+                "SHA1": hashes["sha1"].hexdigest() if "sha1" in hashes else None,
+                "SHA256": hashes["sha256"].hexdigest() if "sha256" in hashes else None,
+                "CRC32": format(hashes["crc32"] & 0xFFFFFFFF, "08x").upper() if "crc32" in hashes else None,
+            }
+
+            # 发出结果信号
+            self.result_signal.emit(file_info, results)
+
+        except Exception as e:
+            QMessageBox.critical(None, "错误", f"计算哈希失败：{str(e)}")
+
+
 class HashCalculatorApp(QWidget):
-    # 定义一个信号，在窗口关闭时触发
     closed_signal = pyqtSignal()
 
     def __init__(self):
@@ -21,17 +83,14 @@ class HashCalculatorApp(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        # 设置窗口属性
         self.setWindowTitle(FsConstants.HASH_CALCULATOR_WINDOW_TITLE)
-        self.setFixedSize(500, 300)
+        self.setFixedSize(500, 350)
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
-        # 启用文件拖放功能
         self.setAcceptDrops(True)
 
-        # 主布局
         layout = QVBoxLayout()
 
-        # 文件路径布局
+        # 文件选择布局
         file_layout = QHBoxLayout()
         self.file_label = QLabel("选择的文件:")
         self.file_path_entry = QLineEdit()
@@ -44,29 +103,30 @@ class HashCalculatorApp(QWidget):
         file_layout.addWidget(self.file_path_entry)
         file_layout.addWidget(browse_button)
 
-        # 选择计算的哈希类型
+        # 哈希类型选择布局
         hash_selection_layout = QHBoxLayout()
         self.md5_checkbox = QCheckBox("MD5")
-        self.md5_checkbox.setChecked(True)  # 默认勾选 MD5
+        self.md5_checkbox.setChecked(True)
         self.sha1_checkbox = QCheckBox("SHA1")
-        self.sha1_checkbox.setChecked(True)  # 默认勾选 SHA1
+        self.sha1_checkbox.setChecked(True)
         self.sha256_checkbox = QCheckBox("SHA256")
-        self.sha256_checkbox.setChecked(True)  # 默认勾选 SHA256
+        self.sha256_checkbox.setChecked(True)
         self.crc32_checkbox = QCheckBox("CRC32")
-        self.crc32_checkbox.setChecked(True)  # 默认勾选 CRC32
+        self.crc32_checkbox.setChecked(True)
 
         hash_selection_layout.addWidget(self.md5_checkbox)
         hash_selection_layout.addWidget(self.sha1_checkbox)
         hash_selection_layout.addWidget(self.sha256_checkbox)
         hash_selection_layout.addWidget(self.crc32_checkbox)
 
-        # 操作按钮
+        # 按钮布局
         button_layout = QHBoxLayout()
         calculate_button = QPushButton("计算")
-        calculate_button.setObjectName("calculate_button")
-        calculate_button.clicked.connect(self.calculate_hashes)
+        calculate_button.setObjectName("start_button")
+        calculate_button.clicked.connect(self.start_hash_calculation)
         exit_button = QPushButton("退出")
         exit_button.setObjectName("exit_button")
+
         exit_button.clicked.connect(self.close)
 
         button_layout.addWidget(calculate_button)
@@ -76,148 +136,82 @@ class HashCalculatorApp(QWidget):
         self.file_info_text = QTextEdit()
         self.file_info_text.setReadOnly(True)
 
-        # 将各个布局添加到主布局中
+        # 进度条
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setValue(0)
+
+        # 布局组合
         layout.addLayout(file_layout)
         layout.addLayout(hash_selection_layout)
         layout.addWidget(self.file_info_text)
+        layout.addWidget(self.progress_bar)
         layout.addLayout(button_layout)
 
         self.setLayout(layout)
 
     def browse_file(self):
-        """
-        选择本地文件，并显示文件路径
-        """
         file_path, _ = QFileDialog.getOpenFileName(self, "选择文件", "", "所有文件 (*.*)")
         if file_path:
             self.file_path_entry.setText(file_path)
 
     def dragEnterEvent(self, event):
-        """
-        拖入文件时的事件处理
-        """
         if event.mimeData().hasUrls():
             event.accept()
         else:
             event.ignore()
 
     def dropEvent(self, event):
-        """
-        放置文件时的事件处理
-        """
         if event.mimeData().hasUrls():
-            urls = event.mimeData().urls()
-            file_path = urls[0].toLocalFile()  # 获取第一个文件路径
-            if os.path.isfile(file_path):  # 确保是文件而不是文件夹
+            file_path = event.mimeData().urls()[0].toLocalFile()
+            if os.path.isfile(file_path):
                 self.file_path_entry.setText(file_path)
             else:
                 QMessageBox.warning(self, "警告", "拖入的不是有效文件！")
 
-    def calculate_hashes(self):
-        """
-        计算选中文件的哈希值和文件信息
-        """
+    def start_hash_calculation(self):
         file_path = self.file_path_entry.text()
-
         if not file_path:
             QMessageBox.warning(self, "警告", "请先选择一个文件！")
             return
 
-        # 获取文件信息
-        try:
-            file_info = self.get_file_info(file_path)
-        except Exception as e:
-            QMessageBox.critical(self, "错误", f"读取文件信息失败：{str(e)}")
+        hash_types = []
+        if self.md5_checkbox.isChecked():
+            hash_types.append("MD5")
+        if self.sha1_checkbox.isChecked():
+            hash_types.append("SHA1")
+        if self.sha256_checkbox.isChecked():
+            hash_types.append("SHA256")
+        if self.crc32_checkbox.isChecked():
+            hash_types.append("CRC32")
+
+        if not hash_types:
+            QMessageBox.warning(self, "警告", "请至少选择一种哈希类型！")
             return
 
-        # 根据用户选择计算哈希值
-        hashes = {}
-        if self.md5_checkbox.isChecked():
-            hashes["MD5"] = self.get_md5_of_file(file_path)
-        if self.sha1_checkbox.isChecked():
-            hashes["SHA1"] = self.get_sha1_of_file(file_path)
-        if self.sha256_checkbox.isChecked():
-            hashes["SHA256"] = self.get_sha256_of_file(file_path)
-        if self.crc32_checkbox.isChecked():
-            hashes["CRC32"] = self.get_crc32_of_file(file_path)
+        # 创建并启动线程
+        self.thread = HashCalculatorThread(file_path, hash_types)
+        self.thread.progress_signal.connect(self.progress_bar.setValue)
+        self.thread.result_signal.connect(self.display_file_info)
+        self.thread.start()
 
-        # 显示结果
-        self.display_file_info(file_info, hashes)
+    def display_file_info(self, file_info, hashes):
+        info_text = "\n".join([f"{key}: {value}" for key, value in file_info.items()])
+        hash_text = "\n".join([f"{key}: {value}" for key, value in hashes.items() if value])
+        self.file_info_text.setText(f"{info_text}\n\n{hash_text}")
+        self.progress_bar.setValue(100)
 
     @staticmethod
     def get_file_info(file_path):
-        """
-        获取文件的基本信息
-        :param file_path: 文件路径
-        :return: 文件名、大小、修改时间的字典
-        """
-        #file_name = os.path.basename(file_path)
         file_size = os.path.getsize(file_path)
         modification_time = os.path.getmtime(file_path)
 
         return {
             "文件名": file_path,
             "大小": f"{file_size} 字节",
-            "修改时间": CommonUtil.format_time(modification_time)  # 假设格式化方法在 CommonUtil 中
+            "修改时间": CommonUtil.format_time(modification_time)
         }
 
-    @staticmethod
-    def get_md5_of_file(file_path):
-        """
-        计算文件的 MD5 值
-        """
-        md5_hash = hashlib.md5()
-        with open(file_path, "rb") as f:
-            for chunk in iter(lambda: f.read(4096), b""):  # 按 4KB 分块读取文件
-                md5_hash.update(chunk)
-        return md5_hash.hexdigest()
-
-    @staticmethod
-    def get_sha1_of_file(file_path):
-        """
-        计算文件的 SHA1 值
-        """
-        sha1_hash = hashlib.sha1()
-        with open(file_path, "rb") as f:
-            for chunk in iter(lambda: f.read(4096), b""):
-                sha1_hash.update(chunk)
-        return sha1_hash.hexdigest()
-
-    @staticmethod
-    def get_sha256_of_file(file_path):
-        """
-        计算文件的 SHA256 值
-        """
-        sha256_hash = hashlib.sha256()
-        with open(file_path, "rb") as f:
-            for chunk in iter(lambda: f.read(4096), b""):
-                sha256_hash.update(chunk)
-        return sha256_hash.hexdigest()
-
-    @staticmethod
-    def get_crc32_of_file(file_path):
-        """
-        计算文件的 CRC32 值
-        """
-        crc32_hash = 0
-        with open(file_path, "rb") as f:
-            for chunk in iter(lambda: f.read(4096), b""):
-                crc32_hash = zlib.crc32(chunk, crc32_hash)
-        return format(crc32_hash & 0xFFFFFFFF, "08x").upper()
-
-    def display_file_info(self, file_info, hashes):
-        """
-        显示文件信息和计算结果
-        """
-        info_text = "\n".join([f"{key}: {value}" for key, value in file_info.items()])
-        if hashes:
-            hash_text = "\n".join([f"{key}: {value}" for key, value in hashes.items()])
-            info_text += f"\n\n{hash_text}"
-
-        self.file_info_text.setText(info_text)
-
     def closeEvent(self, event):
-        # 在关闭事件中发出信号
         self.closed_signal.emit()
         super().closeEvent(event)
 
