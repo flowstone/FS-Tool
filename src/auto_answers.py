@@ -26,6 +26,9 @@ success = 0
 
 
 class AutoAnswersApp(QWidget):
+    # 定义一个信号，在窗口关闭时触发
+    closed_signal = pyqtSignal()
+
     def __init__(self):
         super().__init__()
 
@@ -50,16 +53,16 @@ class AutoAnswersApp(QWidget):
         font.setPointSize(12)
 
 
-        # ---- 工具栏 START
-        menu_bar = QMenuBar(self)
-        help_menu = QMenu(FsConstants.TOOLBAR_HELP_TITLE, self)
-        menu_bar.addMenu(help_menu)
-
-        # 创建"说明"菜单项
-        readme_action = QAction(FsConstants.TOOLBAR_README_TITLE, self)
-        readme_action.triggered.connect(self.show_instructions)
-        help_menu.addAction(readme_action)
-        main_layout.addWidget(menu_bar)
+        # # ---- 工具栏 START
+        # menu_bar = QMenuBar(self)
+        # help_menu = QMenu(FsConstants.TOOLBAR_HELP_TITLE, self)
+        # menu_bar.addMenu(help_menu)
+        #
+        # # 创建"说明"菜单项
+        # readme_action = QAction(FsConstants.TOOLBAR_README_TITLE, self)
+        # readme_action.triggered.connect(self.show_instructions)
+        # help_menu.addAction(readme_action)
+        # main_layout.addWidget(menu_bar)
         # ---- 工具栏 END
 
         # 图片标签，单独占一行
@@ -330,6 +333,11 @@ class AutoAnswersApp(QWidget):
                                f"today = '{self.today}'")
         except Exception as e:
             logger.warning(f"更新自动答题记录表失败，{e}")
+
+    def closeEvent(self, event):
+        # 在关闭事件中发出信号
+        self.closed_signal.emit()
+        super().closeEvent(event)
 
 class AutoAnswerThread(QThread):
     finished_signal = pyqtSignal()

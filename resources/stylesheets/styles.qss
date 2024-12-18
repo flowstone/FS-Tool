@@ -26,7 +26,7 @@ QLabel {
     font-size: 14px;
 }
 
-QComboBox, QLineEdit {
+QComboBox {
     background-color: #ffffff;
     border: 1px solid #cccccc;
     border-radius: 5px;
@@ -36,6 +36,15 @@ QComboBox, QLineEdit {
 }
 QComboBox::drop-down {
     border: none;
+}
+
+QLineEdit {
+    background-color: #ffffff;
+    border: 1px solid #4CAF50;
+    border-radius: 5px;
+    padding: 6px;
+    font-size: 14px;
+    color: #333333;
 }
 QLineEdit:focus {
     border: 1px solid #66afe9;
@@ -56,8 +65,12 @@ QPushButton:hover {
 QPushButton:pressed {
     background-color: #4F94CD;
 }
+QPushButton:disabled {
+    background-color: gray;
+    color: white;
+}
 QMenuBar {
-    background-color: #ffffff;
+    background: #f0f0f0;
     color: #333333;
 }
 QMenuBar::item {
@@ -130,8 +143,8 @@ QSpinBox::down-button:hover {
 
 
 QLineEdit#folder_path_input {
-    border: 1px solid #ccc;
-    border-radius: 3px;
+    border: 1px solid #4CAF50;
+    border-radius: 5px;
     padding: 6px;
     font-size: 14px;
 }
@@ -184,7 +197,10 @@ QPushButton#exit_button:hover {
 QPushButton#exit_button:pressed {
     background-color: #c62828;
 }
-
+QPushButton#exit_button:disabled {
+    background-color: gray;
+    color: white;
+}
 QPushButton#normal {
     font-size: 14px;
     color: #fff;
@@ -198,6 +214,10 @@ QPushButton#normal:hover {
 }
 QPushButton#normal:pressed {
     background-color: #004a9b;
+}
+QPushButton#normal:disabled {
+    background-color: gray;
+    color: white;
 }
 /*
  透明时间 ------------
@@ -235,7 +255,7 @@ QPushButton#feature:hover {
  ------END ------------
  */
 
- QTabWidget::pane {
+QTabWidget::pane {
     border: 1px solid #C2C7CB;  /* Tab页内容区域边框 */
     background-color: white;  /* Tab页内容区域背景色 */
     border-radius: 8px;

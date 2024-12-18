@@ -1,13 +1,16 @@
 import sys
+
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit, QPushButton, QMessageBox, QHBoxLayout
 from PyQt5.QtGui import QIcon, QFont
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from src.common_util import CommonUtil
 from src.fs_constants import FsConstants
 from src.hover_image_button import HoverImageButton
 from loguru import logger
 
 class StickyNoteApp(QWidget):
+    # 定义一个信号，在窗口关闭时触发
+    closed_signal =  pyqtSignal()
     def __init__(self):
         super().__init__()
         # 标记窗口当前是否可操作（初始设为可操作）
@@ -100,6 +103,8 @@ class StickyNoteApp(QWidget):
         """
         if self.is_operable:
             event.accept()
+            # 在关闭事件中发出信号
+            self.closed_signal.emit()
         else:
             event.ignore()
 

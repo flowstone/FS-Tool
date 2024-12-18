@@ -39,7 +39,10 @@ F:\Workspace\PycharmProjects\fs-tool\.venv\Lib\site-packages\PyQt5\Qt5\bin;./PyQ
 
 2. 应用界面
 
-![](https://raw.githubusercontent.com/flowstone/fs-tool/release/resources/preview/app-main-window.png)
+![老的界面](https://raw.githubusercontent.com/flowstone/fs-tool/release/resources/preview/app-main-window.png)
+
+![新的界面](https://raw.githubusercontent.com/flowstone/fs-tool/release/resources/preview/1.png)
+
 
 3. 关闭应用窗口，屏幕右上角会有悬浮球
 

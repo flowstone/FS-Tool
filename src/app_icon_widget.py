@@ -6,7 +6,7 @@ from PyQt5.QtGui import QPixmap, QColor
 
 class AppIconWidget(QWidget):
     # 定义一个信号，当图标被点击时发出
-    iconClicked = pyqtSignal()  # 传递图标名称
+    iconClicked = pyqtSignal(str)  # 传递图标名称
 
     def __init__(self, icon_path, name, parent=None):
         super().__init__(parent)
@@ -69,7 +69,7 @@ class AppIconWidget(QWidget):
         self.color_animation.start()
 
         # 发出点击信号
-        self.iconClicked.emit()
+        self.iconClicked.emit(self.name)
 
         super().mousePressEvent(event)
 

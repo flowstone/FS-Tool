@@ -2,6 +2,7 @@ import sys
 import os
 import datetime
 
+
 from src.fs_constants import FsConstants
 from src.config_manager import ConfigManager
 
@@ -17,7 +18,8 @@ class CommonUtil:
             return os.path.join(sys._MEIPASS, relative_path)
 
         if CommonUtil.check_win_os():
-            return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
+            #return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
+            return os.path.join(os.path.dirname(sys.argv[0]), relative_path)
         else:
             return os.path.join(os.path.dirname(sys.argv[0]), relative_path)
 
@@ -134,3 +136,12 @@ class CommonUtil:
     def get_button_ico_path(button_icon):
         full_path = os.path.join(FsConstants.BUTTON_ICON_PATH, button_icon)
         return CommonUtil.get_resource_path(full_path)
+
+    @staticmethod
+    def format_time(current_datetime):
+        format: str = '%Y-%m-%d %H:%M:%S'
+        # 将时间戳转换为datetime对象
+        dt_object = datetime.datetime.fromtimestamp(current_datetime)
+        # 格式化时间，这里使用了常见的年-月-日 时:分:秒格式
+        # 格式化时间为指定格式
+        return dt_object.strftime(format)

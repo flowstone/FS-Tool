@@ -1,11 +1,14 @@
 import sys
 import time
+
 from PyQt5.QtWidgets import QApplication, QFormLayout, QWidget, QLabel, QVBoxLayout, QPushButton, QDialog, QComboBox, QHBoxLayout
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt, QTimer, pyqtSignal
 from src.common_util import CommonUtil
+from loguru import logger
 
 class DesktopClockApp(QWidget):
+
     def __init__(self):
         super().__init__()
         self.elapsed_time = 0
@@ -74,9 +77,9 @@ class DesktopClockApp(QWidget):
         self.count_time.setText(time_str)
 
 
-
-
 class ColorSettingDialog(QDialog):
+    # 定义一个信号，在窗口关闭时触发
+    closed_signal = pyqtSignal()
     def __init__(self):
         super().__init__()
         self.init_ui()
@@ -133,6 +136,13 @@ class ColorSettingDialog(QDialog):
         self.window = DesktopClockApp()
         self.window.show_with_colors(time_color, timer_color)
         self.hide()
+
+
+    def closeEvent(self, event):
+        # 在关闭事件中发出信号
+        self.closed_signal.emit()
+        super().closeEvent(event)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
