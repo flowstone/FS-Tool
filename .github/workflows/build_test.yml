@@ -124,34 +124,4 @@ jobs:
           asset_path: FS-Tool.app.zip
           asset_name: FS-Tool.MacOS.zip
           asset_content_type: application/zip
-          
-      - name: Add version badge to README
-        run: |
-          VERSION="${{ github.ref }}"
-          BADGE_URL="https://img.shields.io/badge/version-${VERSION}-blue.svg"
-          README_FILE="README.md"
-
-          # 使用 sed 或类似工具在 README.md 中插入版本徽章
-          # 查找现有的徽章或其他位置插入版本徽章
-          if grep -q "version" "$README_FILE"; then
-            sed -i "s|<badge_placeholder>|![Version Badge](${BADGE_URL})|g" "$README_FILE"
-          else
-            # 如果没有找到 placeholder，直接在文件顶部插入
-            echo "![Version Badge](${BADGE_URL})" | cat - "$README_FILE" > temp && mv temp "$README_FILE"
-          fi
-
-      - name: Commit changes to README
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git add README.md
-          git commit -m "Add version badge for ${{ github.ref }}"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
-          
+     
