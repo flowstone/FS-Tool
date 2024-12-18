@@ -13,7 +13,7 @@ from src.file_comparator import FileComparatorApp
 from src.file_generator import FileGeneratorApp
 from src.file_encryptor import FileEncryptorApp
 from src.rsa_key_generator import RSAKeyGeneratorApp
-from src.md5_calculator import MD5CalculatorApp
+from src.hash_calculator import HashCalculatorApp
 
 from PyQt5.QtGui import QIcon
 from src.app_mini import FloatingBall
@@ -46,7 +46,7 @@ class MainWindow(QMainWindow):
             "file_comparator": None,
             "file_encryptor": None,
             "rsa_key_generator": None,
-            "md5_calculator": None
+            "hash_calculator": None
         }
         self.init_ui()
 
@@ -89,8 +89,8 @@ class MainWindow(QMainWindow):
              "class": FileEncryptorApp},
             {"key": "rsa_key_generator", "icon": FsConstants.BUTTON_RSA_KEY_GENERATOR_ICON,"title": FsConstants.RSA_KEY_GENERATOR_WINDOW_TITLE,
              "class": RSAKeyGeneratorApp},
-            {"key": "md5_calculator", "icon": FsConstants.BUTTON_MD5_CALCULATOR_ICON,"title": FsConstants.RSA_MD5_CALCULATOR_WINDOW_TITLE,
-             "class": MD5CalculatorApp},
+            {"key": "hash_calculator", "icon": FsConstants.BUTTON_HASH_CALCULATOR_ICON,"title": FsConstants.HASH_CALCULATOR_WINDOW_TITLE,
+             "class": HashCalculatorApp},
         ]
 
 
