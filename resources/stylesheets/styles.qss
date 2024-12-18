@@ -65,6 +65,10 @@ QPushButton:hover {
 QPushButton:pressed {
     background-color: #4F94CD;
 }
+QPushButton:disabled {
+    background-color: gray;
+    color: white;
+}
 QMenuBar {
     background: #f0f0f0;
     color: #333333;
@@ -193,7 +197,10 @@ QPushButton#exit_button:hover {
 QPushButton#exit_button:pressed {
     background-color: #c62828;
 }
-
+QPushButton#exit_button:disabled {
+    background-color: gray;
+    color: white;
+}
 QPushButton#normal {
     font-size: 14px;
     color: #fff;
@@ -207,6 +214,10 @@ QPushButton#normal:hover {
 }
 QPushButton#normal:pressed {
     background-color: #004a9b;
+}
+QPushButton#normal:disabled {
+    background-color: gray;
+    color: white;
 }
 /*
  透明时间 ------------

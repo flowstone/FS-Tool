@@ -121,15 +121,15 @@ class HashCalculatorApp(QWidget):
 
         # 按钮布局
         button_layout = QHBoxLayout()
-        calculate_button = QPushButton("计算")
-        calculate_button.setObjectName("start_button")
-        calculate_button.clicked.connect(self.start_hash_calculation)
+        self.calculate_button = QPushButton("计算")
+        self.calculate_button.setObjectName("start_button")
+        self.calculate_button.clicked.connect(self.start_hash_calculation)
         exit_button = QPushButton("退出")
         exit_button.setObjectName("exit_button")
 
         exit_button.clicked.connect(self.close)
 
-        button_layout.addWidget(calculate_button)
+        button_layout.addWidget(self.calculate_button)
         button_layout.addWidget(exit_button)
 
         # 文件信息显示框
@@ -188,6 +188,7 @@ class HashCalculatorApp(QWidget):
             QMessageBox.warning(self, "警告", "请至少选择一种哈希类型！")
             return
 
+        self.calculate_button.setEnabled(False)
         # 创建并启动线程
         self.thread = HashCalculatorThread(file_path, hash_types)
         self.thread.progress_signal.connect(self.progress_bar.setValue)
@@ -199,6 +200,8 @@ class HashCalculatorApp(QWidget):
         hash_text = "\n".join([f"{key}: {value}" for key, value in hashes.items() if value])
         self.file_info_text.setText(f"{info_text}\n\n{hash_text}")
         self.progress_bar.setValue(100)
+        self.calculate_button.setEnabled(True)
+
 
     @staticmethod
     def get_file_info(file_path):

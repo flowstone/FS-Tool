@@ -203,7 +203,7 @@ class FileComparatorApp(QWidget):
         if not self.source_directory or not self.target_directory:
             QMessageBox.warning(self, "警告", "请先选择源目录和目标目录！")
             return
-        self.setEnabled(False)
+        self.compare_button.setEnabled(False)
         method = self.method_combo.currentText()
         self.compare_thread = CompareThread(self.source_directory, self.target_directory, method)
         self.compare_thread.update_signal.connect(self.update_result)
@@ -219,7 +219,7 @@ class FileComparatorApp(QWidget):
         summary = f"\n相同文件数量: {same_count} 个文件\n"
         summary += f"不同文件数量: {diff_count} 个文件\n"
         self.result_text.append(summary)
-        self.setEnabled(True)
+        self.compare_button.setEnabled(True)
 
 
     def closeEvent(self, event):

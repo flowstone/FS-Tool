@@ -175,7 +175,7 @@ class FileGeneratorApp(QWidget):
             return
 
         file_type = self.file_type_combo.currentText()
-
+        self.generate_button.setEnabled(False)
         self.thread = FileGenerationThread(self.folder_path, file_count, file_size, file_type)
         self.thread.update_progress_signal.connect(self.update_progress)
         self.thread.file_generated_signal.connect(self.file_generated)
@@ -190,6 +190,8 @@ class FileGeneratorApp(QWidget):
         logger.info(f"第 {index} 个 {file_type} 文件已生成")
 
     def file_generation_finished(self):
+        self.generate_button.setEnabled(True)
+
         self.show_message("成功", "文件生成完成！")
 
     def show_message(self, title, message):

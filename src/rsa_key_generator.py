@@ -4,17 +4,51 @@ import zipfile
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QComboBox, QPushButton, QVBoxLayout, QHBoxLayout, QTextEdit, QFileDialog
 )
-from PyQt5.QtGui import QClipboard, QIcon
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from Crypto.PublicKey import RSA
-
 from src.common_util import CommonUtil
 from src.fs_constants import FsConstants
 from loguru import logger
 
+
+class RSAKeyGeneratorThread(QThread):
+    result_signal = pyqtSignal(str, str)  # 用于将公钥和私钥传递回主线程
+    error_signal = pyqtSignal(str)  # 用于传递错误消息
+
+    def __init__(self, key_length, encryption_method):
+        super().__init__()
+        self.key_length = key_length
+        self.encryption_method = encryption_method
+
+    def run(self):
+        try:
+            # 生成 RSA 密钥对
+            key = RSA.generate(self.key_length)
+            if self.encryption_method == "OpenSSH":
+                public_key = key.publickey().export_key(format="OpenSSH").decode()
+                private_key = key.export_key(format="PEM").decode()
+            else:
+                public_key = key.publickey().export_key(
+                    format="PEM",
+                    pkcs=1 if self.encryption_method == "PKCS#1" else 8
+                ).decode()
+                private_key = key.export_key(
+                    format="PEM",
+                    pkcs=1 if self.encryption_method == "PKCS#1" else 8
+                ).decode()
+
+            # 发出结果信号
+            self.result_signal.emit(public_key, private_key)
+
+        except Exception as e:
+            self.error_signal.emit(str(e))
+
+
 class RSAKeyGeneratorApp(QWidget):
     # 定义一个信号，在窗口关闭时触发
     closed_signal = pyqtSignal()
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("RSA密钥生成器")
@@ -27,6 +61,9 @@ class RSAKeyGeneratorApp(QWidget):
         # 初始化密钥内容
         self.public_key = None
         self.private_key = None
+
+        # 初始化线程对象
+        self.thread = None
 
     def init_ui(self):
         # 第一行：密钥长度选择和加密方式选择
@@ -78,76 +115,45 @@ class RSAKeyGeneratorApp(QWidget):
         self.setLayout(layout)
 
         # 信号连接
-        self.generate_button.clicked.connect(self.generate_keys)
+        self.generate_button.clicked.connect(self.start_key_generation)
         self.copy_public_button.clicked.connect(self.copy_public_key)
         self.copy_private_button.clicked.connect(self.copy_private_key)
         self.download_button.clicked.connect(self.download_keys)
 
-        # 添加样式表
-        #self.setStyleSheet(self.load_stylesheet())
-
-    def load_stylesheet(self):
-        """加载样式表，用于美化界面"""
-        return """
-            QWidget {
-                background-color: #f4f4f4;
-                font-family: Arial, sans-serif;
-                font-size: 14px;
-            }
-            QLabel {
-                font-size: 16px;
-                font-weight: bold;
-            }
-            QComboBox {
-                padding: 5px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                background-color: #fff;
-            }
-            QPushButton {
-                padding: 10px 15px;
-                border: none;
-                border-radius: 5px;
-                background-color: #0078d7;
-                color: white;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #005a9e;
-            }
-            QTextEdit {
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                padding: 10px;
-                background-color: #fff;
-                font-family: Consolas, monospace;
-                font-size: 14px;
-            }
-        """
-
-    def generate_keys(self):
-        """生成 RSA 密钥对"""
+    def start_key_generation(self):
+        """启动密钥生成线程"""
         key_length = int(self.key_length_combo.currentText())
         encryption_method = self.encryption_combo.currentText()
 
-        # 生成 RSA 密钥
-        key = RSA.generate(key_length)
+        # 禁用按钮，防止重复操作
+        self.generate_button.setEnabled(False)
+        self.public_key_text.setPlainText("正在生成公钥，请稍候……")
+        self.private_key_text.setPlainText("正在生成私钥，请稍候……")
 
-        if encryption_method == "OpenSSH":
-            self.public_key = key.publickey().export_key(format="OpenSSH").decode()
-            self.private_key = key.export_key(format="PEM").decode()
-        else:
-            self.public_key = key.publickey().export_key(
-                format="PEM",
-                pkcs=1 if encryption_method == "PKCS#1" else 8
-            ).decode()
-            self.private_key = key.export_key(
-                format="PEM",
-                pkcs=1 if encryption_method == "PKCS#1" else 8
-            ).decode()
+        # 启动线程
+        self.thread = RSAKeyGeneratorThread(key_length, encryption_method)
+        self.thread.result_signal.connect(self.on_key_generated)
+        self.thread.error_signal.connect(self.on_error)
+        self.thread.start()
+
+    def on_key_generated(self, public_key, private_key):
+        """接收线程生成的密钥并更新 UI"""
+        self.public_key = public_key
+        self.private_key = private_key
 
         self.public_key_text.setPlainText(self.public_key)
         self.private_key_text.setPlainText(self.private_key)
+
+        # 恢复按钮可用状态
+        self.generate_button.setEnabled(True)
+
+    def on_error(self, error_message):
+        """处理线程中的错误"""
+        self.public_key_text.setPlainText(f"生成公钥失败：{error_message}")
+        self.private_key_text.setPlainText(f"生成私钥失败：{error_message}")
+
+        # 恢复按钮可用状态
+        self.generate_button.setEnabled(True)
 
     def copy_public_key(self):
         """复制公钥到剪贴板"""
@@ -171,7 +177,6 @@ class RSAKeyGeneratorApp(QWidget):
             self.private_key_text.setPlainText("请先生成密钥对")
             return
 
-        # 保存文件对话框
         file_dialog = QFileDialog()
         save_path, _ = file_dialog.getSaveFileName(self, "保存密钥", "", "ZIP 文件 (*.zip)")
 
@@ -187,9 +192,9 @@ class RSAKeyGeneratorApp(QWidget):
 
     def closeEvent(self, event):
         logger.info("点击了关闭事件")
-        # 在关闭事件中发出信号
         self.closed_signal.emit()
         super().closeEvent(event)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
