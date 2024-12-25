@@ -13,6 +13,8 @@ from Crypto.Hash import SHA256
 from loguru import logger
 
 from src.common_util import CommonUtil
+from src.color_constants import RED,DARK_GRAY,BLUE,BLACK
+from src.font_constants import FontConstants
 
 
 class EncryptThread(QThread):
@@ -109,23 +111,24 @@ class FileEncryptorApp(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("批量文件加密")
-        self.setFixedSize(500, 550)  # 调整窗口大小
+        #self.setFixedSize(500, 550)  # 调整窗口大小
+        self.setFixedWidth(500)
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         layout = QVBoxLayout()
 
         # 应用标题
         title_label = QLabel("批量文件加密")
-        title_label.setFont(QFont("Arial", 18, QFont.Bold))
         title_label.setAlignment(Qt.AlignCenter)
-        title_label.setStyleSheet("color: #2E86C1;")
+        title_label.setStyleSheet(f"color: {BLACK.name()};")
+        title_label.setFont(FontConstants.H1)
         layout.addWidget(title_label)
 
         # 应用说明
         desc_label = QLabel("通过 AES 加密算法加密或解密指定文件夹内的所有文件。\n"
                             "支持密钥长度 128/192/256 位，请输入密码进行加密操作。")
-        desc_label.setFont(QFont("Arial", 12))
         desc_label.setAlignment(Qt.AlignCenter)
+        desc_label.setStyleSheet(f"color: {BLUE.name()};")
         desc_label.setWordWrap(True)
         layout.addWidget(desc_label)
 

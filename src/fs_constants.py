@@ -36,7 +36,7 @@ class FsConstants:
     FILE_COMPARATOR_WINDOW_TITLE = "文件比较"
     FILE_ENCRYPTOR_WINDOW_TITLE = "文件加密"
     RSA_KEY_GENERATOR_WINDOW_TITLE = "RSA生成器"
-    HASH_CALCULATOR_WINDOW_TITLE = "hash校验"
+    HASH_CALCULATOR_WINDOW_TITLE = "HASH校验"
 
     # 桌面时钟相关常量
     DESKTOP_CLOCK_WINDOW_WIDTH = 0
@@ -126,3 +126,4 @@ class FsConstants:
 
     APP_CONFIG_FILE = "config.json"
     HELP_PDF_FILE_PATH = "resources/pdf/help.pdf"
+    FONT_FILE_PATH = "resources/fonts/AlimamaFangYuanTiVF-Thin.ttf"

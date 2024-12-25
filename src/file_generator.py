@@ -11,8 +11,10 @@ from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtGui import QFont, QColor, QIcon
 from PIL import Image
 from loguru import logger
+from src.color_constants import RED,DARK_GRAY,BLUE,BLACK
 
 from src.common_util import CommonUtil
+from src.font_constants import FontConstants
 
 
 class FileGenerationThread(QThread):
@@ -96,19 +98,19 @@ class FileGeneratorApp(QWidget):
         super().__init__()
         self.folder_path = None
         self.setWindowTitle("批量生成文件")
-        self.setFixedSize(450, 400)
+        #self.setFixedSize(450, 400)
+        self.setFixedWidth(450)
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         layout = QVBoxLayout()
         title_label = QLabel("批量生成文件")
         title_label.setAlignment(Qt.AlignCenter)
-        title_label.setFont(QFont("Arial", 20, QFont.Bold))
-        title_label.setStyleSheet("color: #4CAF50;")
+        title_label.setStyleSheet(f"color: {BLACK.name()};")
+        title_label.setFont(FontConstants.H1)
         layout.addWidget(title_label)
 
         browse_layout = QHBoxLayout()
         self.output_folder_label = QLabel("输出目录")
-        self.output_folder_label.setFont(QFont("Arial", 12))
         self.output_folder_label.setAlignment(Qt.AlignCenter)
         self.folder_path_entry = QLineEdit()
         self.folder_path_entry.setPlaceholderText("请选择要生成文件的目录")

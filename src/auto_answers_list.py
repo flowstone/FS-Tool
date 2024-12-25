@@ -49,7 +49,6 @@ class AutoAnswersList(QWidget):
         button_layout.addWidget(prev_button)
 
         self.page_label = QLabel(f'第 {self.current_page} 页')
-        self.page_label.setFont(QFont("Arial", 12, QFont.Bold))
         button_layout.addWidget(self.page_label, alignment=Qt.AlignCenter)  # 将标签居中
 
         next_button = QPushButton('下一页')
