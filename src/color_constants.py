@@ -33,4 +33,6 @@ PURPLE = QColor(128, 0, 128)
 PINK = QColor(255, 192, 203)
 # 棕色，RGB值为(165, 42, 42)
 BROWN = QColor(165, 42, 42)
+# 深天蓝
+DEEP_SKY_BLUE = QColor(0, 154, 205)
 

@@ -14,7 +14,7 @@ import whatimage
 import pillow_heif
 from PIL import Image,ImageOps
 from pillow_heif import register_heif_opener
-from src.color_constants import RED,DARK_GRAY,BLUE
+from src.color_constants import RED, DARK_GRAY, BLUE, BLACK, DEEP_SKY_BLUE
 from src.font_constants import FontConstants
 # 注册HEIC文件 opener，使得PIL能够识别并打开HEIC格式文件，仅限V2方法使用
 register_heif_opener()
@@ -36,7 +36,11 @@ class HeicToJpgApp(QWidget):
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         layout = QVBoxLayout()
-
+        title_label = QLabel("批量HEIC转JPG")
+        title_label.setAlignment(Qt.AlignCenter)
+        title_label.setStyleSheet(f"color: {BLACK.name()};")
+        title_label.setFont(FontConstants.H1)
+        layout.addWidget(title_label)
         # 说明文本
         description_label = QLabel("说明：请选择HEIC文件所在的文件夹，系统将自动将其中的HEIC文件转换为JPG格式。")
         description_label.setStyleSheet(f"color: {BLUE.name()};")

@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtGui import QFont, QColor, QIcon
 from PIL import Image
 from loguru import logger
-from src.color_constants import RED,DARK_GRAY,BLUE,BLACK
+from src.color_constants import RED, DARK_GRAY, BLUE, BLACK, DEEP_SKY_BLUE
 
 from src.common_util import CommonUtil
 from src.font_constants import FontConstants

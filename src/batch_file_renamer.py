@@ -6,7 +6,9 @@ from PyQt5.QtGui import QFont, QIcon, QColor, QPalette
 from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from loguru import logger
 
+from src.color_constants import BLACK, DEEP_SKY_BLUE
 from src.common_util import CommonUtil
+from src.font_constants import FontConstants
 from src.fs_constants import FsConstants
 from src.progress_widget import ProgressWidget
 
@@ -28,7 +30,11 @@ class RenameFileApp(QWidget):
 
 
         layout = QVBoxLayout()
-
+        title_label = QLabel("批量修改文件/文件夹名")
+        title_label.setAlignment(Qt.AlignCenter)
+        title_label.setStyleSheet(f"color: {BLACK.name()};")
+        title_label.setFont(FontConstants.H1)
+        layout.addWidget(title_label)
         # 创建第一个单选按钮组（文件类型）
         group_box = QGroupBox('文件类型')
         radio_btn_layout = QHBoxLayout()

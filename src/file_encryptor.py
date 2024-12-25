@@ -13,7 +13,7 @@ from Crypto.Hash import SHA256
 from loguru import logger
 
 from src.common_util import CommonUtil
-from src.color_constants import RED,DARK_GRAY,BLUE,BLACK
+from src.color_constants import RED, DARK_GRAY, BLUE, BLACK, DEEP_SKY_BLUE
 from src.font_constants import FontConstants
 
 
