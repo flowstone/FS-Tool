@@ -1,10 +1,13 @@
 import sys
+
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication
 from src.main_window import MainWindow
 from src.init_db import InitDB
 from src.common_util import CommonUtil
 from src.fs_constants import FsConstants
 import  os
+from src.load_font import load_external_font
 
 def main():
     app = QApplication(sys.argv)
@@ -20,6 +23,11 @@ def main():
             stylesheet = file.read()
             # 为应用程序设置样式表
             app.setStyleSheet(stylesheet)
+    # 加载外部字体
+    font_path = CommonUtil.get_resource_path(FsConstants.FONT_FILE_PATH)
+    font_family = load_external_font(font_path)
+    if font_family:
+        app.setFont(QFont(font_family))
 
     window = MainWindow()
     window.show()

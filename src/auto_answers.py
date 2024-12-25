@@ -17,7 +17,7 @@ from src.sqlite_util import SQLiteTool
 from src.auto_answers_list import AutoAnswersList
 from src.progress_widget import ProgressWidget
 from src.config_manager import ConfigManager
-
+from src.color_constants import RED,BLACK
 # 这里定义一些常见的姓氏和名字的列表，可以根据实际情况扩展
 last_names = ["赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈", "褚", "卫", "蒋", "沈", "韩", "杨"]
 first_names = ["强", "伟", "芳", "娜", "秀英", "敏", "静", "丽", "军", "磊", "超", "鹏", "慧", "勇", "杰"]
@@ -198,7 +198,7 @@ class AutoAnswersApp(QWidget):
         # 姓名输入框和标签
         passwd_label = QLabel("*访问密码")
         passwd_label.setFont(font)
-        passwd_label.setStyleSheet("color:red;")
+        passwd_label.setStyleSheet(f"color:{RED.name()};")
         self.passwd_edit = QLineEdit()
         self.passwd_edit.setPlaceholderText("指定手机号")
         self.passwd_edit.setFont(font)
