@@ -114,6 +114,7 @@ class FileEncryptorApp(QWidget):
         #self.setFixedSize(500, 550)  # 调整窗口大小
         self.setFixedWidth(500)
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
+        self.setAcceptDrops(True)
 
         layout = QVBoxLayout()
 
@@ -196,6 +197,20 @@ class FileEncryptorApp(QWidget):
         folder_path = QFileDialog.getExistingDirectory(self, "选择文件夹")
         self.selected_folder = folder_path
         self.folder_path_entry.setText(folder_path)
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        if event.mimeData().hasUrls():
+            folder_path = event.mimeData().urls()[0].toLocalFile()
+            if os.path.isdir(folder_path):
+                self.folder_path_entry.setText(folder_path)
+            else:
+                QMessageBox.warning(self, "警告", "拖入的不是有效文件夹！")
 
     def encrypt_folder(self):
         """加密文件夹下的所有文件"""

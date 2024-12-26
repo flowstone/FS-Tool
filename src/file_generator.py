@@ -101,6 +101,7 @@ class FileGeneratorApp(QWidget):
         #self.setFixedSize(450, 400)
         self.setFixedWidth(450)
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
+        self.setAcceptDrops(True)
 
         layout = QVBoxLayout()
         title_label = QLabel("批量生成文件")
@@ -158,6 +159,19 @@ class FileGeneratorApp(QWidget):
         logger.info(f"选择的输出目录：{self.folder_path}")
         self.folder_path_entry.setText(self.folder_path)
 
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        if event.mimeData().hasUrls():
+            folder_path = event.mimeData().urls()[0].toLocalFile()
+            if os.path.isdir(folder_path):
+                self.folder_path_entry.setText(folder_path)
+            else:
+                QMessageBox.warning(self, "警告", "拖入的不是有效文件夹！")
     def start_file_generation(self):
         file_count = self.file_count_input.text()
         file_size = self.file_size_input.text()

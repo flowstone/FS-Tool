@@ -30,6 +30,7 @@ class CreateFolderApp(QWidget):
 
         # 设置窗口背景色为淡灰色
         self.setAutoFillBackground(True)
+        self.setAcceptDrops(True)
 
 
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
@@ -94,7 +95,19 @@ class CreateFolderApp(QWidget):
         folder_path = QFileDialog.getExistingDirectory(self, "选择文件夹")
         self.folder_path_entry.setText(folder_path)
 
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
 
+    def dropEvent(self, event):
+        if event.mimeData().hasUrls():
+            folder_path = event.mimeData().urls()[0].toLocalFile()
+            if os.path.isdir(folder_path):
+                self.folder_path_entry.setText(folder_path)
+            else:
+                QMessageBox.warning(self, "警告", "拖入的不是有效文件夹！")
 
     def start_operation(self):
         logger.info("---- 开始执行操作 ----")
