@@ -8,6 +8,9 @@ from PyQt5.QtWidgets import (
     QPushButton, QLabel, QFileDialog, QMessageBox, QLineEdit, QTextEdit, QCheckBox, QProgressBar
 )
 from PyQt5.QtCore import Qt, pyqtSignal, QThread
+
+from src.color_constants import BLACK, DEEP_SKY_BLUE
+from src.font_constants import FontConstants
 from src.fs_constants import FsConstants
 from src.common_util import CommonUtil
 
@@ -92,6 +95,12 @@ class HashCalculatorApp(QWidget):
 
         # 文件选择布局
         file_layout = QHBoxLayout()
+        title_label = QLabel("HASH校验")
+        title_label.setAlignment(Qt.AlignCenter)
+        title_label.setStyleSheet(f"color: {BLACK.name()};")
+        title_label.setFont(FontConstants.H1)
+        layout.addWidget(title_label)
+
         self.file_label = QLabel("选择的文件:")
         self.file_path_entry = QLineEdit()
         self.file_path_entry.setReadOnly(True)

@@ -7,7 +7,10 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from Crypto.PublicKey import RSA
+
+from src.color_constants import BLACK, DEEP_SKY_BLUE
 from src.common_util import CommonUtil
+from src.font_constants import FontConstants
 from src.fs_constants import FsConstants
 from loguru import logger
 
@@ -105,6 +108,12 @@ class RSAKeyGeneratorApp(QWidget):
 
         # 布局
         layout = QVBoxLayout()
+        title_label = QLabel("RSA密钥生成器")
+        title_label.setAlignment(Qt.AlignCenter)
+        title_label.setStyleSheet(f"color: {BLACK.name()};")
+        title_label.setFont(FontConstants.H1)
+        layout.addWidget(title_label)
+
         layout.addLayout(key_settings_layout)
         layout.addLayout(button_layout)
         layout.addWidget(public_key_label)

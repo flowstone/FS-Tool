@@ -6,7 +6,10 @@ from PyQt5.QtGui import QPixmap, QIcon
 from PIL import Image
 from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from loguru import logger
+
+from src.color_constants import BLACK, DEEP_SKY_BLUE
 from src.common_util import CommonUtil
+from src.font_constants import FontConstants
 from src.fs_constants import FsConstants
 from src.progress_widget import ProgressWidget
 
@@ -30,7 +33,11 @@ class PicConversionApp(QWidget):
 
         # 主布局
         layout = QVBoxLayout()
-
+        title_label = QLabel("图片格式转换")
+        title_label.setAlignment(Qt.AlignCenter)
+        title_label.setStyleSheet(f"color: {BLACK.name()};")
+        title_label.setFont(FontConstants.H1)
+        layout.addWidget(title_label)
 
 
         # 上传图片按钮

@@ -14,7 +14,7 @@ import whatimage
 import pillow_heif
 from PIL import Image,ImageOps
 from pillow_heif import register_heif_opener
-from src.color_constants import RED,DARK_GRAY,BLUE
+from src.color_constants import RED, DARK_GRAY, BLUE, BLACK, DEEP_SKY_BLUE
 from src.font_constants import FontConstants
 # 注册HEIC文件 opener，使得PIL能够识别并打开HEIC格式文件，仅限V2方法使用
 register_heif_opener()
@@ -30,13 +30,18 @@ class HeicToJpgApp(QWidget):
         logger.info("---- 初始化HEIC转JPG ----")
         self.setWindowTitle(FsConstants.HEIC_JPG_WINDOW_TITLE)
         self.setWindowFlags(self.windowFlags() | Qt.MSWindowsFixedSizeDialogHint)
+        self.setAcceptDrops(True)
 
 
 
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         layout = QVBoxLayout()
-
+        title_label = QLabel("批量HEIC转JPG")
+        title_label.setAlignment(Qt.AlignCenter)
+        title_label.setStyleSheet(f"color: {BLACK.name()};")
+        title_label.setFont(FontConstants.H1)
+        layout.addWidget(title_label)
         # 说明文本
         description_label = QLabel("说明：请选择HEIC文件所在的文件夹，系统将自动将其中的HEIC文件转换为JPG格式。")
         description_label.setStyleSheet(f"color: {BLUE.name()};")
@@ -87,7 +92,19 @@ class HeicToJpgApp(QWidget):
         folder_path = QFileDialog.getExistingDirectory(self, "选择文件夹")
         self.folder_path_input.setText(folder_path)
 
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
 
+    def dropEvent(self, event):
+        if event.mimeData().hasUrls():
+            folder_path = event.mimeData().urls()[0].toLocalFile()
+            if os.path.isdir(folder_path):
+                self.folder_path_input.setText(folder_path)
+            else:
+                QMessageBox.warning(self, "警告", "拖入的不是有效文件夹！")
 
     def start_operation(self):
         logger.info("---- 开始执行操作 ----")

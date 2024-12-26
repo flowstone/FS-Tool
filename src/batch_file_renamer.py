@@ -6,7 +6,9 @@ from PyQt5.QtGui import QFont, QIcon, QColor, QPalette
 from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from loguru import logger
 
+from src.color_constants import BLACK, DEEP_SKY_BLUE
 from src.common_util import CommonUtil
+from src.font_constants import FontConstants
 from src.fs_constants import FsConstants
 from src.progress_widget import ProgressWidget
 
@@ -25,10 +27,15 @@ class RenameFileApp(QWidget):
         self.setWindowTitle(FsConstants.FILE_RENAMER_WINDOW_TITLE)
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
         self.setWindowFlags(self.windowFlags() | Qt.MSWindowsFixedSizeDialogHint)
+        self.setAcceptDrops(True)
 
 
         layout = QVBoxLayout()
-
+        title_label = QLabel("批量修改文件/文件夹名")
+        title_label.setAlignment(Qt.AlignCenter)
+        title_label.setStyleSheet(f"color: {BLACK.name()};")
+        title_label.setFont(FontConstants.H1)
+        layout.addWidget(title_label)
         # 创建第一个单选按钮组（文件类型）
         group_box = QGroupBox('文件类型')
         radio_btn_layout = QHBoxLayout()
@@ -178,7 +185,19 @@ class RenameFileApp(QWidget):
         folder_path = QFileDialog.getExistingDirectory(self, "选择文件夹")
         self.folder_path_entry.setText(folder_path)
 
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
 
+    def dropEvent(self, event):
+        if event.mimeData().hasUrls():
+            folder_path = event.mimeData().urls()[0].toLocalFile()
+            if os.path.isdir(folder_path):
+                self.folder_path_entry.setText(folder_path)
+            else:
+                QMessageBox.warning(self, "警告", "拖入的不是有效文件夹！")
 
     def start_operation(self):
         self.progress_tool = ProgressWidget(self)

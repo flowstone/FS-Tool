@@ -10,7 +10,8 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt, pyqtSignal, QThread
 
 from src.common_util import CommonUtil
-from src.color_constants import RED,DARK_GRAY,BLUE
+from src.color_constants import RED, DARK_GRAY, BLUE, BLACK, DEEP_SKY_BLUE
+from src.font_constants import FontConstants
 
 
 class CompareThread(QThread):
@@ -127,6 +128,11 @@ class FileComparatorApp(QWidget):
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         layout = QVBoxLayout()
+        title_label = QLabel("批量文件比较")
+        title_label.setAlignment(Qt.AlignCenter)
+        title_label.setStyleSheet(f"color: {BLACK.name()};")
+        title_label.setFont(FontConstants.H1)
+        layout.addWidget(title_label)
 
         self.label = QLabel("请选择源目录和目标目录进行文件比较")
         self.label.setAlignment(Qt.AlignCenter)

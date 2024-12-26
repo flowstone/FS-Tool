@@ -9,6 +9,9 @@ from loguru import logger
 
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFont, QIcon
+
+from src.color_constants import BLACK, DEEP_SKY_BLUE
+from src.font_constants import FontConstants
 from src.fs_constants import FsConstants
 from src.common_util import CommonUtil
 
@@ -87,6 +90,11 @@ class PasswordGeneratorApp(QWidget):
         self.generate_button.clicked.connect(self.start_password_generation)
 
         layout = QVBoxLayout()
+        title_label = QLabel("密码生成器")
+        title_label.setAlignment(Qt.AlignCenter)
+        title_label.setStyleSheet(f"color: {BLACK.name()};")
+        title_label.setFont(FontConstants.H1)
+        layout.addWidget(title_label)
         options_layout = QHBoxLayout()
         options_layout.addWidget(self.include_digits)
         options_layout.addWidget(self.include_lowercase)

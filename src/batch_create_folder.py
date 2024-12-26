@@ -9,9 +9,11 @@ from PyQt5.QtCore import Qt, pyqtSignal, QThread
 
 from loguru import logger
 from src.common_util import CommonUtil
+from src.font_constants import FontConstants
 from src.fs_constants import FsConstants
 from src.progress_widget import ProgressWidget,ProgressSignalEmitter
-from src.color_constants import RED,DARK_GRAY,BLUE
+from src.color_constants import RED, DARK_GRAY, BLUE, BLACK, DEEP_SKY_BLUE
+
 
 class CreateFolderApp(QWidget):
     # 定义一个信号，在窗口关闭时触发
@@ -28,12 +30,17 @@ class CreateFolderApp(QWidget):
 
         # 设置窗口背景色为淡灰色
         self.setAutoFillBackground(True)
+        self.setAcceptDrops(True)
 
 
         self.setWindowIcon(QIcon(CommonUtil.get_ico_full_path()))
 
         layout = QVBoxLayout()
-
+        title_label = QLabel("批量生成文件夹")
+        title_label.setAlignment(Qt.AlignCenter)
+        title_label.setStyleSheet(f"color: {BLACK.name()};")
+        title_label.setFont(FontConstants.H1)
+        layout.addWidget(title_label)
         # 说明文本
         description_label = QLabel("说明：根据输入的分割字符，取前部分创建文件夹，符合相关的文件都移动到对应文件夹中")
         description_label.setStyleSheet(f"color: {BLUE.name()};")
@@ -88,7 +95,19 @@ class CreateFolderApp(QWidget):
         folder_path = QFileDialog.getExistingDirectory(self, "选择文件夹")
         self.folder_path_entry.setText(folder_path)
 
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
 
+    def dropEvent(self, event):
+        if event.mimeData().hasUrls():
+            folder_path = event.mimeData().urls()[0].toLocalFile()
+            if os.path.isdir(folder_path):
+                self.folder_path_entry.setText(folder_path)
+            else:
+                QMessageBox.warning(self, "警告", "拖入的不是有效文件夹！")
 
     def start_operation(self):
         logger.info("---- 开始执行操作 ----")

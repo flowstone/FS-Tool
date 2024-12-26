@@ -1,35 +1,26 @@
 from PyQt5.QtGui import QColor, QFont
 
+
+def create_font(size: int, bold: bool = False, weight: int = 50, italic: bool = False) -> QFont:
+    """动态生成字体"""
+    font = QFont()
+    font.setPointSize(size)
+    font.setBold(bold)
+    font.setWeight(weight)
+    font.setItalic(italic)
+    return font
+
 class FontConstants:
-    """字体常量类"""
-    # 模拟H1标题字体
-    H1 = QFont()
-    H1.setPointSize(32)
-    H1.setBold(True)
-    H1.setWeight(75)
 
-    # 模拟H2标题字体
-    H2 = QFont()
-    H2.setPointSize(28)
-    H2.setBold(True)
-    H2.setWeight(70)
+    # 预定义字体常量
+    H1 = create_font(32, bold=True, weight=75)
+    H2 = create_font(28, bold=True, weight=70)
+    H3 = create_font(24, bold=True, weight=65)
+    BODY_LARGE = create_font(18)
+    BODY_NORMAL = create_font(16)
+    BODY_SMALL = create_font(14)
 
-    # 模拟H3标题字体
-    H3 = QFont()
-    H3.setPointSize(24)
-    H3.setBold(True)
-    H3.setWeight(65)
-
-    # 普通正文大字体
-    BODY_LARGE = QFont()
-    BODY_LARGE.setPointSize(18)
-
-    # 普通正文字体
-    BODY_NORMAL = QFont()
-    BODY_NORMAL.setPointSize(16)
-
-    # 普通正文小字体
-    BODY_SMALL = QFont()
-    BODY_SMALL.setPointSize(14)
-
-
+    # 斜体字体
+    ITALIC_LARGE = create_font(18, italic=True)
+    ITALIC_NORMAL = create_font(16, italic=True)
+    ITALIC_SMALL = create_font(14, italic=True)
