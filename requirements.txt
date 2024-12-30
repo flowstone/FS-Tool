@@ -49,3 +49,4 @@ wsproto==1.2.0
 pillow_heif
 whatimage
 pycryptodome
+pyperclip
