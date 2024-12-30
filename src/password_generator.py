@@ -1,6 +1,7 @@
 import sys
 import random
 import string
+import pyperclip
 
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QLineEdit, QCheckBox, QPushButton, QVBoxLayout, QHBoxLayout, QSpinBox
@@ -67,6 +68,9 @@ class PasswordGeneratorApp(QWidget):
         self.label.setAlignment(Qt.AlignCenter)
         self.generated_password = QLineEdit(self)
         self.generated_password.setReadOnly(True)
+        # 复制按钮
+        self.copy_button = QPushButton("复制", self)
+        self.copy_button.clicked.connect(self.copy_password)
 
         self.exclude_label = QLabel("排除字符:")
         self.exclude_input = QLineEdit(self)
@@ -108,7 +112,11 @@ class PasswordGeneratorApp(QWidget):
         layout.addWidget(self.password_length_input)
         layout.addWidget(self.generate_button)
         layout.addWidget(self.label)
-        layout.addWidget(self.generated_password)
+        # 新的水平布局，将生成的密码和复制按钮放在同一行
+        password_display_layout = QHBoxLayout()
+        password_display_layout.addWidget(self.generated_password)
+        password_display_layout.addWidget(self.copy_button)
+        layout.addLayout(password_display_layout)
 
         self.setLayout(layout)
 
@@ -141,6 +149,11 @@ class PasswordGeneratorApp(QWidget):
     def closeEvent(self, event):
         self.closed_signal.emit()
         super().closeEvent(event)
+
+    def copy_password(self):
+        password = self.generated_password.text()
+        if password:
+            pyperclip.copy(password)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

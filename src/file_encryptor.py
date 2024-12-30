@@ -159,11 +159,18 @@ class FileEncryptorApp(QWidget):
         # 密码输入
         password_label = QLabel("输入密码：")
         layout.addWidget(password_label)
-
+        # 密码输入和显示密码按钮布局
+        password_input_layout = QHBoxLayout()
         self.password_input = QLineEdit()
         self.password_input.setEchoMode(QLineEdit.Password)
         self.password_input.setPlaceholderText("请输入密码 (至少8位)")
-        layout.addWidget(self.password_input)
+        password_input_layout.addWidget(self.password_input)
+
+        # 显示密码按钮
+        self.show_password_button = QPushButton("显示密码")
+        self.show_password_button.clicked.connect(self.toggle_password_visibility)
+        password_input_layout.addWidget(self.show_password_button)
+        layout.addLayout(password_input_layout)
 
         button_layout = QHBoxLayout()
 
@@ -296,6 +303,13 @@ class FileEncryptorApp(QWidget):
         self.closed_signal.emit()
         super().closeEvent(event)
 
+    def toggle_password_visibility(self):
+        if self.password_input.echoMode() == QLineEdit.Password:
+            self.password_input.setEchoMode(QLineEdit.Normal)
+            self.show_password_button.setText("隐藏密码")
+        else:
+            self.password_input.setEchoMode(QLineEdit.Password)
+            self.show_password_button.setText("显示密码")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
