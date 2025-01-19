@@ -8,7 +8,8 @@ class FsConstants:
     APP_WINDOW_WIDTH = 300
     APP_WINDOW_HEIGHT = 300
     APP_WINDOW_TITLE = "流体石头的工具箱"
-
+    VERSION = "1.6.6"
+    COPYRIGHT_INFO = f"© 2025 {APP_WINDOW_TITLE}"
     # 悬浮球相关常量
     APP_MINI_WINDOW_WIDTH = 90
     APP_MINI_WINDOW_HEIGHT = 90
@@ -98,6 +99,7 @@ class FsConstants:
     PROJECT_ADDRESS = "https://github.com/flowstone/FS-Tool"
     BASE_QSS_PATH = "resources/stylesheets/styles.qss"
     BASE_COLOR_MAP = "resources/img_colormap.gif"
+    LICENSE_FILE_PATH = "resources/txt/LICENSE"
 
     BUTTON_ICON_PATH = "resources/icon/"
     BUTTON_TIME_ICON = "time-icon.svg"

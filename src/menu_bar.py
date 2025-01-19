@@ -1,4 +1,6 @@
 from PyQt5.QtWidgets import QMenuBar, QMenu, QAction, QMessageBox
+
+from src.about_window import AboutWindow
 from src.fs_constants import FsConstants
 import sys,os
 from src.common_util import CommonUtil
@@ -9,6 +11,7 @@ class MenuBar:
         self.menu_bar = QMenuBar(self.parent)
 
         self._create_help_menu()
+        self.about_window = AboutWindow()
 
     def _create_help_menu(self):
         """创建帮助菜单"""
@@ -18,18 +21,21 @@ class MenuBar:
         readme_action = QAction(FsConstants.TOOLBAR_README_TITLE, self.parent)
         readme_action.triggered.connect(open_readme)
 
-
+        # 创建日志窗口菜单项
+        about_action = QAction("关于", self.parent)
+        about_action.triggered.connect(self.show_about_window)
 
         # 将菜单项添加到“帮助”菜单中
         help_menu.addAction(readme_action)
+        help_menu.addAction(about_action)
 
         # 添加帮助菜单到菜单栏
         self.menu_bar.addMenu(help_menu)
-
         # 设置菜单栏
         self.parent.setMenuBar(self.menu_bar)
 
-
+    def show_about_window(self):
+         self.about_window.show()
 
 def open_readme():
     try:
